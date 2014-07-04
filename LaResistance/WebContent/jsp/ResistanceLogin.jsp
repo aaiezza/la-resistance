@@ -7,6 +7,7 @@
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script type="text/javascript" src="http://epeli.github.io/underscore.string/dist/underscore.string.min.js"></script>
 <script type="text/javascript" src="js/js-graph-it_1.0/js-graph-it.js"></script>
+<script type="text/javascript" src="js/LoginWidget.js" ></script>
 <!--script type="text/javascript" src="js/GOGraphWidget.js" ></script>
 <script type="text/javascript" src="js/GOpValWidget.js" ></script>
 <script type="text/javascript" src="js/QuickGOWidget.js" ></script>

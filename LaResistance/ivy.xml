@@ -32,8 +32,9 @@
         <dependency org="org.springframework" name="spring-web" rev="4.0.5.RELEASE" conf="compile->runtime"/>
         <dependency org="org.springframework" name="spring-webmvc" rev="4.0.5.RELEASE" conf="build"/>
         
-        <dependency org="org.springframework.security" name="spring-security-config" rev="3.2.4.RELEASE" conf="compile->runtime"/>
-        <dependency org="org.springframework.security" name="spring-security-web" rev="3.2.4.RELEASE" conf="compile->runtime"/>
+        <dependency org="org.springframework.security" name="spring-security-config" rev="3.2.4.RELEASE"/>
+        <dependency org="org.springframework.security" name="spring-security-core" rev="3.2.4.RELEASE"/>
+        <dependency org="org.springframework.security" name="spring-security-web" rev="3.2.4.RELEASE"/>
 
         <dependency org="org.apache.commons" name="commons-lang3" rev="3.3.2" conf="build"/>
         <dependency org="org.apache.httpcomponents" name="httpclient" rev="4.3.4" conf="build"/>
