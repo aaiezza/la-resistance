@@ -1,4 +1,4 @@
-// Wrap code with module pattern.
+// Wrap code with module pattern
 var LoginWidget = function()
 {
 	var global = this;
@@ -13,7 +13,6 @@ var LoginWidget = function()
         ////////////////////////
 
 		var container = parentElement;
-
 
         //////////////////////////////
         // Private Instance Methods //

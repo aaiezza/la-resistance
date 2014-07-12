@@ -1,53 +1,52 @@
 // Wrap code with module pattern
-var SignupWidget = function()
+var UserManagementWidget = function()
 {
-	var global = this;
+    var global = this;
 
     /////////////////////////////////
     // Widget Constructor Function //
     /////////////////////////////////
-	global.makeSignupWidget = function( parentElement )
-	{
-        ////////////////////////
-        /////    Fields    /////
-        ////////////////////////
+    global.makeUserManagementWidget = function( parentElement )
+    {
+        //////////////////
+        ///// Fields /////
+        //////////////////
 
-		var container = parentElement;
+        var container = parentElement;
+
+        var logoutOption = $( "#logoutOption" );
 
         //////////////////////////////
         // Private Instance Methods //
         //////////////////////////////
-
+        headerWidget.addOption( logoutOption );
 
         //////////////////////////////////////////
         // Find Pieces and Enliven DOM Fragment //
         //////////////////////////////////////////
-        $("input[value='Clear']").click(function()
-        {
-            $('input.userForm').val('');
-        });
+
 
         /////////////////////////////
         // Public Instance Methods //
         /////////////////////////////
-		return {
+        return {
             getRootEl : function()
             {
                 return container;
             },
-            update : function()
+            refresh : function()
             {
-                
             },
-            log : function( message )
+            log : function(message)
             {
-                
+
             }
         };
-	};
+    };
 }();
 
 $(document).ready(function()
 {
-    signupWidget = makeSignupWidget( $("#core") )
+    userManagementWidget = makeUserManagementWidget($("core"));
+
 });

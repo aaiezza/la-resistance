@@ -36,13 +36,12 @@ img {
 	max-width: 970.0px;
 	margin: 0.0 auto;
 	padding: 0.0 12.0px;
-	
 	text-align: center;
 }
 
 .group:after {
 	content: ".";
-	display: block;
+	display: inline-block;
 	height: 0.0;
 	clear: both;
 	visibility: hidden;
@@ -59,7 +58,6 @@ body {
 #logo {
 	float: left;
 	padding: 0.0 20.0px 0.0 0.0;
-	
 	text-align: left;
 }
 
@@ -87,7 +85,6 @@ body {
 	font-size: large;
 	margin-top: 10px;
 	float: right;
-	
 	color: #A50000;
 }
 
@@ -102,4 +99,11 @@ a:visited, a:link {
 a:hover {
 	background-color: slategray;
 	font-style: italic;
+}
+
+#core {
+	padding: 30px;
+	margin-top: 45px;
+	height: 93%;
+	text-align: center;
 }

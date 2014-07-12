@@ -1,4 +1,4 @@
-// Wrap code with module pattern.
+// Wrap code with module pattern
 var ResultsWidget = function()
 {
     var global = this;
@@ -13,6 +13,8 @@ var ResultsWidget = function()
         //////////////////
 
         var container = parentElement;
+        
+        var logoutOption = $( "#logoutOption" );
 
         //////////////////////////////
         // Private Instance Methods //
@@ -44,6 +46,8 @@ var ResultsWidget = function()
         //////////////////////////////////////////
         // Find Pieces and Enliven DOM Fragment //
         //////////////////////////////////////////
+        headerWidget.addOption( logoutOption );
+        
         $("#resetButton").click( reset );
         
         /////////////////////////////

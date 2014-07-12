@@ -1,27 +1,35 @@
-// Wrap code with module pattern.
-var UserManagementWidget = function()
+// Wrap code with module pattern
+var ProfileWidget = function()
 {
     var global = this;
 
     /////////////////////////////////
     // Widget Constructor Function //
     /////////////////////////////////
-    global.makeUserManagementWidget = function( parentElement )
+    global.makeProfileWidget = function( parentElement )
     {
-        //////////////////
-        ///// Fields /////
-        //////////////////
+        ////////////////////////
+        /////    Fields    /////
+        ////////////////////////
 
         var container = parentElement;
+        
+        var manageUsersOption = $( "#userManagementOption" );
+        
+        var logoutOption = $( "#logoutOption" );
         
         //////////////////////////////
         // Private Instance Methods //
         //////////////////////////////
 
+
         //////////////////////////////////////////
         // Find Pieces and Enliven DOM Fragment //
         //////////////////////////////////////////
+        headerWidget.addOption( logoutOption );
         
+        headerWidget.addOption( manageUsersOption );
+
         /////////////////////////////
         // Public Instance Methods //
         /////////////////////////////
@@ -30,12 +38,13 @@ var UserManagementWidget = function()
             {
                 return container;
             },
-            refresh : function()
+            update : function()
             {
+                
             },
-            log : function(message)
+            log : function( message )
             {
-
+                
             }
         };
     };
@@ -43,5 +52,5 @@ var UserManagementWidget = function()
 
 $(document).ready(function()
 {
-    userManagementWidget = userManagementWidget($("#userManagement"));
+    profileWidget = makeProfileWidget( $ ( "#core" ) );
 });

@@ -1,4 +1,4 @@
-// Wrap code with module pattern.
+// Wrap code with module pattern
 var GameLobbyWidget = function()
 {
     var global = this;
@@ -13,6 +13,8 @@ var GameLobbyWidget = function()
         //////////////////
 
         var container = parentElement;
+        
+        var logoutOption = $( "#logoutOption" );
         
         var gameAndChatBlock = $( "<div id='gameAndChatBlock'>" ).addClass( "gameLobby" ).addClass( "leftPane" );
         
@@ -62,6 +64,8 @@ var GameLobbyWidget = function()
         //////////////////////////////////////////
         // Find Pieces and Enliven DOM Fragment //
         //////////////////////////////////////////
+        headerWidget.addOption( logoutOption );
+
         gameList.append(createGameButton);
         
         gameBlock.append(gameList).append(gameView);
@@ -91,5 +95,5 @@ var GameLobbyWidget = function()
 
 $(document).ready(function()
 {
-    gameLobbyWidget = makeGameLobbyWidget($("#gameLobby"));
+    gameLobbyWidget = makeGameLobbyWidget($("#core"));
 });

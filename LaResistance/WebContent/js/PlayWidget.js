@@ -1,4 +1,4 @@
-// Wrap code with module pattern.
+// Wrap code with module pattern
 var PlayWidget = function()
 {
     var global = this;
@@ -19,15 +19,7 @@ var PlayWidget = function()
         //////////////////////////////
         function assignPlayers()
         {
-            // SEND REQUEST TO SERVER
-            $.post("play", null, "json").done(function(response)
-            {
-                if (typeof response == "string")
-                {
-                    window.location.reload(false);
-                }
-                $("#role").html(response.role);
-            });
+            
         };
 
         //////////////////////////////////////////

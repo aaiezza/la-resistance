@@ -1,4 +1,4 @@
-// Wrap code with module pattern.
+// Wrap code with module pattern
 var VoteWidget = function()
 {
     var global = this;

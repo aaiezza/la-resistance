@@ -29,16 +29,6 @@ div.rightPane {
 	height: calc(100% - ( 16px + .5em));
 }
 
-#gameLobby {
-	display: flex;
-	display: -webkit-flex;
-	flex-direction: row;
-	-webkit-flex-direction: row;
-	flex-wrap: nowrap;
-	-webkit-flex-wrap: nowrap;
-	height: 100%;
-}
-
 #gameAndChatBlock, #gameBlock {
 	display: flex;
 	display: -webkit-flex;

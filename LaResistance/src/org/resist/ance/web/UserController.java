@@ -58,6 +58,15 @@ public class UserController
         this.dataSource = dataSource;
         this.authMan = authMan;
     }
+    
+    @RequestMapping( method = GET, value = "userManagement" )
+    public ModelAndView getUserManagementPage()
+    {
+        // Call dataSource to get all users and their roles
+        
+        
+        return new ModelAndView( "userManagement" );
+    }
 
     @RequestMapping ( method = GET, value = "/signup" )
     public ModelAndView getSignupPage( HttpSession session )
