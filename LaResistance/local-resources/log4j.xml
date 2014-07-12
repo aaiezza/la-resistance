@@ -10,6 +10,14 @@
             <param name="ConversionPattern" value="%-5p %d{HH:mm:ss,SSS} %c{3}: %m%n" />
         </layout>
     </appender>
+    
+    <logger name="com.mysql.jdbc">
+        <level value="INFO" />
+    </logger>
+    
+    <logger name="org.springframework.beans">
+        <level value="INFO" />
+    </logger>
 
     <logger name="edu.rit.go">
         <level value="INFO" />

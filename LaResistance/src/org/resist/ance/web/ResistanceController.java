@@ -4,16 +4,20 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.resist.ance.BoardFactory;
+import org.resist.ance.mech.Role;
 import org.resist.ance.utils.VoteCounter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ResistanceController
 {
-    private static final String          VOTED = "_voted_";
+    private static final String          VOTED        = "_voted_";
 
     private final Log                    LOGGER;
 
@@ -33,6 +37,10 @@ public class ResistanceController
     private final ArrayList<HttpSession> SESSION_TRACKER;
 
     private final BoardFactory           BOARD_FACTORY;
+
+    private int                          numOfPlayers = 0;
+
+    private int                          spies        = 0;
 
     @Autowired
     public ResistanceController(
@@ -46,12 +54,17 @@ public class ResistanceController
         BOARD_FACTORY = boardFactory;
     }
 
-    public void sayHello()
+    @RequestMapping ( method = GET, value = "/gameLobby" )
+    public ModelAndView getGameLobbyPage()
     {
-        LOGGER.info( "HELLO!" );
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        LOGGER.info( String.format( "%s is looking for recruitment!", auth.getName() ) );
+
+        return new ModelAndView( "gameLobby" );
     }
 
-    @RequestMapping ( "/" )
+    @RequestMapping ( "/voter" )
     public ModelAndView getVotePanel( HttpSession session )
     {
         LOGGER.info( "Someone wants to vote!" );
@@ -107,6 +120,7 @@ public class ResistanceController
         return new ModelAndView( "results", getVoteResults() );
     }
 
+
     @RequestMapping ( method = POST, value = "/reset" )
     @ResponseStatus ( value = HttpStatus.OK )
     public void resetResults()
@@ -121,8 +135,17 @@ public class ResistanceController
         LOGGER.info( "Vote Counter Reset" );
     }
 
+    @RequestMapping ( "play" )
+    public ModelAndView assignRole( HttpSession session )
+    {
+        HashMap<String, Object> json = new HashMap<String, Object>();
+
+        return new ModelAndView( "play", json );
+    }
+
     public void createGame()
     {
+
 
     }
 }

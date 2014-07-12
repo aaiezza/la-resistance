@@ -105,7 +105,7 @@
 
     <!-- Defines the Page to Display on the Root Page>
     <welcome-file-list>
-        <welcome-file>/jsp/ResistanceLogin.jsp</welcome-file>
-    </welcome-file-list-->
+        <welcome-file>redirect:profile</welcome-file>
+    </welcome-file-list -->
 
 </web-app>

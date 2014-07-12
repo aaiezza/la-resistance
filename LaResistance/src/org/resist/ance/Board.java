@@ -11,17 +11,31 @@ public class Board
 
     private Mission                 currentMission;
 
-    private final int               voteTeamTracker;
+    private final int               teamVoteTracker;
+
+    private final int               num_players;
+
+    private final int               num_spies;
+
 
     private final ArrayList<Player> players;
 
-    public Board( final Missions missions )
+    public Board( final int num_players, final int num_spies, final Missions missions )
     {
         this.missions = missions;
 
-        voteTeamTracker = 0;
-        
+        teamVoteTracker = 0;
+
+        this.num_spies = num_spies;
+
+        this.num_players = num_players;
+
         players = new ArrayList<Player>();
+    }
+
+    public int getNumPlayers()
+    {
+        return num_players;
     }
 
     public ArrayList<Player> getPlayers()
@@ -29,8 +43,30 @@ public class Board
         return players;
     }
 
-    public int getVoteTeamTracker()
+    public int getTeamVoteTracker()
     {
-        return voteTeamTracker;
+        return teamVoteTracker;
+    }
+
+    /**
+     * Proceed to the next mission
+     * 
+     * @return <code>true</code> if there is another mission to go on.
+     */
+    public boolean nextMission()
+    {
+        currentMission = missions.nextMission();
+
+        return currentMission != null;
+    }
+
+    public Mission getCurrentMission()
+    {
+        return currentMission;
+    }
+
+    public int getNumSpies()
+    {
+        return num_spies;
     }
 }

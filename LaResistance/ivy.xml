@@ -24,7 +24,8 @@
 
         <dependency org="org.apache.logging.log4j" name="log4j-api" rev="2.0-rc2" conf="compile->runtime"/>
         <dependency org="org.apache.logging.log4j" name="log4j-core" rev="2.0-rc2" conf="compile->runtime"/>
-        <dependency org="org.slf4j" name="slf4j-api" rev="1.7.7" conf="runtime->default"/>
+        <dependency org="org.slf4j" name="slf4j-api" rev="1.7.7"/>
+        <dependency org="org.apache.directory.server" name="apacheds-all" rev="2.0.0-M17" conf="runtime->default"/>
         <dependency org="org.apache.logging.log4j" name="log4j-slf4j-impl" rev="2.0-rc2" conf="runtime->default"/>
 
         <dependency org="org.springframework" name="spring-core" rev="4.0.5.RELEASE" conf="compile->runtime"/>
@@ -32,10 +33,14 @@
         <dependency org="org.springframework" name="spring-web" rev="4.0.5.RELEASE" conf="compile->runtime"/>
         <dependency org="org.springframework" name="spring-webmvc" rev="4.0.5.RELEASE" conf="build"/>
         
+        <dependency org="mysql" name="mysql-connector-java" rev="5.1.31" conf="build"/>
+        <dependency org="org.springframework" name="spring-jdbc" rev="4.0.5.RELEASE" conf="build"/>
+        
         <dependency org="org.springframework.security" name="spring-security-config" rev="3.2.4.RELEASE"/>
         <dependency org="org.springframework.security" name="spring-security-core" rev="3.2.4.RELEASE"/>
         <dependency org="org.springframework.security" name="spring-security-web" rev="3.2.4.RELEASE"/>
-
+        <dependency org="org.springframework.security" name="spring-security-ldap" rev="3.2.4.RELEASE"/>
+        
         <dependency org="org.apache.commons" name="commons-lang3" rev="3.3.2" conf="build"/>
         <dependency org="org.apache.httpcomponents" name="httpclient" rev="4.3.4" conf="build"/>
 
