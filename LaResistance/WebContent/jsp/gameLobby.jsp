@@ -8,11 +8,19 @@
 
 <link href="css/ResistanceStyle.css" rel="stylesheet" type="text/css">
 <link href="css/GameLobbyStyleFlex.css" rel="stylesheet" type="text/css">
+<link href="css/ChatViewStyle.css" rel="stylesheet" type="text/css">
 
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script type="text/javascript" src="http://epeli.github.io/underscore.string/dist/underscore.string.min.js"></script>
+
 <script type="text/javascript" src="js/HeaderWidget.js"></script>
 <script type="text/javascript" src="js/GameLobbyWidget.js"></script>
+<script type="text/javascript" src="js/ChatWidget.js"></script>
+<script type="text/javascript">
+window.onbeforeunload = function() { 
+    $.get( "logout" );
+};
+</script>
 
 <link rel="icon" type="image/ico" href="images/favicon.ico">
 
@@ -20,7 +28,7 @@
 
 </head>
 <body>
-    <c:url value="j_spring_security_logout" var="logoutUrl" />
+    <c:url value="logout" var="logoutUrl" />
 
 	<div id="header" class="group linkProfile"></div>
 	<div id="core"></div>

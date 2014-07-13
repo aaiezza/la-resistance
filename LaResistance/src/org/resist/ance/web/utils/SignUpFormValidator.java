@@ -31,5 +31,10 @@ public class SignUpFormValidator implements Validator
                 errors.rejectValue( "passwordConfirm", "passwordconfirm.mustmatch" );
             }
         }
+        
+        if( form.getUsername().contains( " " ) )
+        {
+            errors.rejectValue( "username", "Username contains space" );
+        }
     }
 }

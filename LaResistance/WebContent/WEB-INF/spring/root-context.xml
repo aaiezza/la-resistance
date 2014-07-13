@@ -30,6 +30,10 @@
     <constructor-arg value="org.resist.ance.web.SignUpController" />
   </bean>
   
+  <bean id="Chat_Logger" class="org.apache.commons.logging.LogFactory" factory-method="getLog">
+    <constructor-arg value="org.resist.ance.web.ChatController" />
+  </bean>
+  
   <!-- Import the La Resistance database files -->
   <import resource="resistance-context.xml"/>
       <!-- import resource="${GO_Database-context}" /-->

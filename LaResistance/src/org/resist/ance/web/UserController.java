@@ -43,11 +43,13 @@ public class UserController
 
     private final static String       NEW_USER_ROLE_SQL_FORMAT         = "INSERT INTO user_role (username, role) VALUES( '%s', '%s' );";
 
-    private final static String       DELETE_USER_SQL_FORMAT           = "";
+    private final static String       DELETE_USER_SQL_FORMAT           = "DELETE FROM user WHERE username=%s;";
 
-    private final static String       DELETE_USER_ROLE_SQL_FORMAT      = "";
+    private final static String       DELETE_USER_ROLE_SQL_FORMAT      = "DELETE FROM user_role WHERE username=%s;";
 
     private final static String       SELECT_ALL_USERS_SQL             = "SELECT users.username, password, enabled, first_name, last_name, email, role FROM users LEFT JOIN user_role ON users.username=user_role.username;";
+
+    private final static String       UPDATE_USER_ENABLITY_SQL_FORMAT  = "UPDATE users SET enabled=%2$b WHERE username=%1$s;";
 
     private final static String       UNFINISHED_SIGN_UP_FORM          = "_unifinshedSignUpForm_";
 
@@ -303,13 +305,7 @@ public class UserController
 
     private UserDetails checkForAdminRights() throws IllegalAccessException
     {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        UserDetails userDetails = null;
-        if ( principal instanceof UserDetails )
-        {
-            userDetails = (UserDetails) principal;
-        }
+        UserDetails userDetails = getUserDetails();
 
         if ( userDetails == null || !userDetails.isEnabled() ||
                 !userDetails.getAuthorities().toString().contains( "ROLE_ADMIN" ) )
@@ -317,6 +313,19 @@ public class UserController
             throw new IllegalAccessException( "INVALID CREDENTIALS" );
         }
 
+        return userDetails;
+    }
+
+    static UserDetails getUserDetails()
+    {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        UserDetails userDetails = null;
+        if ( principal instanceof UserDetails )
+        {
+            userDetails = (UserDetails) principal;
+        }
+        
         return userDetails;
     }
 }

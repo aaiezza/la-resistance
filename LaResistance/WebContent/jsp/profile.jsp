@@ -8,6 +8,11 @@
 <script type="text/javascript" src="http://epeli.github.io/underscore.string/dist/underscore.string.min.js"></script>
 <script type="text/javascript" src="js/HeaderWidget.js"></script>
 <script type="text/javascript" src="js/ProfileWidget.js"></script>
+<script type="text/javascript">
+window.onbeforeunload = function() { 
+    $.get( "logout" );
+};
+</script>
 
 <link rel="icon" type="image/ico" href="images/favicon.ico">
 
@@ -18,7 +23,7 @@
 	<c:url value="gameLobby" var="gameLobbyUrl" />
 	<c:url value="results" var="resultsUrl" />
 	<c:url value="userManagement" var="userManagementUrl" />
-	<c:url value="j_spring_security_logout" var="logoutUrl" />
+	<c:url value="logout" var="logoutUrl" />
 
 	<div id="header" class="group"></div>
 	<div id="core">

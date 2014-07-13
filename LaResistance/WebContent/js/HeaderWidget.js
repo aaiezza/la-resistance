@@ -50,7 +50,15 @@ var HeaderWidget = function()
 
         if( $(container).hasClass("linkProfile") )
         {
-            $("img#_logo").wrap( $("<a>").attr( 'href', urls.profileUrl ) );
+            $("img#_logo").wrap($("<a>").attr('href', urls.profileUrl)).hover(
+                    function()
+                    {
+                        $(this).parent().parent().fadeTo(50, 0.45);
+                    }, function()
+                    {
+                        $(this).parent().parent().fadeTo(50, 1.0);
+                    })
+                .attr( 'title', 'Back to Profile' );
         }
         
         /////////////////////////////

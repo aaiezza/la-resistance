@@ -28,7 +28,9 @@ var GameLobbyWidget = function()
         
         var playerList = $( "<div id='playerList'>" ).addClass( "gameLobby" ).addClass( "rightPane" );
 
-        var createGameButton = $("<input id='newGameButton' type='button' value='Start a Resistance'>");
+        var createGameButton = $( "<input id='newGameButton' type='button' value='Start a Resistance'>" );
+        
+        var chatWidget = makeChatWidget( chatView ).init();
 
         //////////////////////////////
         // Private Instance Methods //

@@ -7,10 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
+import org.resist.ance.web.utils.ChatLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,7 +21,9 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class LoginController
 {
-    static final String             JUST_JOINING_US = "just_joining_us";
+    private ChatLogger                      CHAT_LOG;
+
+    static final String                     JUST_JOINING_US = "just_joining_us";
 
     private final ArrayList<Authentication> PLAYERS_ONLINE;
 
@@ -28,8 +32,10 @@ public class LoginController
     @Autowired
     public LoginController(
         @Qualifier ( "Login_Logger" ) Log logger,
-        @Qualifier ( "OnlinePlayerList" ) ArrayList<Authentication> playersOnline )
+        @Qualifier ( "OnlinePlayerList" ) ArrayList<Authentication> playersOnline,
+        ChatLogger chatLog )
     {
+        CHAT_LOG = chatLog;
         LOGGER = logger;
         PLAYERS_ONLINE = playersOnline;
     }
@@ -38,6 +44,16 @@ public class LoginController
     public ModelAndView backToYourRoots()
     {
         return new ModelAndView( "redirect:login" );
+    }
+    
+    @RequestMapping( "logout" )
+    public ModelAndView logout()
+    {
+        UserDetails userDetails = UserController.getUserDetails();
+        CHAT_LOG.say( "::", String.format( "%s has LEFT!", userDetails.getUsername() ) );
+        LOGGER.info( String.format( "%s has Logged Out!", userDetails.getUsername() ) );
+        
+        return new ModelAndView( "redirect:j_spring_security_logout" );
     }
 
     @RequestMapping ( "login" )
@@ -72,7 +88,10 @@ public class LoginController
             LOGGER.debug( "Trying to access results without logging in..." );
         } else
         {
-            LOGGER.info( message.isEmpty() ? "Waiting For Login" : message );
+            if ( message.isEmpty() )
+            {
+                LOGGER.info( "Waiting For Login" );
+            }
         }
 
         map.put( "message", message );
@@ -93,6 +112,8 @@ public class LoginController
         {
             session.setAttribute( JUST_JOINING_US, true );
             LOGGER.info( String.format( "%s successfully Logged in!", auth.getName() ) );
+            
+            CHAT_LOG.say( "::", String.format( "%s is ONLINE!", auth.getName() ) );
 
             if ( !PLAYERS_ONLINE.contains( auth ) )
             {

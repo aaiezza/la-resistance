@@ -16,15 +16,17 @@ var UserManagementWidget = function()
 
         var logoutOption = $( "#logoutOption" );
         
-        var userTable = $( "<table id='userTable'><tr id='userTableHeader'>" );
+        var userTable = $( "<table id='userTable'><thead><tr id='userTableHeader'>" );
 
         //////////////////////////////
         // Private Instance Methods //
         //////////////////////////////
         function retrieveUsers()
         {
+            $( "#userTable tr:not(:first-child)" ).remove();
+            
             $.post( "retrieveUsers" ).done( function( users ) {
-                $( users ).each( function ( username, user ) {
+                $( users ).each( function ( i, user ) {
                     $( "#userTable" )
                     .append( $("<tr>")
                     .append( $("<td><span>" + user.username + "</span></td>" ) )
@@ -37,23 +39,29 @@ var UserManagementWidget = function()
             });
         }
 
+        function deleteUsers()
+        {
+            
+        }
         //////////////////////////////////////////
         // Find Pieces and Enliven DOM Fragment //
         //////////////////////////////////////////
         headerWidget.addOption( logoutOption );
         
-        container.append( userTable );
+        container.append( $( "<div>" ).append( userTable ).attr( "id", "user_tableBlock" ) );
         
         $( "#userTableHeader" )
-        .append( $("<td><h3>Username</h3></td>" ) )
-        .append( $("<td><h3>Enabled</h3></td>" ) )
-        .append( $("<td><h3>First Name</h3></td>" ) )
-        .append( $("<td><h3>Last Name</h3></td>" ) )
-        .append( $("<td><h3>Email</h3></td>" ) )
-        .append( $("<td><h3>Roles</h3></td>" ) );
+        .append( $("<th class='header'>Username</th>" ) )
+        .append( $("<th class='header'>Enabled</th>" ) )
+        .append( $("<th class='header'>First Name</th>" ) )
+        .append( $("<th class='header'>Last Name</th>" ) )
+        .append( $("<th class='header'>Email</th>" ) )
+        .append( $("<th class='header'>Roles</th>" ) );
+        
+        $( "#userTable" ).append( $("<tbody>") );
         
         retrieveUsers();
-
+        
         /////////////////////////////
         // Public Instance Methods //
         /////////////////////////////
@@ -76,5 +84,13 @@ var UserManagementWidget = function()
 $(document).ready(function()
 {
     userManagementWidget = makeUserManagementWidget($("#core"));
+    $("#userTable").tablesorter(
+    {
+        sortList : [ [ 0, 0 ] ]/*,
+        textExtraction : function(node)
+        {
+            return node.childNodes[0].innerHTML;
+        }*/
+    });
 
 });

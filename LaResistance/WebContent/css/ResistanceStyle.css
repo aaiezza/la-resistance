@@ -71,10 +71,6 @@ body {
 	display: block;
 	background-repeat: no-repeat;
 	background-position: 0.0 50.0%;
-	-webkit-transition: opacity 0.2s ease;
-	-moz-transition: opacity 0.2s ease;
-	-o-transition: opacity 0.2s ease;
-	transition: opacity 0.2s ease;
 }
 
 .group {

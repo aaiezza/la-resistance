@@ -68,9 +68,8 @@ div.rightPane {
 	height: 100%;
 	background-color: #550000;
 	text-align: left;
-	overflow-y: auto;
-}
-
-#playerList {
-	overflow-y: auto;
+	
+	display: inline-flex;
+	flex-direction: column;
+	position: relative;
 }
