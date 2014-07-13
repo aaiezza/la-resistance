@@ -2,6 +2,8 @@ package org.resist.ance.web.utils;
 
 import static org.apache.commons.lang.StringUtils.isEmpty;
 
+import java.util.ArrayList;
+
 public class User
 {
     private String first_name;
@@ -15,6 +17,26 @@ public class User
     private String password;
 
     private String confirmPassword;
+    
+    private boolean enabled;
+    
+    private ArrayList<String> roles = new ArrayList<String>();
+
+    /**
+     * @return the enabled
+     */
+    public boolean isEnabled()
+    {
+        return enabled;
+    }
+
+    /**
+     * @param enabled the enabled to set
+     */
+    public void setEnabled( boolean enabled )
+    {
+        this.enabled = enabled;
+    }
 
     /**
      * @return the first_name
@@ -116,6 +138,16 @@ public class User
         password = "";
         confirmPassword = "";
     }
+    
+    public void addRole( String role )
+    {
+        roles.add( role );
+    }
+    
+    public ArrayList<String> getRoles()
+    {
+        return roles;
+    }
 
     public boolean isBlank()
     {
@@ -123,9 +155,26 @@ public class User
                 isEmpty( email );
     }
 
+    @Override
     public String toString()
     {
         return String.format( "%s (%s %s)", username, first_name, last_name );
+    }
+    
+    @Override
+    public boolean equals( Object o )
+    {
+        if ( o instanceof User )
+        {
+            return username.equals( ( (User)o ).username );
+        }
+        return false;
+    }
+    
+    @Override
+    public int hashCode()
+    {
+        return username.hashCode();
     }
 
 }

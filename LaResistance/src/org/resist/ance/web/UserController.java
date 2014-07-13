@@ -7,6 +7,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -21,6 +23,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -40,6 +43,12 @@ public class UserController
 
     private final static String       NEW_USER_ROLE_SQL_FORMAT         = "INSERT INTO user_role (username, role) VALUES( '%s', '%s' );";
 
+    private final static String       DELETE_USER_SQL_FORMAT           = "";
+
+    private final static String       DELETE_USER_ROLE_SQL_FORMAT      = "";
+
+    private final static String       SELECT_ALL_USERS_SQL             = "SELECT users.username, password, enabled, first_name, last_name, email, role FROM users LEFT JOIN user_role ON users.username=user_role.username;";
+
     private final static String       UNFINISHED_SIGN_UP_FORM          = "_unifinshedSignUpForm_";
 
     private final Log                 LOGGER;
@@ -58,13 +67,48 @@ public class UserController
         this.dataSource = dataSource;
         this.authMan = authMan;
     }
-    
-    @RequestMapping( method = GET, value = "userManagement" )
-    public ModelAndView getUserManagementPage()
+
+    @RequestMapping ( method = POST, value = "retrieveUsers" )
+    @ResponseBody
+    public Collection<User> getUsers() throws SQLException, IllegalAccessException
     {
+        checkForAdminRights();
+
         // Call dataSource to get all users and their roles
-        
-        
+        HashMap<String, User> users = new HashMap<String, User>();
+
+        Statement sql = dataSource.getConnection().createStatement();
+
+        sql.executeQuery( SELECT_ALL_USERS_SQL );
+
+        ResultSet rs = sql.getResultSet();
+
+        while ( rs.next() )
+        {
+            User user = new User();
+
+            user.setUsername( rs.getString( "username" ) );
+            user.setEnabled( rs.getBoolean( "enabled" ) );
+            user.setFirst_name( rs.getString( "first_name" ) );
+            user.setLast_name( rs.getString( "last_name" ) );
+            user.setEmail( rs.getString( "email" ) );
+
+            if ( users.containsKey( user.getUsername() ) )
+            {
+                users.get( user.getUsername() ).addRole( rs.getString( "role" ) );
+            } else
+            {
+                user.addRole( rs.getString( "role" ) );
+                users.put( user.getUsername(), user );
+            }
+        }
+
+        return users.values();
+    }
+
+    @RequestMapping ( method = GET, value = "userManagement" )
+    public ModelAndView getUserManagementPage() throws SQLException
+    {
         return new ModelAndView( "userManagement" );
     }
 
@@ -98,6 +142,7 @@ public class UserController
         return new User();
     }
 
+    // TODO Test this path
     @RequestMapping ( method = POST, value = "doesUserExist/{someusername}" )
     @ResponseBody
     public boolean doesUserExist( @PathVariable ( "someusername" ) String username )
@@ -168,6 +213,7 @@ public class UserController
             return new ModelAndView( "signup", "message", message );
         }
 
+        // TODO SEE IF THIS IS EVEN NECESSARY!
         authenticateUserAndSetSession( form, request );
 
         LOGGER.info( String.format( "FRESH MEAT -> %s", form ) );
@@ -212,5 +258,65 @@ public class UserController
         Authentication authenticatedUser = authMan.authenticate( token );
 
         SecurityContextHolder.getContext().setAuthentication( authenticatedUser );
+    }
+
+    @RequestMapping ( method = POST, value = "deleteUser/{someusername}" )
+    private void deleteUser( @PathVariable ( "someusername" ) String username )
+            throws SQLException, IllegalAccessException
+    {
+        // CHECK FOR ROLE ADMIN ON CURRENTLY LOGGED IN USER
+        UserDetails userDetails = checkForAdminRights();
+
+        // USER THAT IS LOGGED IN CANNOT DELETE HIMSELF!
+
+        // DELETE user from to database
+        Statement sql = dataSource.getConnection().createStatement();
+
+        sql.addBatch( String.format( DELETE_USER_SQL_FORMAT, username ) );
+
+        sql.addBatch( String.format( DELETE_USER_ROLE_SQL_FORMAT, username ) );
+
+        sql.executeBatch();
+        sql.close();
+    }
+
+    @RequestMapping ( method = POST, value = "alterEnablityOfUser/{someusername}" )
+    private void alterEnablityOfUser(
+            @PathVariable ( "someusername" ) String username,
+            boolean enabled ) throws SQLException, IllegalAccessException
+    {
+        // CHECK FOR ROLE ADMIN ON CURRENTLY LOGGED IN USER
+        UserDetails userDetails = checkForAdminRights();
+
+        // USER THAT IS LOGGED IN CANNOT DELETE HIMSELF!
+
+        // DELETE user from to database
+        Statement sql = dataSource.getConnection().createStatement();
+
+        sql.addBatch( String.format( DELETE_USER_SQL_FORMAT, username ) );
+
+        sql.addBatch( String.format( DELETE_USER_ROLE_SQL_FORMAT, username ) );
+
+        sql.executeBatch();
+        sql.close();
+    }
+
+    private UserDetails checkForAdminRights() throws IllegalAccessException
+    {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        UserDetails userDetails = null;
+        if ( principal instanceof UserDetails )
+        {
+            userDetails = (UserDetails) principal;
+        }
+
+        if ( userDetails == null || !userDetails.isEnabled() ||
+                !userDetails.getAuthorities().toString().contains( "ROLE_ADMIN" ) )
+        {
+            throw new IllegalAccessException( "INVALID CREDENTIALS" );
+        }
+
+        return userDetails;
     }
 }
