@@ -35,16 +35,26 @@ var ChatWidget = function()
         
         var chatInput = $( "<input id='chat' type='text'>" );
         
+        var chatButton = $( "<input id='chatSubmit' type='button' value='say'>" );
+        
         var KEY = {
           ENTER: 13      
         };
+        
+        var stickyScroll = 0;
         
         //////////////////////////////
         // Private Instance Methods //
         //////////////////////////////
         function sayIt( say )
         {
+            say = say.trim();
             $("#chat").val("");
+
+            if (!say)
+            {
+                return;
+            }
             
             $.ajax({
                 url: "sayIt",
@@ -65,8 +75,10 @@ var ChatWidget = function()
                         chatLog.append("  ").append(message).append("\n");
                     });
                     chatLog.append("\t~ ~ ~\n");
-                    scrollDown();
                 }
+                
+                stickyScroll = 0;
+                scrollDown();
             });
         }
 
@@ -89,26 +101,37 @@ var ChatWidget = function()
             {
                 // NEED TO USE <code> tag instead of <textarea>
                 //chatLog.append($("<span style='color:red;'>\nSERVER DOWN\n"));
-                chatLog.append( "\n\nSERVER DOWN\n" )
+                location.reload();
             });
         }
         
         function scrollDown()
         {
-            chatLog.scrollTop( chatLog.prop( "scrollHeight" ) );
+            if ( chatLog.scrollTop() >= stickyScroll )
+            {
+                chatLog.scrollTop( chatLog.prop( "scrollHeight" ) );
+                stickyScroll = chatLog.scrollTop();
+            }
         }
         
         //////////////////////////////////////////
         // Find Pieces and Enliven DOM Fragment //
         //////////////////////////////////////////
-        container.append( chatLog ).append( chatInput );
-        
-        chatInput.keypress( function ( event ) {
-            if ( event.which == KEY.ENTER ) {
+        container.append( chatLog ).append( chatInput ).append( chatButton );
+                
+        chatButton.click(function()
+        {
+            sayIt($("#chat").val());
+        });
+
+        chatInput.keypress(function(event)
+        {
+            if (event.which == KEY.ENTER)
+            {
                 event.preventDefault();
-                sayIt($("#chat").val());
-             }
-        } );
+                chatButton.click();
+            }
+        });
         
         /////////////////////////////
         // Public Instance Methods //

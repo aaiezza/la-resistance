@@ -7,7 +7,7 @@
 <head>
 
 <link href="css/ResistanceStyle.css" rel="stylesheet" type="text/css">
-<link href="css/GameLobbyStyleFlex.css" rel="stylesheet" type="text/css">
+<link href="css/GameLobbyStyle.css" rel="stylesheet" type="text/css">
 <link href="css/ChatViewStyle.css" rel="stylesheet" type="text/css">
 
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>

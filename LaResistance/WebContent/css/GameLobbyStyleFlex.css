@@ -1,3 +1,7 @@
+#core {
+	overflow: overlay;
+}
+
 div.leftPane, div.rightPane {
 	float: left;
 	border-color: darkslategray;
@@ -64,12 +68,14 @@ div.rightPane {
 }
 
 #chatView {
+	margin: 0 auto;
+	
 	width: 100%;
 	height: 100%;
 	background-color: #550000;
 	text-align: left;
 	
-	display: inline-flex;
+	display: flex;
 	flex-direction: column;
 	position: relative;
 }
