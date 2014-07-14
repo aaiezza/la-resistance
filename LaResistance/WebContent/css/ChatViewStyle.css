@@ -20,6 +20,7 @@
 	max-height: calc( 100% - 7px);
 	
 	//background-color: transparent;
+	opacity: 0.8;
 	
 	border: 0;
 	position: relative;

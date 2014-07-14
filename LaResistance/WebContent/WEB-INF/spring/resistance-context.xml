@@ -15,10 +15,6 @@
 		<property name="password" value="${db.password}" />
 	</bean>
 	
-	<bean id="threadLock" class="java.lang.Object" />
+	<bean id="chatLogger" class="org.resist.ance.web.utils.ChatLogger" />
 	
-	<bean id="chatLogger" class="org.resist.ance.web.utils.ChatLogger">
-		<constructor-arg ref="threadLock"></constructor-arg>
-	</bean>
-
 </beans>

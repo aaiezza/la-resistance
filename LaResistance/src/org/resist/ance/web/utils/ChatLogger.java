@@ -6,9 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Stack;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-
 public class ChatLogger
 {
     private static final String           CHAT_FORMAT = "%s %s: %s";
@@ -20,15 +17,11 @@ public class ChatLogger
 
     private LinkedHashMap<Long, String>   log;
 
-    private Object                        lock;
-
     private long                          lastUpdate;
 
-    @Autowired
-    public ChatLogger( @Qualifier ( "threadLock" ) Object lock )
+    public ChatLogger()
     {
         log = new LinkedHashMap<Long, String>();
-        this.lock = lock;
     }
 
     public synchronized void say( String username, String message )
@@ -47,9 +40,9 @@ public class ChatLogger
             }
         }
 
-        synchronized ( lock )
+        synchronized ( this )
         {
-            lock.notifyAll();
+            notifyAll();
         }
     }
 
@@ -67,13 +60,9 @@ public class ChatLogger
     {
         log.clear();
         lastUpdate = 0;
-        synchronized ( lock )
-        {
-            lock.notifyAll();
-        }
     }
 
-    public synchronized Stack<String> messagesSince( long when )
+    public Stack<String> messagesSince( long when )
     {
         Stack<String> messages = new Stack<String>();
 

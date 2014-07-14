@@ -2,8 +2,23 @@
 var ChatWidget = function()
 {
     var global = this;
+    
+    function currentTimeMillis()
+    {
+        var serverTime = 0;
+        $.ajax(
+        {
+            async : false,
+            url : "serverTime"
+        }).done(function(time)
+        {
+            serverTime = time;
+        });
 
-    /////////////////////////////////
+        return parseInt(serverTime);
+    };
+
+    // ///////////////////////////////
     // Widget Constructor Function //
     /////////////////////////////////
     global.makeChatWidget = function( parentElement )
@@ -14,9 +29,7 @@ var ChatWidget = function()
 
         var container = parentElement;
         
-        var lastUpdate = Date.now();
-        
-        var lastUpdated = Date.now();
+        var chatUpdated = currentTimeMillis();
         
         var chatLog = $( "<textarea id='chatLog' disabled>" );
         
@@ -36,26 +49,53 @@ var ChatWidget = function()
             $.ajax({
                 url: "sayIt",
                 type: "POST",
+                dataType: "json",
                 headers: { "say": say }
+            }).done(function(response)
+            {
+                if (Object.keys(response).length > 0)
+                {
+                    if (Object.keys(response.messages).length <= 0)
+                    {
+                        response.messages = [ "No Messages!" ];
+                    }
+                    chatLog.append("\t~ ~ ~\n");
+                    $(response.messages).each(function(i, message)
+                    {
+                        chatLog.append("  ").append(message).append("\n");
+                    });
+                    chatLog.append("\t~ ~ ~\n");
+                    scrollDown();
+                }
             });
-            updateChat();
         }
 
         function updateChat()
         {
-            lastUpdated = Date.now();
-            $.get( "updateChat?lastUpdate=" + lastUpdate ).done(function( log ) {
-                if ( log == "" || lastUpdated < lastUpdate )
+            $.get("updateChat?lastUpdate=" + chatUpdated).done(function(log)
+            {
+                if (log == "")
                 {
-                    return;
+                    console.log("UH OH!!!");
+                } else
+                {
+                    chatLog.append(log);
                 }
-                lastUpdate = Date.now();
-                chatLog.append( log );
-                chatLog.scrollTop = chatLog.scrollHeight;
-                
-                $(document).ajaxStop();
+
+                chatUpdated = currentTimeMillis();
+                scrollDown();
+                updateChat();
+            }).fail(function()
+            {
+                // NEED TO USE <code> tag instead of <textarea>
+                //chatLog.append($("<span style='color:red;'>\nSERVER DOWN\n"));
+                chatLog.append( "\n\nSERVER DOWN\n" )
             });
-            setTimeout( function(){updateChat()}, 200 );
+        }
+        
+        function scrollDown()
+        {
+            chatLog.scrollTop( chatLog.prop( "scrollHeight" ) );
         }
         
         //////////////////////////////////////////
@@ -80,7 +120,8 @@ var ChatWidget = function()
             },
             init : function()
             {
-                setTimeout( function(){updateChat()}, 500 );
+                updateChat();
+                //setTimeout( function(){updateChat()}, 500 );
             },
             log : function(message)
             {
