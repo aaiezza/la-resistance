@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.resist.ance.web.utils.ChatLogger;
+import org.resist.ance.web.utils.UserTracker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
@@ -18,26 +19,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+/**
+ * @author Alex Aiezza
+ */
 @Controller
 public class LoginController
 {
-    private ChatLogger                      CHAT_LOG;
+    private ChatLogger        CHAT_LOG;
 
-    static final String                     JUST_JOINING_US = "just_joining_us";
+    static final String       JUST_JOINING_US = "just_joining_us";
 
-    private final ArrayList<Authentication> PLAYERS_ONLINE;
+    private final Log         LOGGER;
 
-    private final Log                       LOGGER;
+    private final UserTracker USER_TRACKER;
 
     @Autowired
     public LoginController(
         @Qualifier ( "Login_Logger" ) Log logger,
-        @Qualifier ( "OnlinePlayerList" ) ArrayList<Authentication> playersOnline,
+        @Qualifier ( "userTracker" ) UserTracker userTracker,
         ChatLogger chatLog )
     {
         CHAT_LOG = chatLog;
         LOGGER = logger;
-        PLAYERS_ONLINE = playersOnline;
+        USER_TRACKER = userTracker;
     }
 
     @RequestMapping ( "/*" )
@@ -45,14 +49,14 @@ public class LoginController
     {
         return new ModelAndView( "redirect:login" );
     }
-    
-    @RequestMapping( "logout" )
+
+    @RequestMapping ( "logout" )
     public ModelAndView logout()
     {
         UserDetails userDetails = UserController.getUserDetails();
         CHAT_LOG.say( "::", String.format( "%s has LEFT!", userDetails.getUsername() ) );
         LOGGER.info( String.format( "%s has Logged Out!", userDetails.getUsername() ) );
-        
+
         return new ModelAndView( "redirect:j_spring_security_logout" );
     }
 
@@ -90,7 +94,7 @@ public class LoginController
         {
             if ( message.isEmpty() )
             {
-                LOGGER.info( "Waiting For Login" );
+                LOGGER.debug( "Waiting For Login" );
             }
         }
 
@@ -112,13 +116,10 @@ public class LoginController
         {
             session.setAttribute( JUST_JOINING_US, true );
             LOGGER.info( String.format( "%s successfully Logged in!", auth.getName() ) );
-            
+
             CHAT_LOG.say( "::", String.format( "%s is ONLINE!", auth.getName() ) );
 
-            if ( !PLAYERS_ONLINE.contains( auth ) )
-            {
-                PLAYERS_ONLINE.add( auth );
-            }
+            USER_TRACKER.addUser( auth );
         }
 
         map.put( "username", auth.getName() );

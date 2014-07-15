@@ -2,6 +2,9 @@ package org.resist.ance;
 
 import org.resist.ance.mech.Role;
 
+/**
+ * @author Alex Aiezza
+ */
 public class Player
 {
 

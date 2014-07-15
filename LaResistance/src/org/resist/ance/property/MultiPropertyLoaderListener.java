@@ -3,7 +3,9 @@ package org.resist.ance.property;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-
+/**
+ * @author Alex Aiezza
+ */
 public class MultiPropertyLoaderListener implements ServletContextListener
 {
 

@@ -6,6 +6,12 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Stack;
 
+import org.springframework.stereotype.Component;
+
+/**
+ * @author Alex Aiezza
+ */
+@Component ( "chatLogger" )
 public class ChatLogger
 {
     private static final String           CHAT_FORMAT = "%s %s: %s";
@@ -14,7 +20,6 @@ public class ChatLogger
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
                                                               "([MM-dd-yyyy] HH:mm:ss)" );
-
     private LinkedHashMap<Long, String>   log;
 
     private long                          lastUpdate;
@@ -40,10 +45,7 @@ public class ChatLogger
             }
         }
 
-        synchronized ( this )
-        {
-            notifyAll();
-        }
+        notifyAll();
     }
 
     public synchronized String lastMessage()

@@ -4,14 +4,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.resist.ance.BoardFactory;
-import org.resist.ance.mech.Role;
 import org.resist.ance.utils.VoteCounter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,6 +23,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+/**
+ * @author Alex Aiezza
+ */
 @Controller
 public class ResistanceController
 {
@@ -37,10 +38,6 @@ public class ResistanceController
     private final ArrayList<HttpSession> SESSION_TRACKER;
 
     private final BoardFactory           BOARD_FACTORY;
-
-    private int                          numOfPlayers = 0;
-
-    private int                          spies        = 0;
 
     @Autowired
     public ResistanceController(

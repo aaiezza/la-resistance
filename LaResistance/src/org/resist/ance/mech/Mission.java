@@ -5,6 +5,9 @@ import java.util.Collections;
 
 import org.resist.ance.Player;
 
+/**
+ * @author Alex Aiezza
+ */
 public final class Mission implements Comparable<Mission>
 {
     public final int          MissionNumber;

@@ -20,8 +20,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
+/**
+ * @author Alex Aiezza
+ */
 @Controller
 public class ChatController
 {
@@ -66,7 +68,7 @@ public class ChatController
             {
             case "/clear":
                 CHAT_LOG.clearLog();
-                map.put( "messages", new String [] {"Chat Log Cleared!"} );
+                map.put( "messages", new String [] { "Chat Log Cleared!" } );
                 break;
             case "/all":
                 map.put( "messages", CHAT_LOG.getAllMessages() );
@@ -95,12 +97,12 @@ public class ChatController
 
         synchronized ( CHAT_LOG )
         {
-            LOGGER.info( String.format( "\n\t\t%s is waiting for the chat to update!!!\n",
+            LOGGER.debug( String.format( "\n\t\t%s is waiting for the chat to update!!!",
                 userDetails.getUsername() ) );
             CHAT_LOG.wait();
         }
 
-        LOGGER.info( String.format( "\n\t\tThe wait is OVER for %s\n", userDetails.getUsername() ) );
+        LOGGER.debug( String.format( "\n\t\tThe wait is OVER for %s", userDetails.getUsername() ) );
 
         PrintWriter out = response.getWriter();
 

@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import org.resist.ance.mech.Mission;
 import org.resist.ance.mech.Missions;
 
+/**
+ * @author Alex Aiezza
+ */
 public class Board
 {
     private final Missions          missions;

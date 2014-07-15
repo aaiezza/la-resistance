@@ -38,9 +38,6 @@
 		</authentication-provider>
 	</authentication-manager>
 
-	<global-method-security 
-		authentication-manager-ref="authMan" />
-
 	<!-- If You don't want to use LDAP and can define all your users here, you 
 		can use this. -->
 	<!-- authentication-manager> <authentication-provider> <user-service> <user 

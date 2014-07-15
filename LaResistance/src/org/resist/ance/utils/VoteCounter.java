@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import org.springframework.stereotype.Component;
 
+/**
+ * @author Alex Aiezza
+ */
 @Component
 public class VoteCounter
 {

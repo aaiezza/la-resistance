@@ -4,6 +4,9 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Stack;
 
+/**
+ * @author Alex Aiezza
+ */
 public class Missions
 {
     private final static int                      NUMBER_OF_MISSIONS  = 5;

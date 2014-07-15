@@ -5,6 +5,9 @@ import java.io.IOException;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
+/**
+ * @author Alex Aiezza
+ */
 public class MultiPropertyLoader
 {
 

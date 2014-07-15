@@ -9,28 +9,31 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.resist.ance.Game;
+import org.resist.ance.web.utils.UserTracker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * @author Alex Aiezza
+ */
 @Controller
 public class GameLobbyController
 {
-    private final Log                       LOGGER;
+    private final Log               LOGGER;
 
-    private final ArrayList<String>         LOBBY_CHAT;
+    private final ArrayList<String> LOBBY_CHAT;
 
-    private final ArrayList<Game>           GAMES;
+    private final ArrayList<Game>   GAMES;
 
-    private final ArrayList<Authentication> PLAYERS_ONLINE;
+    private final UserTracker       USER_TRACKER;
 
     @Autowired
     public GameLobbyController(
         @Qualifier ( "GameLobby_Logger" ) Log logger,
-        @Qualifier ( "OnlinePlayerList" ) ArrayList<Authentication> playersOnline )
+        @Qualifier ( "userTracker" ) UserTracker userTracker )
     {
         LOGGER = logger;
 
@@ -38,7 +41,7 @@ public class GameLobbyController
 
         GAMES = new ArrayList<Game>();
 
-        PLAYERS_ONLINE = playersOnline;
+        USER_TRACKER = userTracker;
     }
 
     @RequestMapping ( method = POST, value = "playersOnline" )
@@ -50,6 +53,4 @@ public class GameLobbyController
 
         return json;
     }
-
-
 }

@@ -5,6 +5,9 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
+/**
+ * @author Alex Aiezza
+ */
 public class SignUpFormValidator implements Validator
 {
     @Override
@@ -31,8 +34,8 @@ public class SignUpFormValidator implements Validator
                 errors.rejectValue( "passwordConfirm", "passwordconfirm.mustmatch" );
             }
         }
-        
-        if( form.getUsername().contains( " " ) )
+
+        if ( form.getUsername().contains( " " ) )
         {
             errors.rejectValue( "username", "Username contains space" );
         }

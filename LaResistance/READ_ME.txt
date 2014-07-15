@@ -10,6 +10,8 @@ http://krams915.blogspot.com/2011/01/spring-security-mvc-using-ldap.html
 
 http://www.mkyong.com/spring-security/spring-security-form-login-using-database/
 
+http://www.codercorp.com/blog/spring/security-spring/tracking-logged-in-users-using-spring-security-httpsessionlistener-in-java-web-application.html
+
 
  = = = =  GAME LOBBY = = = =
 1) Game Panel listing all games
