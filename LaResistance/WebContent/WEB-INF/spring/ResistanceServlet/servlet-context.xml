@@ -38,6 +38,10 @@
 		<property name="synchronizeOnSession" value="true" />
 	</bean>
 	
+	<context:mbean-server />
+
 	<context:component-scan base-package="org.resist.ance" />
 
+	<context:mbean-export />
+	
 </beans>

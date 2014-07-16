@@ -13,7 +13,7 @@ public class SignUpFormValidator implements Validator
     @Override
     public boolean supports( Class<?> clazz )
     {
-        return User.class.equals( clazz );
+        return UserForm.class.equals( clazz );
     }
 
     @Override
@@ -25,13 +25,13 @@ public class SignUpFormValidator implements Validator
         ValidationUtils.rejectIfEmptyOrWhitespace( errors, "username", "Username Required" );
         ValidationUtils.rejectIfEmptyOrWhitespace( errors, "password", "Password required" );
 
-        User form = (User) target;
+        UserForm form = (UserForm) target;
 
         if ( !StringUtils.isEmpty( form.getPassword() ) )
         {
             if ( !form.getPassword().equals( form.getConfirmPassword() ) )
             {
-                errors.rejectValue( "passwordConfirm", "passwordconfirm.mustmatch" );
+                errors.rejectValue( "confirmPassword", "passwordconfirm.mustmatch" );
             }
         }
 

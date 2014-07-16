@@ -44,7 +44,7 @@
         <dependency org="org.apache.commons" name="commons-lang3" rev="3.3.2" conf="build"/>
         <dependency org="org.apache.httpcomponents" name="httpclient" rev="4.3.4" conf="build"/>
 
-        <dependency org="javax.servlet" name="javax.servlet-api" rev="3.1.0" conf="runtime"/>
+        <dependency org="javax.servlet" name="javax.servlet-api" rev="3.1.0" conf="build"/>
         <dependency org="javax.servlet" name="jstl" rev="1.2" conf="build"/>
         
 

@@ -2,13 +2,11 @@ package org.resist.ance.web;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
-import org.resist.ance.Game;
 import org.resist.ance.web.utils.UserTracker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,13 +20,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class GameLobbyController
 {
-    private final Log               LOGGER;
+    private final Log         LOGGER;
 
-    private final ArrayList<String> LOBBY_CHAT;
-
-    private final ArrayList<Game>   GAMES;
-
-    private final UserTracker       USER_TRACKER;
+    private final UserTracker USER_TRACKER;
 
     @Autowired
     public GameLobbyController(
@@ -36,10 +30,6 @@ public class GameLobbyController
         @Qualifier ( "userTracker" ) UserTracker userTracker )
     {
         LOGGER = logger;
-
-        LOBBY_CHAT = new ArrayList<String>();
-
-        GAMES = new ArrayList<Game>();
 
         USER_TRACKER = userTracker;
     }
@@ -50,6 +40,7 @@ public class GameLobbyController
     {
         HashMap<String, Object> json = new HashMap<String, Object>();
 
+        json.put( "users", USER_TRACKER );
 
         return json;
     }

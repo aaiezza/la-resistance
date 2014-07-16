@@ -12,6 +12,7 @@ http://www.mkyong.com/spring-security/spring-security-form-login-using-database/
 
 http://www.codercorp.com/blog/spring/security-spring/tracking-logged-in-users-using-spring-security-httpsessionlistener-in-java-web-application.html
 
+http://mrather.blogspot.com/2010/02/extending-usernamepasswordauthenticatio.html#comment-form
 
  = = = =  GAME LOBBY = = = =
 1) Game Panel listing all games

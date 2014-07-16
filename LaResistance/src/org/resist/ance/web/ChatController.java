@@ -7,10 +7,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.resist.ance.web.utils.ChatLogger;
+import org.resist.ance.web.utils.ShabaJdbcUserDetailsManager;
+import org.resist.ance.web.utils.UserTracker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -27,15 +30,25 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class ChatController
 {
-    private ChatLogger CHAT_LOG;
+    private final ShabaJdbcUserDetailsManager USER_MAN;
 
-    private Log        LOGGER;
+    private final UserTracker                 USER_TRACKER;
+
+    private final ChatLogger                  CHAT_LOG;
+
+    private final Log                         LOGGER;
 
     @Autowired
-    private ChatController( @Qualifier ( "Chat_Logger" ) Log logger, ChatLogger chatLog )
+    private ChatController(
+        @Qualifier ( "Chat_Logger" ) Log logger,
+        ChatLogger chatLog,
+        ShabaJdbcUserDetailsManager userManager,
+        UserTracker userTracker )
     {
         LOGGER = logger;
         CHAT_LOG = chatLog;
+        USER_MAN = userManager;
+        USER_TRACKER = userTracker;
     }
 
     @RequestMapping ( method = GET, value = "serverTime" )
@@ -59,7 +72,7 @@ public class ChatController
     {
         HashMap<String, Object> map = new HashMap<String, Object>();
 
-        UserDetails userDetails = UserController.getUserDetails();
+        UserDetails userDetails = USER_MAN.getUserDetails();
 
         // IF you're an ADMIN you get some fun tools here!
         if ( userDetails.getAuthorities().toString().contains( "ROLE_ADMIN" ) )
@@ -93,7 +106,7 @@ public class ChatController
             @RequestParam ( "lastUpdate" ) long lastUpdate,
             HttpServletResponse response ) throws IOException, InterruptedException
     {
-        UserDetails userDetails = UserController.getUserDetails();
+        UserDetails userDetails = USER_MAN.getUserDetails();
 
         synchronized ( CHAT_LOG )
         {
@@ -110,5 +123,11 @@ public class ChatController
         {
             out.println( line );
         }
+    }
+    
+    @PostConstruct
+    private void init()
+    {
+        USER_TRACKER.addObserver( CHAT_LOG );
     }
 }

@@ -4,15 +4,22 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Stack;
 
+import javafx.util.Pair;
+
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Component;
 
 /**
  * @author Alex Aiezza
  */
 @Component ( "chatLogger" )
-public class ChatLogger
+@ManagedResource
+public class ChatLogger implements Observer
 {
     private static final String           CHAT_FORMAT = "%s %s: %s";
 
@@ -58,6 +65,7 @@ public class ChatLogger
         return lastUpdate;
     }
 
+    @ManagedOperation ( description = "clear the log" )
     public void clearLog()
     {
         log.clear();
@@ -82,5 +90,27 @@ public class ChatLogger
     public synchronized Stack<String> getAllMessages()
     {
         return messagesSince( 0 );
+    }
+
+    @Override
+    public void update( Observable o, Object arg )
+    {
+        if ( o instanceof UserTracker && arg instanceof Pair<?, ?> )
+        {
+            if ( (boolean) ( (Pair<?, ?>) arg ).getKey() )
+            {
+                say(
+                    "::",
+                    String.format( "%s is ONLINE!",
+                        ( (ShabaUser) ( (Pair<?, ?>) arg ).getValue() ).getUsername() ) );
+            } else
+            {
+                say(
+                    "::",
+                    String.format( "%s has LEFT!",
+                        ( (ShabaUser) ( (Pair<?, ?>) arg ).getValue() ).getUsername() ) );
+            }
+        }
+
     }
 }

@@ -2,38 +2,42 @@ package org.resist.ance.web.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Observable;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
+import javafx.util.Pair;
 
 /**
  * @author Alex Aiezza
  */
-@Component ( "userTracker" )
-public class UserTracker
+public class UserTracker extends Observable
 {
-    private final ArrayList<Authentication> onlineUsers;
+    private final ArrayList<ShabaUser> onlineUsers;
 
-    public UserTracker()
+    private UserTracker()
     {
-        onlineUsers = new ArrayList<Authentication>();
+        onlineUsers = new ArrayList<ShabaUser>();
     }
 
-    public synchronized void addUser( final Authentication user )
+    public synchronized void addUser( final ShabaUser user )
     {
         if ( !onlineUsers.contains( user ) )
         {
             onlineUsers.add( user );
+            setChanged();
+            notifyObservers( new Pair<Boolean, ShabaUser>( true, user ) );
         }
     }
 
-    public synchronized void removeUser( final Authentication user )
+    public synchronized void removeUser( final ShabaUser user )
     {
         onlineUsers.remove( user );
+        setChanged();
+        notifyObservers( new Pair<Boolean, ShabaUser>( false, user ) );
     }
 
-    public synchronized Collection<Authentication> getLoggedInUsers()
+    public synchronized Collection<ShabaUser> getLoggedInUsers()
     {
         return onlineUsers;
     }
+
 }

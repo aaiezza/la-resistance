@@ -20,7 +20,7 @@
 	<div id="header" class="group"></div>
 	<div id="core">
 		<h1>Sign Up for The Resistance!</h1>
-		<form:form method="post" modelAttribute="newUserForm" action="signup" style="display: inline-block;">
+		<form:form method="POST" modelAttribute="newUserForm" action="signup" style="display: inline-block;">
 			<table>
 				<tr>
 					<td colspan="2" style="color: red">${message}</td>

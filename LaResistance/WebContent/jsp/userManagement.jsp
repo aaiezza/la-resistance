@@ -12,11 +12,6 @@
 <script type="text/javascript" src="js/jquery.tablesorter.js"></script>
 <script type="text/javascript" src="js/HeaderWidget.js"></script>
 <script type="text/javascript" src="js/UserManagementWidget.js"></script>
-<script type="text/javascript">
-window.onbeforeunload = function() { 
-    $.get( "logout" );
-};
-</script>
 
 <link rel="icon" type="image/ico" href="images/favicon.ico">
 
@@ -24,7 +19,7 @@ window.onbeforeunload = function() {
 
 </head>
 <body>
-    <c:url value="logout" var="logoutUrl" />
+    <c:url value="j_spring_security_logout" var="logoutUrl" />
 
 	<div id="header" class="group linkProfile"></div>
 	<div id="core"></div>
