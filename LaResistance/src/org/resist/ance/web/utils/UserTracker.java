@@ -67,5 +67,11 @@ public class UserTracker extends Observable
         }
         return onlineUsers.contains( user );
     }
+    
+    @Override
+    public String toString()
+    {
+        return onlineUsers.toString();
+    }
 
 }

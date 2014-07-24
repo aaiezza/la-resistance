@@ -81,7 +81,7 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
     /**
      * 
      */
-    public final static String           UPDATE_USER_SQL             = "UPDATE users SET password = ?, enabled = ?, first_name = ?, last_name = ?, email = ? WHERE username = ?";
+    public final static String           UPDATE_USER_SQL             = "UPDATE users SET enabled = ?, first_name = ?, last_name = ?, email = ? WHERE username = ?";
 
     private AuthenticationManager        authenticationManager;
 
@@ -133,12 +133,11 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
             {
                 public void setValues( PreparedStatement ps ) throws SQLException
                 {
-                    ps.setString( 1, user.getPassword() );
-                    ps.setBoolean( 2, user.isEnabled() );
-                    ps.setString( 3, user.getFirst_name() );
-                    ps.setString( 4, user.getLast_name() );
-                    ps.setString( 5, user.getEmail() );
-                    ps.setString( 6, user.getUsername() );
+                    ps.setBoolean( 1, user.isEnabled() );
+                    ps.setString( 2, user.getFirst_name() );
+                    ps.setString( 3, user.getLast_name() );
+                    ps.setString( 4, user.getEmail() );
+                    ps.setString( 5, user.getUsername() );
                 }
             } );
 

@@ -80,6 +80,8 @@ var UserDetailsWidget = function()
             
             if( $(this).is(".authBox") )
             {
+                if ($("#authoritiesRow").is(".permanent")) return;
+                
                 var unChanged = true;
                 $(".authBox").each(function()
                 {
@@ -93,6 +95,8 @@ var UserDetailsWidget = function()
             }
             else if ( $(this).is("#enabled") )
             {
+                if ($("#enabledRow").is(".permanent")) return;
+
                 $("tr:has(#" + field + ")")
                 .toggleClass("selected", detail != $(this).is(":checked") );
             }
@@ -120,13 +124,16 @@ var UserDetailsWidget = function()
         
         getDetails(userDetails);
         
+        $("tr input[type!=button]").on("change input", updateUserDetails);
+        
+        $("input#changePasswordButton").click( changePassword );
+        
         // If it was meant to be permanent, disable it!
         $("tr.permanent input[type!=button][type!=submit]")
         .prop("readonly", true);
         
-        $("tr input[type!=button]").on("change input", updateUserDetails);
-        
-        $("input#changePasswordButton").click( changePassword );
+        $("tr.permanent input[type=checkbox]")
+        .click( function(){return false;});
         
         updateClickabilityOfButtons();
 

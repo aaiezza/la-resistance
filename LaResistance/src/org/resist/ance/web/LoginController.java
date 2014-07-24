@@ -5,12 +5,16 @@ import static org.resist.ance.web.utils.ShabaJdbcUserDetailsManager.USER;
 
 import java.util.HashMap;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.resist.ance.web.utils.ShabaJdbcUserDetailsManager;
 import org.resist.ance.web.utils.ShabaUser;
 import org.resist.ance.web.utils.UserTracker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,7 +52,8 @@ public class LoginController
     @RequestMapping ( "login" )
     public ModelAndView getLoginForm(
             @RequestParam ( required = false ) String authfailed,
-            String logout )
+            String logout,
+            HttpServletRequest request )
     {
         if ( USER_TRACKER.contains( USER_MAN.getShabaUser() ) )
         {
@@ -60,7 +65,8 @@ public class LoginController
         String message = "";
         if ( authfailed != null )
         {
-            message = "Invalid username or password, try again!";
+
+            message = getErrorMessage( request, "SPRING_SECURITY_LAST_EXCEPTION" );
             map.put( "success", false );
         } else if ( logout != null )
         {
@@ -91,5 +97,23 @@ public class LoginController
         map.put( "user", user.getAuthorities().contains( USER ) );
 
         return new ModelAndView( "profile", map );
+    }
+
+    // customize the error message
+    private String getErrorMessage( HttpServletRequest request, String key )
+    {
+
+        Exception exception = (Exception) request.getSession().getAttribute( key );
+
+        String error = "";
+        if ( exception instanceof BadCredentialsException )
+        {
+            error = "Invalid username and password!";
+        } else
+        {
+            error = exception.getMessage();
+        }
+
+        return error;
     }
 }

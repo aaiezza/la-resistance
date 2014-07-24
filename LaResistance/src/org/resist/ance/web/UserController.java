@@ -26,8 +26,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.ServletRequestDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -232,11 +230,11 @@ public class UserController
     @RequestMapping ( method = POST, value = "updateUser" )
     private ModelAndView updateUser(
             UserForm userToUpdate,
-            @RequestParam(value = "auths" )ArrayList<SimpleGrantedAuthority> authorities,
+            @RequestParam ( value = "auths" ) ArrayList<SimpleGrantedAuthority> authorities,
             BindingResult result )
     {
         userToUpdate.setAuthorities( authorities );
-        
+
         if ( !USER_MAN.userExists( userToUpdate.getUsername() ) )
         {
             result.rejectValue( "username", "Username does not exist" );
@@ -255,7 +253,7 @@ public class UserController
             {
                 result.rejectValue( "password", "Wrong Password" );
             }
-            
+
         } else
         {
             suValidator.validate( userToUpdate, result );
@@ -275,22 +273,21 @@ public class UserController
                     "message", out );
         }
 
-        USER_MAN.updateUser( ShabaUser.ShabaUserFromForm( userToUpdate ) );
+        if ( userToUpdate.getConfirmPassword().isEmpty() )
+        {
+            USER_MAN.updateUser( ShabaUser.ShabaUserFromForm( userToUpdate ) );
+        } else
+        {
+            USER_MAN.changePassword( userToUpdate.getUsername(), shabaUser.getPassword(),
+                userToUpdate.getPassword() );
+        }
 
-        String message = String.format( "%s UPDATED!", shabaUser );
+        String message = String.format( "%s UPDATED!",
+            USER_MAN.loadShabaUserByUsername( shabaUser.getUsername() ) );
 
         LOGGER.info( message );
 
         return new ModelAndView( "redirect:userDetails/" + userToUpdate.getUsername(), "message",
                 message );
-    }
-
-    @InitBinder
-    public void initBinder( ServletRequestDataBinder binder )
-    {
-        if ( binder.getTarget() instanceof Collection )
-        {
-            System.out.println( "OHASDFIASNVEI" );
-        }
     }
 }

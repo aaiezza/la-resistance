@@ -67,7 +67,7 @@
 	<http auto-config="false" entry-point-ref="loginUrlAuthenticationEntryPoint">
 		<intercept-url pattern="/results*" access="ROLE_ADMIN" />
 		<intercept-url pattern="/userManagement*" access="ROLE_ADMIN" />
-		<intercept-url pattern="/updateUser*" access="ROLE_ADMIN" />
+		<intercept-url pattern="/updateUser*" access="ROLE_USER" />
 		<intercept-url pattern="/userDetails*" access="ROLE_USER" />
 		<intercept-url pattern="/profile*" access="ROLE_USER" />
 		<intercept-url pattern="/**" access="ROLE_USER" />
