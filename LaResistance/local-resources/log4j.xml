@@ -11,6 +11,10 @@
         </layout>
     </appender>
     
+    <logger name="org.springframework.beans.TypeConverterDelegate">
+        <level value="NONE" />
+    </logger>
+    
     <logger name="com.mysql.jdbc">
         <level value="INFO" />
     </logger>

@@ -29,7 +29,7 @@ var ProfileWidget = function()
         headerWidget.addOption( logoutOption );
         
         headerWidget.addOption( manageUsersOption );
-
+        
         /////////////////////////////
         // Public Instance Methods //
         /////////////////////////////

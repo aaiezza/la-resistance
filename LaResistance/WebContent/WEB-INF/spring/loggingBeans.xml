@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- Loggers -->
+
+	<bean id="Login_Logger" class="org.apache.commons.logging.LogFactory"
+		factory-method="getLog">
+		<constructor-arg value="org.resist.ance.web.LoginController" />
+	</bean>
+	
+	<bean id="UserTracker_Logger" class="org.apache.commons.logging.LogFactory"
+		factory-method="getLog">
+		<constructor-arg value="org.resist.ance.web.util.UserTracker" />
+	</bean>
+
+	<bean id="GameLobby_Logger" class="org.apache.commons.logging.LogFactory"
+		factory-method="getLog">
+		<constructor-arg value="org.resist.ance.web.GameLobbyController" />
+	</bean>
+
+	<bean id="Resistance_Logger" class="org.apache.commons.logging.LogFactory"
+		factory-method="getLog">
+		<constructor-arg value="org.resist.ance.web.ResistanceController" />
+	</bean>
+
+	<bean id="User_Logger" class="org.apache.commons.logging.LogFactory"
+		factory-method="getLog">
+		<constructor-arg value="org.resist.ance.web.UserController" />
+	</bean>
+
+	<bean id="Chat_Logger" class="org.apache.commons.logging.LogFactory"
+		factory-method="getLog">
+		<constructor-arg value="org.resist.ance.web.ChatController" />
+	</bean>
+	
+</beans>

@@ -12,12 +12,12 @@ import javafx.util.Pair;
 
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Alex Aiezza
  */
-@Component ( "chatLogger" )
+@Service ( "chatLogger" )
 @ManagedResource
 public class ChatLogger implements Observer
 {

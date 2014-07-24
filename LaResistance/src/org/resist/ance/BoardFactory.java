@@ -7,12 +7,12 @@ import org.resist.ance.mech.Mission;
 import org.resist.ance.mech.Missions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Alex Aiezza
  */
-@Component
+@Service
 public class BoardFactory
 {
     private final Scanner BoardDB;

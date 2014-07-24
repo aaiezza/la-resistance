@@ -19,13 +19,17 @@ z<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 	<c:url value="results" var="resultsUrl" />
 	<c:url value="userManagement" var="userManagementUrl" />
 	<c:url value="j_spring_security_logout" var="logoutUrl" />
+	<c:url value="userDetails/${username}" var="userDetailsUrl" />
 
 	<div id="header" class="group"></div>
 	<div id="core">
 		<h2>You are now logged in ${username}</h2>
 		<h3>
 			<c:if test="${user}">
-				<a href='${gameLobbyUrl}'>Game Lobby</a>
+				<a href='${gameLobbyUrl}'>Game Lobby</a> |
+			</c:if>
+			<c:if test="${user}">
+				<a href='${userDetailsUrl}'>Update your Info</a>
 			</c:if>
 			<c:if test="${admin}">
 				| <a href="${resultsUrl}">Vote Results</a>

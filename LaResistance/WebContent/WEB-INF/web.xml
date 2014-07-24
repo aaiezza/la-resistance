@@ -84,7 +84,7 @@
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>Resistance-dispatcher</servlet-name>
+		<servlet-name>default</servlet-name>
 		<url-pattern>*.pdf</url-pattern>
 	</servlet-mapping>
 
@@ -94,7 +94,7 @@
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>Resistance-dispatcher</servlet-name>
+		<servlet-name>default</servlet-name>
 		<url-pattern>*.txt</url-pattern>
 	</servlet-mapping>
 
@@ -102,8 +102,5 @@
 		<servlet-name>Resistance-dispatcher</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
-
-	<!-- Defines the Page to Display on the Root Page> <welcome-file-list> <welcome-file>redirect:profile</welcome-file> 
-		</welcome-file-list -->
 
 </web-app>

@@ -1,5 +1,6 @@
 package org.resist.ance.web;
 
+import static org.resist.ance.web.utils.ShabaJdbcUserDetailsManager.ADMIN;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -13,11 +14,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.resist.ance.web.utils.ChatLogger;
 import org.resist.ance.web.utils.ShabaJdbcUserDetailsManager;
+import org.resist.ance.web.utils.ShabaUser;
 import org.resist.ance.web.utils.UserTracker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -72,10 +73,10 @@ public class ChatController
     {
         HashMap<String, Object> map = new HashMap<String, Object>();
 
-        UserDetails userDetails = USER_MAN.getUserDetails();
+        ShabaUser user = USER_MAN.getShabaUser();
 
         // IF you're an ADMIN you get some fun tools here!
-        if ( userDetails.getAuthorities().toString().contains( "ROLE_ADMIN" ) )
+        if ( user.getAuthorities().contains( ADMIN ) )
         {
             switch ( sayIt )
             {
@@ -87,12 +88,12 @@ public class ChatController
                 map.put( "messages", CHAT_LOG.getAllMessages() );
                 break;
             default:
-                CHAT_LOG.say( userDetails.getUsername(), sayIt );
+                CHAT_LOG.say( user.getUsername(), sayIt );
                 LOGGER.info( CHAT_LOG.lastMessage() );
             }
         } else
         {
-            CHAT_LOG.say( userDetails.getUsername(), sayIt );
+            CHAT_LOG.say( user.getUsername(), sayIt );
             LOGGER.info( CHAT_LOG.lastMessage() );
         }
 
@@ -106,16 +107,16 @@ public class ChatController
             @RequestParam ( "lastUpdate" ) long lastUpdate,
             HttpServletResponse response ) throws IOException, InterruptedException
     {
-        UserDetails userDetails = USER_MAN.getUserDetails();
+        ShabaUser user = USER_MAN.getShabaUser();
 
         synchronized ( CHAT_LOG )
         {
             LOGGER.debug( String.format( "\n\t\t%s is waiting for the chat to update!!!",
-                userDetails.getUsername() ) );
+                user.getUsername() ) );
             CHAT_LOG.wait();
         }
 
-        LOGGER.debug( String.format( "\n\t\tThe wait is OVER for %s", userDetails.getUsername() ) );
+        LOGGER.debug( String.format( "\n\t\tThe wait is OVER for %s", user.getUsername() ) );
 
         PrintWriter out = response.getWriter();
 
@@ -124,7 +125,7 @@ public class ChatController
             out.println( line );
         }
     }
-    
+
     @PostConstruct
     private void init()
     {

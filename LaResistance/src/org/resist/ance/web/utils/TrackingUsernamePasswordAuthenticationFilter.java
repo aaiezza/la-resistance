@@ -1,4 +1,4 @@
-package org.resist.ance.web;
+package org.resist.ance.web.utils;
 
 import java.io.IOException;
 
@@ -7,8 +7,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.resist.ance.web.utils.ShabaJdbcUserDetailsManager;
-import org.resist.ance.web.utils.UserTracker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;

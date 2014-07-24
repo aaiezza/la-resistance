@@ -1,17 +1,16 @@
 package org.resist.ance.web;
 
-import java.util.ArrayList;
+import static org.resist.ance.web.utils.ShabaJdbcUserDetailsManager.ADMIN;
+import static org.resist.ance.web.utils.ShabaJdbcUserDetailsManager.USER;
+
 import java.util.HashMap;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.logging.Log;
-import org.resist.ance.web.utils.ChatLogger;
+import org.resist.ance.web.utils.ShabaJdbcUserDetailsManager;
+import org.resist.ance.web.utils.ShabaUser;
+import org.resist.ance.web.utils.UserTracker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,17 +22,21 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class LoginController
 {
-    private ChatLogger  CHAT_LOG;
+    private final UserTracker                 USER_TRACKER;
 
-    static final String JUST_JOINING_US = "just_joining_us";
+    private final ShabaJdbcUserDetailsManager USER_MAN;
 
-    private final Log   LOGGER;
+    private final Log                         LOGGER;
 
     @Autowired
-    public LoginController( @Qualifier ( "Login_Logger" ) Log logger, ChatLogger chatLog )
+    public LoginController(
+        @Qualifier ( "Login_Logger" ) Log logger,
+        UserTracker userTracker,
+        ShabaJdbcUserDetailsManager userManager )
     {
-        CHAT_LOG = chatLog;
         LOGGER = logger;
+        USER_TRACKER = userTracker;
+        USER_MAN = userManager;
     }
 
     @RequestMapping ( "/*" )
@@ -45,11 +48,9 @@ public class LoginController
     @RequestMapping ( "login" )
     public ModelAndView getLoginForm(
             @RequestParam ( required = false ) String authfailed,
-            String logout,
-            HttpServletRequest request,
-            HttpSession session )
+            String logout )
     {
-        if ( session.getAttribute( JUST_JOINING_US ) != null )
+        if ( USER_TRACKER.contains( USER_MAN.getShabaUser() ) )
         {
             return new ModelAndView( "redirect:profile" );
         }
@@ -67,17 +68,9 @@ public class LoginController
             map.put( "success", true );
         }
 
-        String referer = request.getHeader( "referer" );
-
-        if ( referer != null && referer.endsWith( "/results" ) )
+        if ( message.isEmpty() )
         {
-            LOGGER.debug( "Trying to access results without logging in..." );
-        } else
-        {
-            if ( message.isEmpty() )
-            {
-                LOGGER.debug( "Waiting For Login" );
-            }
+            LOGGER.debug( "Waiting For Login" );
         }
 
         map.put( "message", message );
@@ -86,38 +79,17 @@ public class LoginController
     }
 
     @RequestMapping ( "profile" )
-    public ModelAndView getProfilePage( HttpSession session )
+    public ModelAndView getProfilePage()
     {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        ShabaUser user = USER_MAN.getShabaUser();
 
         HashMap<String, Object> map = new HashMap<String, Object>();
 
-        Boolean justJoiningUs = (Boolean) session.getAttribute( JUST_JOINING_US );
+        map.put( "username", user.getUsername() );
 
-        if ( justJoiningUs == null )
-        {
-            session.setAttribute( JUST_JOINING_US, true );
-            LOGGER.info( String.format( "%s successfully Logged in!", auth.getName() ) );
-
-            CHAT_LOG.say( "::", String.format( "%s is ONLINE!", auth.getName() ) );
-        }
-
-        map.put( "username", auth.getName() );
-
-        ArrayList<String> authorities = getUserAuthorities( auth );
-
-        map.put( "admin", authorities.contains( "ROLE_ADMIN" ) );
-        map.put( "user", authorities.contains( "ROLE_USER" ) );
+        map.put( "admin", user.getAuthorities().contains( ADMIN ) );
+        map.put( "user", user.getAuthorities().contains( USER ) );
 
         return new ModelAndView( "profile", map );
-    }
-
-    private final ArrayList<String> getUserAuthorities( Authentication auth )
-    {
-        ArrayList<String> auths = new ArrayList<String>();
-
-        auth.getAuthorities().forEach( ( ga ) -> auths.add( ga.getAuthority() ) );
-
-        return auths;
     }
 }

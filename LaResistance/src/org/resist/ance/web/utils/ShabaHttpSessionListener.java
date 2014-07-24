@@ -2,18 +2,20 @@ package org.resist.ance.web.utils;
 
 import javax.servlet.http.HttpSessionEvent;
 
+import org.apache.commons.logging.Log;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
 
-@Component
+@Service
 public class ShabaHttpSessionListener extends HttpSessionEventPublisher implements
         ApplicationContextAware
 {
@@ -51,11 +53,16 @@ public class ShabaHttpSessionListener extends HttpSessionEventPublisher implemen
     public void sessionDestroyed( HttpSessionEvent event )
     {
         super.sessionDestroyed( event );
-        Authentication auth = ( (SecurityContext) event.getSession().getAttribute(
-            "SPRING_SECURITY_CONTEXT" ) ).getAuthentication();
-        USER_TRACKER.removeUser( USER_MAN.loadShabaUserByUsername( ( (UserDetails) auth
-                .getPrincipal() ).getUsername() ) );
+        SecurityContext context = ( (SecurityContext) event.getSession().getAttribute(
+            "SPRING_SECURITY_CONTEXT" ) );
+        if ( context != null )
+        {
+            Authentication auth = context.getAuthentication();
+
+            ShabaUser user = USER_MAN.loadShabaUserByUsername( ( (UserDetails) auth.getPrincipal() )
+                    .getUsername() );
+
+            USER_TRACKER.removeUser( user );
+        }
     }
-
-
 }

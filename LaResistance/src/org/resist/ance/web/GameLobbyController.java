@@ -7,6 +7,7 @@ import java.util.HashMap;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
+import org.resist.ance.web.utils.PrintBeans;
 import org.resist.ance.web.utils.UserTracker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,11 +28,14 @@ public class GameLobbyController
     @Autowired
     public GameLobbyController(
         @Qualifier ( "GameLobby_Logger" ) Log logger,
-        @Qualifier ( "userTracker" ) UserTracker userTracker )
+        UserTracker userTracker,
+        PrintBeans beanPrinter )
     {
         LOGGER = logger;
 
         USER_TRACKER = userTracker;
+
+        LOGGER.debug( beanPrinter.printBeans() );
     }
 
     @RequestMapping ( method = POST, value = "playersOnline" )

@@ -2,12 +2,12 @@ package org.resist.ance.utils;
 
 import java.util.ArrayList;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Alex Aiezza
  */
-@Component
+@Service
 public class VoteCounter
 {
     private final ArrayList<Boolean> votes;

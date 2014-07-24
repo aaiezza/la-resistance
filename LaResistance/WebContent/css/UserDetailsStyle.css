@@ -3,15 +3,19 @@
 	padding: 0px;
 	box-shadow: 10px 10px 5px #888888;
 	border: 1px solid #000000;
+	
 	-moz-border-radius-bottomleft: 9px;
 	-webkit-border-bottom-left-radius: 9px;
 	border-bottom-left-radius: 9px;
+	
 	-moz-border-radius-bottomright: 9px;
 	-webkit-border-bottom-right-radius: 9px;
 	border-bottom-right-radius: 9px;
+	
 	-moz-border-radius-topright: 9px;
 	-webkit-border-top-right-radius: 9px;
 	border-top-right-radius: 9px;
+	
 	-moz-border-radius-topleft: 9px;
 	-webkit-border-top-left-radius: 9px;
 	border-top-left-radius: 9px;
@@ -21,31 +25,31 @@
 	cursor: default;
 }
 
-#user_tableBlock tbody tr:last-child td:last-child {
-	-moz-border-radius-bottomright: 9px;
-	-webkit-border-bottom-right-radius: 9px;
-	border-bottom-right-radius: 9px;
-}
-
-#user_tableBlock thead tr:first-child th:first-child {
+tbody tr:first-child td:first-child {
 	-moz-border-radius-topleft: 9px;
 	-webkit-border-top-left-radius: 9px;
 	border-top-left-radius: 9px;
 }
 
-#user_tableBlock thead tr:first-child th:last-child {
+tbody tr:first-child td:last-child {
 	-moz-border-radius-topright: 9px;
 	-webkit-border-top-right-radius: 9px;
 	border-top-right-radius: 9px;
 }
 
-#user_tableBlock tbody tr:last-child td:first-child {
+tbody tr:last-child td:first-child {
 	-moz-border-radius-bottomleft:9px;
 	-webkit-border-bottom-left-radius: 9px;
 	border-bottom-left-radius: 9px;
 }
 
-tbody tr:hover td, tr.selected td {
+tbody tr:last-child td:last-child {
+	-moz-border-radius-bottomright: 9px;
+	-webkit-border-bottom-right-radius: 9px;
+	border-bottom-right-radius: 9px;
+}
+
+tbody tr:not(.permanent):hover td, tbody tr.selected td {
 	background-color: #ffffff;
 	background: -o-linear-gradient(bottom, #ffffff 5%, #d00b0b 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ffffff
@@ -56,32 +60,16 @@ tbody tr:hover td, tr.selected td {
 	background: -o-linear-gradient(top, #ffffff, d00b0b);
 }
 
-thead tr:first-child th {
-	background-color: #d80505;
+#authTable tr:hover td, #authTable tr td {
+	background: #ffffff;
+}
+
+tr.permanent td {
+	background: #d80505;
 	border: 0px solid #000000;
 	text-align: center;
-	border-width: 0px 0px 3px 1px;
 	font-size: 16px;
 	font-weight: normal;
 	color: #000000;
 }
 
-#user_tableBlock thead tr:first-child th:first-child {
-	border-width: 0px 0px 3px 0px;
-}
-
-#user_tableBlock thead tr:first-child th:last-child {
-	border-width: 0px 0px 3px 1px;
-}
-
-#user_tableBlock tbody tr:last-child td {
-	border-width: 0px 1px 0px 0px;
-}
-
-#user_tableBlock tr td:last-child {
-	border-width: 0px 0px 1px 0px;
-}
-
-#user_tableBlock tbody tr:last-child td:last-child {
-	border-width: 0px 0px 0px 0px;
-}

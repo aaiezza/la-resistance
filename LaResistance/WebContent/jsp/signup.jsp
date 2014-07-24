@@ -22,9 +22,11 @@
 		<h1>Sign Up for The Resistance!</h1>
 		<form:form method="POST" modelAttribute="newUserForm" action="signup" style="display: inline-block;">
 			<table>
+				<c:if test="${not empty message}">
 				<tr>
-					<td colspan="2" style="color: red">${message}</td>
-				</tr>
+				<td colspan="2" style="color: red;">${message}</td>
+				<tr>
+				</c:if>
 				<tr>
 					<td><form:label path="first_name">First Name:</form:label></td>
 					<td><form:input class="userForm" type="text" path="first_name"

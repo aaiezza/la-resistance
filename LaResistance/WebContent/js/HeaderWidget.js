@@ -15,8 +15,8 @@ var HeaderWidget = function()
         var container = parentElement;
 
         var urls = {
-            resistFirstIMG : "images/PSMfist.jpg",
-            profileUrl : "profile",
+            resistFirstIMG : "/LaResistance/images/PSMfist.jpg",
+            profileUrl : "/LaResistance/profile",
         };
 
         var headerBar = $( "<div id='header-inner' class='group'>" );
@@ -71,6 +71,11 @@ var HeaderWidget = function()
             },
             addOption : function ( element )
             {
+                if ( !element.length )
+                {
+                    return;
+                }
+                
                 options.prepend( element );
 
                 if ( options.children().length > 1 )

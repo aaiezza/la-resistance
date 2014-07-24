@@ -2,25 +2,35 @@ package org.resist.ance.web.utils;
 
 import static org.apache.commons.lang.StringUtils.isEmpty;
 
+import java.util.ArrayList;
+
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 
 /**
  * This class is only for passing a signup form object
  * 
  * @author Alex Aiezza
  */
-public class UserForm
+@SuppressWarnings ( "serial" )
+public class UserForm implements UserDetails
 {
-    private String password;
+    private String                            password;
 
-    private String first_name;
+    private String                            first_name;
 
-    private String last_name;
+    private String                            last_name;
 
-    private String email;
+    private String                            email;
 
-    private String confirmPassword;
+    private String                            confirmPassword;
 
-    private String username;
+    private String                            username;
+
+    private boolean                           enabled;
+
+    private ArrayList<SimpleGrantedAuthority> authorities;
 
     /**
      * @return the password
@@ -124,6 +134,12 @@ public class UserForm
         this.username = username;
     }
 
+    public void setEnabled( boolean enabled )
+
+    {
+        this.enabled = enabled;
+    }
+
     public boolean isBlank()
     {
         return isEmpty( first_name ) && isEmpty( last_name ) && isEmpty( getUsername() ) &&
@@ -136,4 +152,54 @@ public class UserForm
         confirmPassword = "";
     }
 
+   /* public void setAuthorities( ArrayList<String> authorities )
+    {
+        for ( String auth : authorities )
+        {
+            this.authorities.add( new SimpleGrantedAuthority( auth ) );
+        }
+    }*/
+    
+    public void setAuthorities( ArrayList<SimpleGrantedAuthority> authorities )
+    {
+        this.authorities = authorities;
+    }
+
+    @Override
+    public ArrayList<SimpleGrantedAuthority> getAuthorities()
+    {
+        return authorities;
+    }
+
+    @Override
+    public boolean isAccountNonExpired()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled()
+    {
+        return enabled;
+    }
+
+    public String toString()
+    {
+        return username;
+    }
 }

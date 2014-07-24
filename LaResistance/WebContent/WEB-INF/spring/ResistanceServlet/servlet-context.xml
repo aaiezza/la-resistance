@@ -7,8 +7,7 @@
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
-	<!-- DispatcherServlet Context: defines this servlet's request-processing 
-		infrastructure -->
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
 
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving 
 		up static resources in the ${webappRoot}/resources directory -->
@@ -20,9 +19,6 @@
 	<!-- Needed to allow properties that are loaded here, to be read by the 
 		BeanPostProcessor so they may make it into the java classes -->
 	<context:property-placeholder location="/resources/laResistance.properties" />
-
-	<!-- Maps '/' requests to the 'home' view -->
-	<mvc:view-controller path="/" />
 
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources 
 		in the /jsp directory -->
@@ -38,10 +34,8 @@
 		<property name="synchronizeOnSession" value="true" />
 	</bean>
 	
-	<context:mbean-server />
-
-	<context:component-scan base-package="org.resist.ance" />
-
-	<context:mbean-export />
+	<context:component-scan base-package="org.resist.ance.web">
+	    <context:exclude-filter expression="org.springframework.stereotype.Service" type="annotation"/>
+	</context:component-scan>
 	
 </beans>

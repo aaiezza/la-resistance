@@ -67,6 +67,8 @@
 	<http auto-config="false" entry-point-ref="loginUrlAuthenticationEntryPoint">
 		<intercept-url pattern="/results*" access="ROLE_ADMIN" />
 		<intercept-url pattern="/userManagement*" access="ROLE_ADMIN" />
+		<intercept-url pattern="/updateUser*" access="ROLE_ADMIN" />
+		<intercept-url pattern="/userDetails*" access="ROLE_USER" />
 		<intercept-url pattern="/profile*" access="ROLE_USER" />
 		<intercept-url pattern="/**" access="ROLE_USER" />
 
@@ -85,7 +87,7 @@
 	</beans:bean>
 
 	<beans:bean id="trackingUsernamePasswordAuthenticationFilter"
-		class="org.resist.ance.web.TrackingUsernamePasswordAuthenticationFilter">
+		class="org.resist.ance.web.utils.TrackingUsernamePasswordAuthenticationFilter">
 		<beans:property name="authenticationManager" ref="authMan" />
 		<beans:property name="authenticationFailureHandler" ref="failureHandler" />
 		<beans:property name="authenticationSuccessHandler" ref="successHandler" />
@@ -102,8 +104,6 @@
 		class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
 		<beans:property name="defaultFailureUrl" value="/login?authfailed" />
 	</beans:bean>
-
-	<beans:bean id="userTracker" class="org.resist.ance.web.utils.UserTracker"/>
 
 </beans:beans>
 

@@ -5,11 +5,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,6 +26,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.userdetails.cache.NullUserCache;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.util.Assert;
 
 /**
  * @author Alex Aiezza
@@ -33,57 +36,62 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
     /**
      * 
      */
-    public final static String            QUERY_NUMBER_OF_USERS_SQL   = "SELECT COUNT(username) FROM users WHERE username = ?";
+    public final static String           QUERY_NUMBER_OF_USERS_SQL   = "SELECT COUNT(username) FROM users WHERE username = ?";
 
     /**
      * 
      */
-    public final static String            QUERY_USER_BY_USERNAME      = "SELECT users.username, password, enabled, first_name, last_name, email, role FROM users LEFT JOIN user_role ON users.username=user_role.username WHERE users.username = ?";
+    public final static String           QUERY_USER_BY_USERNAME      = "SELECT users.username, password, enabled, first_name, last_name, email, role FROM users LEFT JOIN user_role ON users.username=user_role.username WHERE users.username = ?";
 
     /**
      * 
      */
-    public final static String            NEW_USER_SQL                = "INSERT INTO users (username, password, enabled, first_name, last_name, email) VALUES ( ?, ?, ?, ?, ?, ? )";
+    public final static String           NEW_USER_SQL                = "INSERT INTO users (username, password, enabled, first_name, last_name, email) VALUES ( ?, ?, ?, ?, ?, ? )";
 
     /**
      * 
      */
-    public final static String            NEW_USER_ROLE_SQL           = "INSERT INTO user_role (username, role) VALUES( ?, ? )";
+    public final static String           NEW_USER_ROLE_SQL           = "INSERT INTO user_role (username, role) VALUES( ?, ? )";
 
     /**
      * 
      */
-    public final static String            DELETE_USER_SQL             = "DELETE FROM user WHERE username = ?";
+    public final static String           DELETE_USER_SQL             = "DELETE FROM users WHERE username = ?";
 
     /**
      * 
      */
-    public final static String            DELETE_USER_ROLE_SQL        = "DELETE FROM user_role WHERE username = ?";
+    public final static String           DELETE_USER_ROLE_SQL        = "DELETE FROM user_role WHERE username = ?";
 
     /**
      * 
      */
-    public final static String            SELECT_ALL_USERS_SQL        = "SELECT users.username, password, enabled, first_name, last_name, email, role FROM users LEFT JOIN user_role ON users.username=user_role.username";
+    public final static String           SELECT_ALL_USERS_SQL        = "SELECT users.username, password, enabled, first_name, last_name, email, role FROM users LEFT JOIN user_role ON users.username=user_role.username";
 
     /**
      * 
      */
-    public final static String            DELETE_USER_AUTHORITIES_SQL = "delete from user_role where username = ?";
+    public final static String           SELECT_ALL_ROLES_SQL        = "SELECT role FROM roles";
 
     /**
      * 
      */
-    public final static String            UPDATE_USER_SQL             = "UPDATE users SET password = ?, enabled = ?, first_name = ?, last_name = ?, email = ? WHERE username = ?";
+    public final static String           DELETE_USER_AUTHORITIES_SQL = "delete from user_role where username = ?";
 
-    private AuthenticationManager         authenticationManager;
+    /**
+     * 
+     */
+    public final static String           UPDATE_USER_SQL             = "UPDATE users SET password = ?, enabled = ?, first_name = ?, last_name = ?, email = ? WHERE username = ?";
 
-    private UserCache                     userCache                   = new NullUserCache();
+    private AuthenticationManager        authenticationManager;
 
-    private final static GrantedAuthority ADMIN                       = new SimpleGrantedAuthority(
-                                                                              "ROLE_ADMIN" );
+    private UserCache                    userCache                   = new NullUserCache();
 
-    private final static GrantedAuthority USER                        = new SimpleGrantedAuthority(
-                                                                              "ROLE_USER" );
+    public final static GrantedAuthority ADMIN                       = new SimpleGrantedAuthority(
+                                                                             "ROLE_ADMIN" );
+
+    public final static GrantedAuthority USER                        = new SimpleGrantedAuthority(
+                                                                             "ROLE_USER" );
 
     /**
      * @param user
@@ -116,7 +124,10 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
     {
         try
         {
-            checkForAdminRights();
+            if ( !getShabaUser().getUsername().equals( user.getUsername() ) )
+            {
+                checkForAdminRights();
+            }
 
             getJdbcTemplate().update( UPDATE_USER_SQL, new PreparedStatementSetter()
             {
@@ -133,8 +144,12 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
 
             if ( getEnableAuthorities() )
             {
+
                 deleteUserAuthorities( user.getUsername() );
-                insertUserAuthorities( user );
+                for ( GrantedAuthority auth : user.getAuthorities() )
+                {
+                    insertUserAuthorities( user, auth );
+                }
             }
 
             userCache.removeUserFromCache( user.getUsername() );
@@ -151,6 +166,11 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
     {
         try
         {
+            if ( checkForAdminRights( loadShabaUserByUsername( username ) ) )
+            {
+                return;
+            }
+
             checkForAdminRights();
 
             if ( getEnableAuthorities() )
@@ -168,9 +188,9 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
     /**
      * @param user
      */
-    private void insertUserAuthorities( ShabaUser user )
+    private void insertUserAuthorities( ShabaUser user, GrantedAuthority auth )
     {
-        getJdbcTemplate().update( NEW_USER_ROLE_SQL, user.getUsername() );
+        getJdbcTemplate().update( NEW_USER_ROLE_SQL, user.getUsername(), auth.getAuthority() );
     }
 
     /**
@@ -268,32 +288,42 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
     public List<ShabaUser> getUsers()
     {
         List<ShabaUser> users = getJdbcTemplate().query( SELECT_ALL_USERS_SQL,
-            new ShabaUserMapper() );
+            new ShabaUserListExtractor() );
 
         return users;
     }
 
-    private UserDetails checkForAdminRights() throws IllegalAccessException
+    public List<String> getAvailableAuthorities()
     {
-        UserDetails userDetails = getUserDetails();
+        return getJdbcTemplate().queryForList( SELECT_ALL_ROLES_SQL, String.class );
+    }
 
-        if ( userDetails == null || !userDetails.isEnabled() ||
-                !userDetails.getAuthorities().contains( ADMIN ) )
+    public boolean checkForAdminRights( ShabaUser user )
+    {
+        return user != null && user.getAuthorities().contains( ADMIN );
+    }
+
+    public UserDetails checkForAdminRights() throws IllegalAccessException
+    {
+        ShabaUser user = getShabaUser();
+
+        if ( user == null || !user.isEnabled() || !user.getAuthorities().contains( ADMIN ) )
         {
             throw new IllegalAccessException( "INVALID CREDENTIALS" );
         }
 
-        return userDetails;
+        return user;
     }
 
-    public UserDetails getUserDetails()
+    public ShabaUser getShabaUser()
     {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         ShabaUser shabaUser = null;
-        if ( principal instanceof UserDetails )
+        if ( auth != null && auth.getPrincipal() instanceof UserDetails )
         {
-            shabaUser = loadShabaUserByUsername( ( (UserDetails) principal ).getUsername() );
+            shabaUser = loadShabaUserByUsername( ( (UserDetails) auth.getPrincipal() )
+                    .getUsername() );
         }
 
         return shabaUser;
@@ -386,6 +416,56 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
                     rs.getString( "last_name" ), rs.getString( "email" ), true, true, true, roles );
 
             return user;
+        }
+    }
+
+    private class ShabaUserListExtractor implements ResultSetExtractor<List<ShabaUser>>
+    {
+        private final ShabaUserMapper rowMapper;
+
+        private int                   rowsExpected;
+
+        public ShabaUserListExtractor()
+        {
+            this( new ShabaUserMapper(), 0 );
+        }
+
+        public ShabaUserListExtractor( ShabaUserMapper rowMapper, int rowsExpected )
+        {
+            Assert.notNull( rowMapper, "RowMapper is required" );
+            this.rowMapper = rowMapper;
+            this.rowsExpected = rowsExpected;
+        }
+
+        @Override
+        public List<ShabaUser> extractData( ResultSet rs ) throws SQLException
+        {
+            HashMap<String, ShabaUser> results = ( this.rowsExpected > 0
+                                                                        ? new HashMap<String, ShabaUser>(
+                                                                                rowsExpected )
+                                                                        : new HashMap<String, ShabaUser>() );
+            int rowNum = 0;
+            while ( rs.next() )
+            {
+                ShabaUser user = rowMapper.mapRow( rs, rowNum++ );
+
+                if ( results.containsKey( user.getUsername() ) )
+                {
+                    ShabaUser inUser = results.get( user.getUsername() );
+                    ArrayList<GrantedAuthority> combinedAuthorities = new ArrayList<GrantedAuthority>();
+
+                    combinedAuthorities.addAll( inUser.getAuthorities() );
+                    combinedAuthorities.addAll( user.getAuthorities() );
+
+                    results.put( user.getUsername(),
+                        createUserDetails( user.getUsername(), user, combinedAuthorities ) );
+                } else
+                {
+                    results.put( user.getUsername(), user );
+                }
+            }
+
+            return new ArrayList<ShabaUser>( results.values() );
         }
     }
 }

@@ -1,13 +1,16 @@
 package org.resist.ance.web;
 
-import static org.resist.ance.web.LoginController.JUST_JOINING_US;
+import static org.resist.ance.web.utils.ShabaJdbcUserDetailsManager.ADMIN;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
@@ -15,15 +18,20 @@ import org.resist.ance.web.utils.ShabaJdbcUserDetailsManager;
 import org.resist.ance.web.utils.ShabaUser;
 import org.resist.ance.web.utils.SignUpFormValidator;
 import org.resist.ance.web.utils.UserForm;
+import org.resist.ance.web.utils.UserTracker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.ServletRequestDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -40,13 +48,17 @@ public class UserController
 
     private final ShabaJdbcUserDetailsManager USER_MAN;
 
+    private final UserTracker                 USER_TRACKER;
+
     @Autowired
     public UserController(
-        @Qualifier ( "Signup_Logger" ) Log logger,
-        ShabaJdbcUserDetailsManager userMan )
+        @Qualifier ( "User_Logger" ) Log logger,
+        ShabaJdbcUserDetailsManager userMan,
+        UserTracker userTracker )
     {
         LOGGER = logger;
         USER_MAN = userMan;
+        USER_TRACKER = userTracker;
     }
 
     @RequestMapping ( method = POST, value = "retrieveUsers" )
@@ -63,9 +75,9 @@ public class UserController
     }
 
     @RequestMapping ( method = GET, value = "/signup" )
-    public ModelAndView getSignupPage( HttpSession session )
+    public ModelAndView getSignupPage()
     {
-        if ( session.getAttribute( JUST_JOINING_US ) != null )
+        if ( USER_TRACKER.contains( USER_MAN.getShabaUser() ) )
         {
             return new ModelAndView( "redirect:profile" );
         }
@@ -92,18 +104,30 @@ public class UserController
         return new UserForm();
     }
 
-    // TODO Test this path
-    @RequestMapping ( method = POST, value = "doesUserExist/{someusername}" )
+    @RequestMapping ( method = POST, value = "getUser/{someusername}" )
     @ResponseBody
-    public boolean doesUserExist( @PathVariable ( "someusername" ) String username )
+    public HashMap<String, Object> getUser( @PathVariable ( "someusername" ) String username )
             throws SQLException
     {
-        return USER_MAN.userExists( username );
+        if ( !USER_MAN.userExists( username ) )
+        {
+            return null;
+        }
+        HashMap<String, Object> json = new HashMap<String, Object>();
+
+        json.put( "user", USER_MAN.loadShabaUserByUsername( username ) );
+
+        ShabaUser currentUser = USER_MAN.getShabaUser();
+
+        boolean admin = currentUser.getAuthorities().contains( ADMIN );
+
+        json.put( "isAdmin", admin );
+
+        return json;
     }
 
     @RequestMapping ( method = POST, value = "signup" )
     public ModelAndView signup( UserForm form, BindingResult result, HttpServletRequest request )
-            throws SQLException
     {
         // VALIDATE THE FORM
         SignUpFormValidator suValidator = new SignUpFormValidator();
@@ -115,16 +139,9 @@ public class UserController
 
         suValidator.validate( form, result );
 
-        // CHECK IF USERNAME IS TAKEN
-        try
+        if ( USER_MAN.userExists( form.getUsername() ) )
         {
-            if ( doesUserExist( form.getUsername() ) )
-            {
-                result.rejectValue( "username", "Username is already taken" );
-            }
-        } catch ( SQLException e )
-        {
-            result.reject( "" + e.getErrorCode(), e.getMessage() );
+            result.rejectValue( "username", "Username is already taken" );
         }
 
         // PRINT OUT ALL ERRORS IF ANY
@@ -169,19 +186,111 @@ public class UserController
     }
 
     @RequestMapping ( method = POST, value = "deleteUser/{someusername}" )
-    private void deleteUser( @PathVariable ( "someusername" ) String username )
-            throws SQLException, IllegalAccessException
+    private void deleteUser(
+            @PathVariable ( "someusername" ) String username,
+            HttpServletResponse response )
     {
         USER_MAN.deleteUser( username );
+
+        LOGGER.info( String.format( "USER :%s: has been DELETED! ", username ) );
+
+        response.setStatus( HttpStatus.OK.value() );
     }
 
-    @RequestMapping (
-        method = POST,
-        value = "updateUser",
-        headers = { "userToUpdate" } )
-    private void updateUser(
-            @RequestHeader ShabaUser userToUpdate )
+    @RequestMapping ( method = GET, value = "userDetails/{user}" )
+    private ModelAndView userDetails(
+            @PathVariable String user,
+            @RequestParam ( required = false ) String message )
     {
-        USER_MAN.updateUser( userToUpdate );
+        HashMap<String, Object> map = new HashMap<String, Object>();
+
+        ShabaUser currentUser = USER_MAN.getShabaUser();
+
+        boolean admin = currentUser.getAuthorities().contains( ADMIN );
+
+        if ( !USER_MAN.userExists( user ) || ( !currentUser.equals( user ) && !admin ) )
+        {
+            return new ModelAndView( String.format( "redirect:%s", currentUser.getUsername() ) );
+        }
+
+        map.put( "admin", admin );
+
+        map.put( "user", user );
+
+        map.put( "availableAuthorities", USER_MAN.getAvailableAuthorities() );
+
+        map.put( "userAuths", USER_MAN.loadUserByUsername( user ).getAuthorities() );
+
+        if ( message != null )
+        {
+            map.put( "message", message );
+        }
+
+        return new ModelAndView( "userDetails", map );
+    }
+
+    @RequestMapping ( method = POST, value = "updateUser" )
+    private ModelAndView updateUser(
+            UserForm userToUpdate,
+            @RequestParam(value = "auths" )ArrayList<SimpleGrantedAuthority> authorities,
+            BindingResult result )
+    {
+        userToUpdate.setAuthorities( authorities );
+        
+        if ( !USER_MAN.userExists( userToUpdate.getUsername() ) )
+        {
+            result.rejectValue( "username", "Username does not exist" );
+        }
+
+        ShabaUser shabaUser = USER_MAN.loadShabaUserByUsername( userToUpdate.getUsername() );
+
+        SignUpFormValidator suValidator = new SignUpFormValidator();
+
+        if ( userToUpdate.getConfirmPassword().isEmpty() )
+        {
+            suValidator.validateRequiredFields( userToUpdate, result );
+
+            if ( !userToUpdate.getPassword().equals( shabaUser.getPassword() ) &&
+                    !USER_MAN.checkForAdminRights( USER_MAN.getShabaUser() ) )
+            {
+                result.rejectValue( "password", "Wrong Password" );
+            }
+            
+        } else
+        {
+            suValidator.validate( userToUpdate, result );
+        }
+
+        // PRINT OUT ALL ERRORS IF ANY
+        if ( result.hasErrors() )
+        {
+            StringBuilder out = new StringBuilder();
+
+            for ( ObjectError er : result.getAllErrors() )
+            {
+                out.append( er.getCode() ).append( "<br>" );
+            }
+
+            return new ModelAndView( "redirect:userDetails/" + userToUpdate.getUsername(),
+                    "message", out );
+        }
+
+        USER_MAN.updateUser( ShabaUser.ShabaUserFromForm( userToUpdate ) );
+
+        String message = String.format( "%s UPDATED!", shabaUser );
+
+        LOGGER.info( message );
+
+        return new ModelAndView( "redirect:userDetails/" + userToUpdate.getUsername(), "message",
+                message );
+    }
+
+    @InitBinder
+    public void initBinder( ServletRequestDataBinder binder )
+    {
+        if ( binder.getTarget() instanceof Collection )
+        {
+            System.out.println( "OHASDFIASNVEI" );
+        }
     }
 }

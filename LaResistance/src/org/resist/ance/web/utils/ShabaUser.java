@@ -72,10 +72,35 @@ public class ShabaUser extends User
     {
         return email;
     }
-    
+
     @Override
     public String toString()
     {
         return String.format( "%s (%s %s)", getUsername(), first_name, last_name );
+    }
+
+    // No need to also override hashcode since User super class already does.
+    @Override
+    public boolean equals( Object rhs )
+    {
+        if ( rhs instanceof User )
+        {
+            return getUsername().equals( ( (User) rhs ).getUsername() );
+        }
+        if ( rhs instanceof String )
+        {
+            return getUsername().equals( rhs );
+        }
+        return false;
+    }
+
+    public static final ShabaUser ShabaUserFromForm( UserForm user )
+    {
+        return new ShabaUser( user.getUsername(), user.getPassword(),
+                user.isEnabled(), user.getFirst_name(), user.getLast_name(), user.getEmail(),
+                user.isAccountNonExpired(), user.isCredentialsNonExpired(),
+                user.isAccountNonLocked(), user.getAuthorities() );
+
+
     }
 }

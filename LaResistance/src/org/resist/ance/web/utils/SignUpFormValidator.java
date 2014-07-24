@@ -15,16 +15,22 @@ public class SignUpFormValidator implements Validator
     {
         return UserForm.class.equals( clazz );
     }
-
-    @Override
-    public void validate( Object target, Errors errors )
+    
+    public void validateRequiredFields( Object target, Errors errors )
     {
         ValidationUtils.rejectIfEmptyOrWhitespace( errors, "first_name", "First Name required" );
         ValidationUtils.rejectIfEmptyOrWhitespace( errors, "last_name", "Last Name Required" );
         ValidationUtils.rejectIfEmptyOrWhitespace( errors, "email", "Email Required" );
         ValidationUtils.rejectIfEmptyOrWhitespace( errors, "username", "Username Required" );
-        ValidationUtils.rejectIfEmptyOrWhitespace( errors, "password", "Password required" );
+    }
 
+    @Override
+    public void validate( Object target, Errors errors )
+    {
+        validateRequiredFields( target, errors );
+        
+        ValidationUtils.rejectIfEmptyOrWhitespace( errors, "password", "Password required" );
+        
         UserForm form = (UserForm) target;
 
         if ( !StringUtils.isEmpty( form.getPassword() ) )
