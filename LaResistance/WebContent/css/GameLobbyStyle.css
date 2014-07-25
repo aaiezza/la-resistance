@@ -31,6 +31,8 @@ div.rightPane {
 	float: left;
 	position: relative;
 	background-color: gray;
+	
+	cursor: default;
 }
 
 #gameAndChatBlock {
@@ -65,4 +67,13 @@ div.rightPane {
 	height: calc(100% - 300px);
 	background-color: #004;
 	text-align: center;
+}
+
+#userList {
+	width: 100%;
+	font-size: medium;
+}
+
+#userList tbody {
+	text-align: left;
 }

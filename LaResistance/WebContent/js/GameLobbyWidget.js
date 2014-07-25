@@ -26,7 +26,7 @@ var GameLobbyWidget = function()
         
         var chatView = $( "<div id='chatView'>" ).addClass( "gameLobby" );
         
-        var playerList = $( "<div id='playerList'>" ).addClass( "gameLobby" ).addClass( "rightPane" );
+        var userList = $( "<div id='userBlock'>" ).append( $("<table id='userList'>").addClass( "gameLobby" ) ).addClass( "gameLobby" ).addClass( "rightPane" );
 
         var createGameButton = $( "<input id='newGameButton' type='button' value='Start a Resistance'>" );
         
@@ -48,18 +48,48 @@ var GameLobbyWidget = function()
                 $("#denies").html(response.denies);
             });
         };
-        
-        function createNewGame()
+
+        function updateUsersOnline()
         {
-            // SEND REQUEST TO SERVER
-            $.post("gameList", null, "json").done(function(response)
-            {
-                if (typeof response == "string")
-                {
-                    window.location.reload(false);
-                }
-                $("#approves").html(response.approves);
-                $("#denies").html(response.denies);
+            $.post("updateUsersOnline")
+            .done( function( response ) {
+                
+                $("#userList tbody").remove();
+                
+                $( response.users ).each( function() {
+                    $("#userList")
+                    .append( $("<tr><td>" + this.username + "</td>").addClass("user")
+                    );
+                });
+                
+                $("#userList").trigger("update");//.trigger("sorton",[[[0,0]]]);
+                
+                updateUsersOnline();
+
+            })
+            .fail(function() {
+                // NEED TO USE <code> tag instead of <textarea>
+                //chatLog.append($("<span style='color:red;'>\nSERVER DOWN\n"));
+                location.reload();
+            });
+        };
+
+        function getUsersOnline()
+        {
+            $.post("usersOnline")
+            .done( function( response ) {
+                $( response.users ).each( function() {
+                    $("#userList")
+                    .append( $("<tr><td>" + this.username + "</td>").addClass("user")
+                    );
+                });
+                $("#userList").tablesorter({sortList: [[0,0]]});
+                updateUsersOnline();
+            })
+            .fail(function() {
+                // NEED TO USE <code> tag instead of <textarea>
+                //chatLog.append($("<span style='color:red;'>\nSERVER DOWN\n"));
+                location.reload();
             });
         };
 
@@ -74,7 +104,9 @@ var GameLobbyWidget = function()
         
         gameAndChatBlock.append(gameBlock).append(chatView);
         
-        container.append(gameAndChatBlock).append(playerList);
+        container.append(gameAndChatBlock).append(userList);
+        
+        $("#userList").append( $("<thead><tr><th class='header'>Users Online</th>") ).append( $("<tbody>") );
         
         /////////////////////////////
         // Public Instance Methods //
@@ -84,8 +116,9 @@ var GameLobbyWidget = function()
             {
                 return container;
             },
-            refresh : function()
+            updateUserList : function()
             {
+                getUsersOnline();
             },
             log : function(message)
             {
@@ -98,4 +131,5 @@ var GameLobbyWidget = function()
 $(document).ready(function()
 {
     gameLobbyWidget = makeGameLobbyWidget($("#core"));
+    gameLobbyWidget.updateUserList();
 });

@@ -176,5 +176,4 @@ $(document).ready(function()
     {
         sortList : [ [ 0, 0 ] ]
     });
-
 });

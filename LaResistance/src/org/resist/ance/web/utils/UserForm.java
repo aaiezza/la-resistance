@@ -16,7 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @SuppressWarnings ( "serial" )
 public class UserForm implements UserDetails
 {
-    private String                            password;
+    private transient String                  password;
 
     private String                            first_name;
 
@@ -24,7 +24,7 @@ public class UserForm implements UserDetails
 
     private String                            email;
 
-    private String                            confirmPassword;
+    private transient String                  confirmPassword;
 
     private String                            username;
 
@@ -152,14 +152,12 @@ public class UserForm implements UserDetails
         confirmPassword = "";
     }
 
-   /* public void setAuthorities( ArrayList<String> authorities )
-    {
-        for ( String auth : authorities )
-        {
-            this.authorities.add( new SimpleGrantedAuthority( auth ) );
-        }
-    }*/
-    
+    /*
+     * public void setAuthorities( ArrayList<String> authorities ) { for (
+     * String auth : authorities ) { this.authorities.add( new
+     * SimpleGrantedAuthority( auth ) ); } }
+     */
+
     public void setAuthorities( ArrayList<SimpleGrantedAuthority> authorities )
     {
         this.authorities = authorities;

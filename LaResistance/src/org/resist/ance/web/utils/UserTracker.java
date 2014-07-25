@@ -11,6 +11,8 @@ import javafx.util.Pair;
 import org.apache.commons.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
  * @author Alex Aiezza
  */
 @Service
+@ManagedResource
 public class UserTracker extends Observable
 {
     private static final String        LOGGED_IN  = "%s successfully Logged in!";
@@ -43,6 +46,7 @@ public class UserTracker extends Observable
             LOGGER.info( format( LOGGED_IN, user ) );
             setChanged();
             notifyObservers( new Pair<Boolean, ShabaUser>( true, user ) );
+            notifyAll();
         }
     }
 
@@ -52,10 +56,13 @@ public class UserTracker extends Observable
         LOGGER.info( format( LOGGED_OUT, user ) );
         setChanged();
         notifyObservers( new Pair<Boolean, ShabaUser>( false, user ) );
+        notifyAll();
     }
 
+    @ManagedOperation ( description = "View Active Users" )
     public synchronized Collection<ShabaUser> getLoggedInUsers()
     {
+        onlineUsers.forEach( ( user ) -> user.eraseCredentials() );
         return onlineUsers;
     }
 
@@ -67,7 +74,7 @@ public class UserTracker extends Observable
         }
         return onlineUsers.contains( user );
     }
-    
+
     @Override
     public String toString()
     {

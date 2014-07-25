@@ -96,8 +96,8 @@ public class ShabaUser extends User
 
     public static final ShabaUser ShabaUserFromForm( UserForm user )
     {
-        return new ShabaUser( user.getUsername(), user.getPassword(),
-                user.isEnabled(), user.getFirst_name(), user.getLast_name(), user.getEmail(),
+        return new ShabaUser( user.getUsername(), user.getPassword(), user.isEnabled(),
+                user.getFirst_name(), user.getLast_name(), user.getEmail(),
                 user.isAccountNonExpired(), user.isCredentialsNonExpired(),
                 user.isAccountNonLocked(), user.getAuthorities() );
 

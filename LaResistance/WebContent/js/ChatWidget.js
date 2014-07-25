@@ -144,7 +144,6 @@ var ChatWidget = function()
             init : function()
             {
                 updateChat();
-                //setTimeout( function(){updateChat()}, 500 );
             },
             log : function(message)
             {
