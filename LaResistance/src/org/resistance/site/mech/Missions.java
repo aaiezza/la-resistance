@@ -1,4 +1,4 @@
-package org.resist.ance.mech;
+package org.resistance.site.mech;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;

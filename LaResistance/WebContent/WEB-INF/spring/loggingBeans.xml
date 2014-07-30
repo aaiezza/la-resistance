@@ -7,32 +7,32 @@
 
 	<bean id="Login_Logger" class="org.apache.commons.logging.LogFactory"
 		factory-method="getLog">
-		<constructor-arg value="org.resist.ance.web.LoginController" />
+		<constructor-arg value="org.resistance.site.web.LoginController" />
 	</bean>
 	
 	<bean id="UserTracker_Logger" class="org.apache.commons.logging.LogFactory"
 		factory-method="getLog">
-		<constructor-arg value="org.resist.ance.web.util.UserTracker" />
+		<constructor-arg value="org.resistance.site.web.util.UserTracker" />
 	</bean>
 
 	<bean id="GameLobby_Logger" class="org.apache.commons.logging.LogFactory"
 		factory-method="getLog">
-		<constructor-arg value="org.resist.ance.web.GameLobbyController" />
+		<constructor-arg value="org.resistance.site.web.GameLobbyController" />
 	</bean>
 
 	<bean id="Resistance_Logger" class="org.apache.commons.logging.LogFactory"
 		factory-method="getLog">
-		<constructor-arg value="org.resist.ance.web.ResistanceController" />
+		<constructor-arg value="org.resistance.site.web.ResistanceController" />
 	</bean>
 
 	<bean id="User_Logger" class="org.apache.commons.logging.LogFactory"
 		factory-method="getLog">
-		<constructor-arg value="org.resist.ance.web.UserController" />
+		<constructor-arg value="org.resistance.site.web.UserController" />
 	</bean>
 
 	<bean id="Chat_Logger" class="org.apache.commons.logging.LogFactory"
 		factory-method="getLog">
-		<constructor-arg value="org.resist.ance.web.ChatController" />
+		<constructor-arg value="org.resistance.site.web.ChatController" />
 	</bean>
 	
 </beans>

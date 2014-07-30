@@ -4,7 +4,7 @@
 
 The UserTracker is just what it says it is and tracks the users that are online.
 
-This is done by using the org.resist.ance.web.TrackingUsernamePasswordAuthenticationFilter.
+This is done by using the org.resistance.site.web.TrackingUsernamePasswordAuthenticationFilter.
 
 This extends the UsernamePasswordAuthenticationFilter that gets auto configured
 by spring security.

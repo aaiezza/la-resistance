@@ -1,9 +1,9 @@
-package org.resist.ance.mech;
+package org.resistance.site.mech;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.resist.ance.Player;
+import org.resistance.site.Player;
 
 /**
  * @author Alex Aiezza

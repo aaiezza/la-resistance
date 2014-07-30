@@ -23,7 +23,7 @@
         <level value="INFO" />
     </logger>
 
-    <logger name="edu.rit.go">
+    <logger name="org.resistance.site">
         <level value="INFO" />
     </logger>
     

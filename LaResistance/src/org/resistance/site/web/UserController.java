@@ -1,6 +1,6 @@
-package org.resist.ance.web;
+package org.resistance.site.web;
 
-import static org.resist.ance.web.utils.ShabaJdbcUserDetailsManager.ADMIN;
+import static org.resistance.site.web.utils.ShabaJdbcUserDetailsManager.ADMIN;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -14,11 +14,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
-import org.resist.ance.web.utils.ShabaJdbcUserDetailsManager;
-import org.resist.ance.web.utils.ShabaUser;
-import org.resist.ance.web.utils.SignUpFormValidator;
-import org.resist.ance.web.utils.UserForm;
-import org.resist.ance.web.utils.UserTracker;
+import org.resistance.site.web.utils.ShabaJdbcUserDetailsManager;
+import org.resistance.site.web.utils.ShabaUser;
+import org.resistance.site.web.utils.SignUpFormValidator;
+import org.resistance.site.web.utils.UserForm;
+import org.resistance.site.web.utils.UserTracker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;

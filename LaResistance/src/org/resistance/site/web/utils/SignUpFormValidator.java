@@ -1,4 +1,4 @@
-package org.resist.ance.web.utils;
+package org.resistance.site.web.utils;
 
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;

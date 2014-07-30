@@ -1,4 +1,4 @@
-package org.resist.ance.web;
+package org.resistance.site.web;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -9,13 +9,16 @@ import java.util.HashMap;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
-import org.resist.ance.BoardFactory;
-import org.resist.ance.utils.VoteCounter;
+import org.resistance.site.BoardFactory;
+import org.resistance.site.Game;
+import org.resistance.site.Player;
+import org.resistance.site.utils.GameTracker;
+import org.resistance.site.utils.VoteCounter;
+import org.resistance.site.web.utils.ShabaJdbcUserDetailsManager;
+import org.resistance.site.web.utils.ShabaUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,36 +32,34 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ResistanceController
 {
-    private static final String          VOTED        = "_voted_";
+    private static final String               VOTED = "_voted_";
 
-    private final Log                    LOGGER;
+    private final Log                         LOGGER;
 
-    private final VoteCounter            VOTE_COUNTER;
+    private final ShabaJdbcUserDetailsManager USER_MAN;
 
-    private final ArrayList<HttpSession> SESSION_TRACKER;
+    private final VoteCounter                 VOTE_COUNTER;
 
-    private final BoardFactory           BOARD_FACTORY;
+    private final ArrayList<HttpSession>      SESSION_TRACKER;
+
+    private final BoardFactory                BOARD_FACTORY;
+
+    private final GameTracker                 GAME_TRACKER;
 
     @Autowired
     public ResistanceController(
         @Qualifier ( "Resistance_Logger" ) Log logger,
+        ShabaJdbcUserDetailsManager userManager,
         VoteCounter voteCounter,
-        BoardFactory boardFactory )
+        BoardFactory boardFactory,
+        GameTracker gameTracker )
     {
         LOGGER = logger;
+        USER_MAN = userManager;
         VOTE_COUNTER = voteCounter;
         SESSION_TRACKER = new ArrayList<HttpSession>();
         BOARD_FACTORY = boardFactory;
-    }
-
-    @RequestMapping ( method = GET, value = "/gameLobby" )
-    public ModelAndView getGameLobbyPage()
-    {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        LOGGER.info( String.format( "%s is looking for recruitment!", auth.getName() ) );
-
-        return new ModelAndView( "gameLobby" );
+        GAME_TRACKER = gameTracker;
     }
 
     @RequestMapping ( "/voter" )
@@ -132,17 +133,19 @@ public class ResistanceController
         LOGGER.info( "Vote Counter Reset" );
     }
 
-    @RequestMapping ( "play" )
-    public ModelAndView assignRole( HttpSession session )
+    @RequestMapping ( method = POST, value = "createGame" )
+    @ResponseBody
+    public Game createGame()
     {
-        HashMap<String, Object> json = new HashMap<String, Object>();
-
-        return new ModelAndView( "play", json );
-    }
-
-    public void createGame()
-    {
-
-
+        ShabaUser user = USER_MAN.getShabaUser();
+        
+        Game g = new Game( new Player( user.getUsername() ) );
+        
+        if( !GAME_TRACKER.registerGame( g ) )
+        {
+            g = null;
+        }
+        
+        return g;
     }
 }

@@ -1,20 +1,19 @@
-package org.resist.ance.web;
+package org.resistance.site.web;
 
-import static org.resist.ance.web.utils.ShabaJdbcUserDetailsManager.ADMIN;
-import static org.resist.ance.web.utils.ShabaJdbcUserDetailsManager.USER;
+import static org.resistance.site.web.utils.ShabaJdbcUserDetailsManager.ADMIN;
+import static org.resistance.site.web.utils.ShabaJdbcUserDetailsManager.USER;
 
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
-import org.resist.ance.web.utils.ShabaJdbcUserDetailsManager;
-import org.resist.ance.web.utils.ShabaUser;
-import org.resist.ance.web.utils.UserTracker;
+import org.resistance.site.web.utils.ShabaJdbcUserDetailsManager;
+import org.resistance.site.web.utils.ShabaUser;
+import org.resistance.site.web.utils.UserTracker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.LockedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

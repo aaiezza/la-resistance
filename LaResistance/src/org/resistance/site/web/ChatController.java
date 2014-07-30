@@ -1,29 +1,29 @@
-package org.resist.ance.web;
+package org.resistance.site.web;
 
-import static org.resist.ance.web.utils.ShabaJdbcUserDetailsManager.ADMIN;
+import static org.resistance.site.web.utils.ShabaJdbcUserDetailsManager.ADMIN;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
-import org.resist.ance.web.utils.ChatLogger;
-import org.resist.ance.web.utils.ShabaJdbcUserDetailsManager;
-import org.resist.ance.web.utils.ShabaUser;
-import org.resist.ance.web.utils.UserTracker;
+import org.resistance.site.web.utils.ChatLogger;
+import org.resistance.site.web.utils.ShabaJdbcUserDetailsManager;
+import org.resistance.site.web.utils.ShabaUser;
+import org.resistance.site.web.utils.UserTracker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.async.DeferredResult;
 
 /**
  * @author Alex Aiezza
@@ -50,15 +50,6 @@ public class ChatController
         CHAT_LOG = chatLog;
         USER_MAN = userManager;
         USER_TRACKER = userTracker;
-    }
-
-    @RequestMapping ( method = GET, value = "serverTime" )
-    public void getServerTime( HttpServletResponse response ) throws IOException
-    {
-        PrintWriter out = response.getWriter();
-        long time = System.currentTimeMillis();
-        out.print( time );
-        LOGGER.debug( "TIME = " + time );
     }
 
     @RequestMapping (
@@ -94,6 +85,7 @@ public class ChatController
         } else
         {
             CHAT_LOG.say( user.getUsername(), sayIt );
+
             LOGGER.info( CHAT_LOG.lastMessage() );
         }
 
@@ -102,30 +94,20 @@ public class ChatController
         return map;
     }
 
-    @RequestMapping ( method = GET, value = "updateChat", params = { "lastUpdate" } )
-    public void getChatLog(
-            @RequestParam ( "lastUpdate" ) long lastUpdate,
-            HttpServletResponse response ) throws IOException, InterruptedException
+    @RequestMapping ( method = GET, value = "updateChat" )
+    @ResponseBody
+    public DeferredResult<List<String>> getChatLog() throws IOException, InterruptedException
     {
+        long lastUpdate = System.currentTimeMillis();
+
         ShabaUser user = USER_MAN.getShabaUser();
 
-        synchronized ( CHAT_LOG )
-        {
-            LOGGER.debug( String.format( "\n\t\t%s is waiting for the chat to update!!!",
-                user.getUsername() ) );
-            CHAT_LOG.wait();
-        }
-
-        LOGGER.debug( String.format( "\n\t\tThe wait is OVER for %s", user.getUsername() ) );
-
-        PrintWriter out = response.getWriter();
-
-        for ( String line : CHAT_LOG.messagesSince( lastUpdate ) )
-        {
-            out.println( line );
-        }
+        return CHAT_LOG.registerRequest( user, lastUpdate );
     }
 
+    /**
+     * Allows for User Traffic to be displayed in chat
+     */
     @PostConstruct
     private void init()
     {

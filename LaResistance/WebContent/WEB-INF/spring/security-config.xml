@@ -39,7 +39,7 @@
 	</authentication-manager>
 
 	<beans:bean id="jdbcUserService"
-		class="org.resist.ance.web.utils.ShabaJdbcUserDetailsManager">
+		class="org.resistance.site.web.utils.ShabaJdbcUserDetailsManager">
 		<beans:property name="dataSource" ref="dataSource" />
 		<beans:property name="authenticationManager" ref="authMan" />
 		<beans:property name="authoritiesByUsernameQuery"
@@ -87,7 +87,7 @@
 	</beans:bean>
 
 	<beans:bean id="trackingUsernamePasswordAuthenticationFilter"
-		class="org.resist.ance.web.utils.TrackingUsernamePasswordAuthenticationFilter">
+		class="org.resistance.site.web.utils.TrackingUsernamePasswordAuthenticationFilter">
 		<beans:property name="authenticationManager" ref="authMan" />
 		<beans:property name="authenticationFailureHandler" ref="failureHandler" />
 		<beans:property name="authenticationSuccessHandler" ref="successHandler" />

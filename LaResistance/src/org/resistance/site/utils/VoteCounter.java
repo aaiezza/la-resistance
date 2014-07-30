@@ -1,4 +1,4 @@
-package org.resist.ance.utils;
+package org.resistance.site.utils;
 
 import java.util.ArrayList;
 

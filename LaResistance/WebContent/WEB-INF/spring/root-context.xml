@@ -10,7 +10,7 @@
 		<property name="locations" value="/resources/laResistance.properties" />
 	</bean>
 	
-	<context:component-scan base-package="org.resist.ance">
+	<context:component-scan base-package="org.resistance.site">
 		<context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation"/>
 	</context:component-scan>
 	

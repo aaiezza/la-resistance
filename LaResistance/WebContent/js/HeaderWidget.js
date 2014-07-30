@@ -15,13 +15,13 @@ var HeaderWidget = function()
         var container = parentElement;
 
         var urls = {
-            resistFirstIMG : "/LaResistance/images/PSMfist.jpg",
+            resistFistIMG : "/LaResistance/images/PSMfist.jpg",
             profileUrl : "/LaResistance/profile",
         };
 
         var headerBar = $( "<div id='header-inner' class='group'>" );
         
-        var logo = $( "<div id='logo'>" ).append( $( "<img id='_logo' alt='resistLogo' />" ).attr( "src", urls.resistFirstIMG ) );
+        var logo = $( "<div id='logo'>" ).append( $( "<img id='_logo' alt='resistLogo' />" ).attr( "src", urls.resistFistIMG ) );
         
         var title = $( "<h2 id='title'>" );
         

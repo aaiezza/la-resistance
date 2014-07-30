@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-	id="WebApp_ID">
+	id="WebApp_ID" version="3.0">
 
 	<display-name>LaResistance</display-name>
-
+	
 	<!-- The definition of the Root Spring Container shared by all Servlets 
 		and Filters -->
 	<context-param>
@@ -20,6 +20,8 @@
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+		<!-- This allows you to return a DeferredResult object from any Controller -->
+		<async-supported>true</async-supported>
 		<init-param>
 			<param-name>targetBeanName</param-name>
 			<param-value>springSecurityFilterChain</param-value>
@@ -39,7 +41,7 @@
 
 	<!-- Loads the Properties Files -->
 	<listener>
-		<listener-class>org.resist.ance.property.MultiPropertyLoaderListener</listener-class>
+		<listener-class>org.resistance.site.property.MultiPropertyLoaderListener</listener-class>
 	</listener>
 
 	<!-- Initializes the Logger with Appenders -->
@@ -65,6 +67,8 @@
 			<param-value>true</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
+		<!-- This allows you to return a DeferredResult object from any Controller -->
+		<async-supported>true</async-supported>
 	</servlet>
 
 	<!-- Defines the Servlet Mapping -->

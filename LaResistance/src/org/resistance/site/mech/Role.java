@@ -1,4 +1,4 @@
-package org.resist.ance.mech;
+package org.resistance.site.mech;
 
 /**
  * @author Alex Aiezza

@@ -2,21 +2,6 @@
 var ChatWidget = function()
 {
     var global = this;
-    
-    function currentTimeMillis()
-    {
-        var serverTime = 0;
-        $.ajax(
-        {
-            async : false,
-            url : "serverTime"
-        }).done(function(time)
-        {
-            serverTime = time;
-        });
-
-        return parseInt(serverTime);
-    };
 
     // ///////////////////////////////
     // Widget Constructor Function //
@@ -28,8 +13,6 @@ var ChatWidget = function()
         //////////////////
 
         var container = parentElement;
-        
-        var chatUpdated = currentTimeMillis();
         
         var chatLog = $( "<textarea id='chatLog' disabled>" );
         
@@ -84,25 +67,17 @@ var ChatWidget = function()
 
         function updateChat()
         {
-            $.get("updateChat?lastUpdate=" + chatUpdated).done(function(log)
+            $.get("updateChat").done( function(log)
             {
-                if (log == "")
-                {
-                    console.log("UH OH!!!");
-                } else
-                {
-                    chatLog.append(log);
-                }
-
-                chatUpdated = currentTimeMillis();
+                $(log).each( function() {
+                    chatLog.append(this).append("\n");
+                });
                 scrollDown();
-                updateChat();
+                
             }).fail(function()
             {
-                // NEED TO USE <code> tag instead of <textarea>
-                //chatLog.append($("<span style='color:red;'>\nSERVER DOWN\n"));
                 location.reload();
-            });
+            }).always( updateChat );
         }
         
         function scrollDown()

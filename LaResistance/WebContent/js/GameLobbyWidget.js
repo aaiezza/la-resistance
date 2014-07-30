@@ -49,48 +49,30 @@ var GameLobbyWidget = function()
             });
         };
 
-        function updateUsersOnline()
+        function getUsersOnline( blank )
         {
-            $.post("updateUsersOnline")
+            $.post("usersOnline/" + blank)
             .done( function( response ) {
                 
+                if ( !response.length )
+                {
+                    return;
+                }
+
                 $("#userList tbody").remove();
                 
-                $( response.users ).each( function() {
+                $( response ).each( function() {
                     $("#userList")
                     .append( $("<tr><td>" + this.username + "</td>").addClass("user")
                     );
                 });
                 
-                $("#userList").trigger("update");//.trigger("sorton",[[[0,0]]]);
-                
-                updateUsersOnline();
-
+                $("#userList").trigger("update")//.trigger("sorton",[[[0,0]]]);
             })
-            .fail(function() {
-                // NEED TO USE <code> tag instead of <textarea>
-                //chatLog.append($("<span style='color:red;'>\nSERVER DOWN\n"));
+            .fail( function() {
                 location.reload();
-            });
-        };
-
-        function getUsersOnline()
-        {
-            $.post("usersOnline")
-            .done( function( response ) {
-                $( response.users ).each( function() {
-                    $("#userList")
-                    .append( $("<tr><td>" + this.username + "</td>").addClass("user")
-                    );
-                });
-                $("#userList").tablesorter({sortList: [[0,0]]});
-                updateUsersOnline();
             })
-            .fail(function() {
-                // NEED TO USE <code> tag instead of <textarea>
-                //chatLog.append($("<span style='color:red;'>\nSERVER DOWN\n"));
-                location.reload();
-            });
+            .always( function(){ getUsersOnline(false) } );
         };
 
         //////////////////////////////////////////
@@ -118,7 +100,8 @@ var GameLobbyWidget = function()
             },
             updateUserList : function()
             {
-                getUsersOnline();
+                $("#userList").tablesorter();
+                getUsersOnline(true);
             },
             log : function(message)
             {

@@ -1,4 +1,4 @@
-package org.resist.ance.property;
+package org.resistance.site.property;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
