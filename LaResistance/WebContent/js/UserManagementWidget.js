@@ -25,9 +25,9 @@ var UserManagementWidget = function()
         //////////////////////////////
         // Private Instance Methods //
         //////////////////////////////
-        function retrieveUsers()
+        function retrieveUsers( localAccess )
         {
-            $( "#userTable tr:not(:first-child)" ).remove();
+            $( "#userTable tbody tr" ).remove();
 
             $.ajax(
             {
@@ -53,7 +53,36 @@ var UserManagementWidget = function()
                     .append( $("<td><span>" + user.email + "</span></td>" ) )
                     .append( authorities ) );
                 });
+                
+                ////////////////////
+                // USER SELECTION //
+                ////////////////////
+                $( ".selectUser" ).click( function( event )
+                {
+                    event.stopPropagation();
+                    var user = $(this).attr( "user" );
+                    $( ".userRow[user=" + user + "]" ).toggleClass( "selected" );
+                    updateClickabilityOfButtons();
+                });
+                
+                $( ".userRow" ).children().click( function()
+                {
+                    var user = $(this).parent().attr( "user" );
+                    $( ".selectUser[user=" + user + "]" ).click();
+                });
+                
+                if ( localAccess )
+                {
+                    $("#userTable").tablesorter(
+                    {
+                        sortList : [ [ 0, 0 ] ]
+                    });
+                }
+                
+                $("#userTable").trigger("update");
+                
             });
+            
             updateClickabilityOfButtons();
         };
 
@@ -121,24 +150,7 @@ var UserManagementWidget = function()
         
         $( "#userTable" ).append( $("<tbody>") );
         
-        retrieveUsers();
-        
-        ////////////////////
-        // USER SELECTION //
-        ////////////////////
-        $( ".selectUser" ).click( function( event )
-        {
-            event.stopPropagation();
-            var user = $(this).attr( "user" );
-            $( ".userRow[user=" + user + "]" ).toggleClass( "selected" );
-            updateClickabilityOfButtons();
-        });
-        
-        $( ".userRow" ).children().click( function()
-        {
-            var user = $(this).parent().attr( "user" );
-            $( ".selectUser[user=" + user + "]" ).click();
-        });
+        retrieveUsers(true);
         
         ///////////////////////
         // USER MODIFICATION //
@@ -159,7 +171,7 @@ var UserManagementWidget = function()
             },
             refresh : function()
             {
-                retrieveUsers();
+                retrieveUsers(false);
             },
             log : function(message)
             {
@@ -172,8 +184,4 @@ var UserManagementWidget = function()
 $(document).ready(function()
 {
     userManagementWidget = makeUserManagementWidget($("#core"));
-    $("#userTable").tablesorter(
-    {
-        sortList : [ [ 0, 0 ] ]
-    });
 });

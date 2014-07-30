@@ -61,7 +61,6 @@
 	<http auto-config="true" security="none" pattern="/login*" />
 	<http auto-config="true" security="none" pattern="/signup*" />
 	<http auto-config="true" security="none" pattern="/vote*" />
-	<http auto-config="true" security="none" pattern="/serverTime*" />
 
 	<!-- Paths that need securing -->
 	<http auto-config="false" entry-point-ref="loginUrlAuthenticationEntryPoint">
@@ -69,6 +68,7 @@
 		<intercept-url pattern="/userManagement*" access="ROLE_ADMIN" />
 		<intercept-url pattern="/updateUser*" access="ROLE_USER" />
 		<intercept-url pattern="/userDetails*" access="ROLE_USER" />
+		<intercept-url pattern="/gameLobby*" access="ROLE_USER" />
 		<intercept-url pattern="/profile*" access="ROLE_USER" />
 		<intercept-url pattern="/**" access="ROLE_USER" />
 
