@@ -6,9 +6,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
@@ -55,12 +53,11 @@ public class ShabaHttpSessionListener extends HttpSessionEventPublisher implemen
             "SPRING_SECURITY_CONTEXT" ) );
         if ( context != null )
         {
-            Authentication auth = context.getAuthentication();
+            ShabaUser user = USER_MAN.getShabaUser();
 
-            ShabaUser user = USER_MAN.loadShabaUserByUsername( ( (UserDetails) auth.getPrincipal() )
-                    .getUsername() );
-
+            if ( user != null )
             USER_TRACKER.removeUser( user );
+
         }
     }
 }

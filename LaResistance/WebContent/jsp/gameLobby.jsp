@@ -8,14 +8,16 @@
 
 <link href="css/ResistanceStyle.css" rel="stylesheet" type="text/css">
 <link href="css/GameLobbyStyle.css" rel="stylesheet" type="text/css">
+<link href="css/GameViewStyle.css" rel="stylesheet" type="text/css">
 <link href="css/ChatViewStyle.css" rel="stylesheet" type="text/css">
 
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-<script type="text/javascript" src="http://epeli.github.io/underscore.string/dist/underscore.string.min.js"></script>
+<script type="text/javascript" src="http://underscorejs.org/underscore-min.js"></script>
 <script type="text/javascript" src="js/jquery.tablesorter.js"></script>
 
 <script type="text/javascript" src="js/HeaderWidget.js"></script>
 <script type="text/javascript" src="js/GameLobbyWidget.js"></script>
+<script type="text/javascript" src="js/GameViewWidget.js"></script>
 <script type="text/javascript" src="js/ChatWidget.js"></script>
 
 <link rel="icon" type="image/ico" href="images/favicon.ico">
@@ -30,5 +32,6 @@
 	<div id="core"></div>
 
 	<a id="logoutOption" href="${logoutUrl}">Logout</a>
+	<p id="p_user" style="display:none">${username}</p>
 </body>
 </html>

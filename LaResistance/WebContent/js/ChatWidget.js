@@ -69,14 +69,16 @@ var ChatWidget = function()
         {
             $.get("updateChat").done( function(log)
             {
+                if ( log == "timeout" )
+                {
+                    return;
+                }
+                
                 $(log).each( function() {
                     chatLog.append(this).append("\n");
                 });
                 scrollDown();
                 
-            }).fail(function()
-            {
-                location.reload();
             }).always( updateChat );
         }
         

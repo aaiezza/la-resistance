@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.resistance.site.Player;
+import org.resistance.site.utils.VoteCounter;
 
 /**
  * @author Alex Aiezza
@@ -17,6 +18,8 @@ public final class Mission implements Comparable<Mission>
     public final int          MinimumFails;
 
     private ArrayList<Player> team;
+    
+    private final VoteCounter votes;
 
     public Mission( int missionNumber, int teamSize, int minimumFails )
     {
@@ -24,6 +27,7 @@ public final class Mission implements Comparable<Mission>
         TeamSize = teamSize;
         team = new ArrayList<Player>( teamSize );
         MinimumFails = minimumFails;
+        votes =  new VoteCounter();
     }
 
     public void addPlayerToTeam( Player player ) throws UnsupportedOperationException
@@ -34,6 +38,16 @@ public final class Mission implements Comparable<Mission>
         }
 
         team.add( player );
+    }
+
+    public void submitVote( Player player, boolean _vote )
+    {
+        if ( !team.contains( player ) )
+        {
+            return;
+        }
+        // If player already voted, this will not work
+        votes.vote( player, _vote );
     }
 
     @Override

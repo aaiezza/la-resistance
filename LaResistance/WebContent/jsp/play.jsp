@@ -4,7 +4,7 @@
 <head>
 
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-<script type="text/javascript" src="http://epeli.github.io/underscore.string/dist/underscore.string.min.js"></script>
+<script type="text/javascript" src="http://underscorejs.org/underscore-min.js"></script>
 <script type="text/javascript" src="js/PlayWidget.js"></script>
 
 <link rel="icon" type="image/ico" href="images/favicon.ico">

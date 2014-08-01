@@ -1,19 +1,25 @@
 package org.resistance.site.web.utils;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.web.context.request.async.DeferredResult;
 
-public abstract class DeferredResponder <T, R> extends Observable
+public abstract class DeferredResponder <T, R>
 {
+    public final static String                                       TIMEOUT = "timeout";
+
     protected final Map<DeferredResult<List<T>>, Pair<ShabaUser, R>> REQUESTS;
 
     protected final Log                                              LOGGER;
+
+    protected DeferredResponder()
+    {
+        this( LogFactory.getLog( DeferredResponder.class ) );
+    }
 
     protected DeferredResponder( Log logger )
     {
@@ -26,7 +32,7 @@ public abstract class DeferredResponder <T, R> extends Observable
      * 
      * @param requestBiConsumer
      */
-    protected synchronized final void sendResults()
+    protected final void sendResults()
     {
         REQUESTS.forEach( ( deferredResult, userAndRestrictor ) -> {
             doBeforeSendingSingleResult( deferredResult, userAndRestrictor );
@@ -38,7 +44,7 @@ public abstract class DeferredResponder <T, R> extends Observable
     /**
      * Optional overriding to perform task before each result is set
      */
-    protected synchronized void doBeforeSendingSingleResult(
+    protected void doBeforeSendingSingleResult(
             DeferredResult<List<T>> deferredResult,
             Pair<ShabaUser, R> userAndRestrictor )
     {}
@@ -59,10 +65,9 @@ public abstract class DeferredResponder <T, R> extends Observable
      * @param resultRestrictor
      * @return
      */
-    public synchronized final DeferredResult<List<T>> registerRequest( ShabaUser user, R resultRestrictor )
+    public final DeferredResult<List<T>> registerRequest( ShabaUser user, R resultRestrictor )
     {
-        final DeferredResult<List<T>> deferredResult = new DeferredResult<List<T>>( null,
-                Collections.emptyList() );
+        final DeferredResult<List<T>> deferredResult = new DeferredResult<List<T>>( null, TIMEOUT );
         REQUESTS.put( deferredResult, new Pair<ShabaUser, R>( user, resultRestrictor ) );
         LOGGER.debug( String.format( "\n\t\t%s is WAITING for a result", user.getUsername() ) );
 

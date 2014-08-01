@@ -7,19 +7,31 @@ import org.resistance.site.mech.Role;
  */
 public class Player
 {
+    private final String GAME_ID;
 
     private final String name;
 
-    protected Role       role;
+    protected transient Role       role;
 
-    public Player( String name )
+    public Player( String name, String gameID )
     {
+        this.GAME_ID = gameID;
         this.name = name;
+    }
+
+    public String getGameID()
+    {
+        return GAME_ID;
     }
 
     public Role getRole()
     {
         return role;
+    }
+
+    void setRole( Role role )
+    {
+        this.role = role;
     }
 
     public String getName()
@@ -30,7 +42,7 @@ public class Player
     @Override
     public int hashCode()
     {
-        return name.hashCode() + role.hashCode();
+        return name.hashCode();
     }
 
     @Override
@@ -38,7 +50,7 @@ public class Player
     {
         if ( o instanceof Player )
         {
-            return name.equals( ( (Player) o ).name ) && role.equals( ( (Player) o ).role );
+            return name.equals( ( (Player) o ).name );
         }
         return false;
     }

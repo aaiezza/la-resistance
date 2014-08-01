@@ -1,5 +1,7 @@
 package org.resistance.site;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.Stack;
 
@@ -15,21 +17,23 @@ import org.springframework.stereotype.Service;
 @Service
 public class BoardFactory
 {
-    private final Scanner BoardDB;
+    private final File BoardDB;
 
     @Autowired
     private BoardFactory( @Value ( "${Board_DB}" ) String boardDB )
     {
-        BoardDB = new Scanner( boardDB );
+        BoardDB = new File( boardDB );
     }
 
-    public synchronized final Board MakeBoard( int numberOfPlayers )
+    public synchronized final Board MakeBoard( int numberOfPlayers ) throws FileNotFoundException
     {
         Board board = null;
 
-        findBoard: while ( BoardDB.hasNext() )
+        final Scanner boardDBsc = new Scanner( BoardDB );
+
+        findBoard: while ( boardDBsc.hasNext() )
         {
-            String [] values = BoardDB.nextLine().split( "\t" );
+            String [] values = boardDBsc.nextLine().split( "\t" );
             int num_players = Integer.parseInt( values[0] );
 
             if ( num_players != numberOfPlayers )
@@ -46,7 +50,7 @@ public class BoardFactory
             int mission_num = 1;
             for ( String s_m : str_missions )
             {
-                String [] str_mission = s_m.split( ":" );
+                String [] str_mission = s_m.split( "," );
                 missions_stack.add( new Mission( mission_num++, Integer.parseInt( str_mission[0] ),
                         Integer.parseInt( str_mission[1] ) ) );
             }
@@ -54,8 +58,9 @@ public class BoardFactory
             board = new Board( num_players, num_spies, new Missions( missions_stack ) );
 
             break findBoard;
-
         }
+        
+        boardDBsc.close();
 
         return board;
     }

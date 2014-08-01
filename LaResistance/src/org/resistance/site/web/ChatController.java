@@ -8,14 +8,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.resistance.site.web.utils.ChatLogger;
 import org.resistance.site.web.utils.ShabaJdbcUserDetailsManager;
 import org.resistance.site.web.utils.ShabaUser;
-import org.resistance.site.web.utils.UserTracker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -33,8 +31,6 @@ public class ChatController
 {
     private final ShabaJdbcUserDetailsManager USER_MAN;
 
-    private final UserTracker                 USER_TRACKER;
-
     private final ChatLogger                  CHAT_LOG;
 
     private final Log                         LOGGER;
@@ -43,13 +39,11 @@ public class ChatController
     private ChatController(
         @Qualifier ( "Chat_Logger" ) Log logger,
         ChatLogger chatLog,
-        ShabaJdbcUserDetailsManager userManager,
-        UserTracker userTracker )
+        ShabaJdbcUserDetailsManager userManager )
     {
         LOGGER = logger;
         CHAT_LOG = chatLog;
         USER_MAN = userManager;
-        USER_TRACKER = userTracker;
     }
 
     @RequestMapping (
@@ -103,14 +97,5 @@ public class ChatController
         ShabaUser user = USER_MAN.getShabaUser();
 
         return CHAT_LOG.registerRequest( user, lastUpdate );
-    }
-
-    /**
-     * Allows for User Traffic to be displayed in chat
-     */
-    @PostConstruct
-    private void init()
-    {
-        USER_TRACKER.addObserver( CHAT_LOG );
     }
 }

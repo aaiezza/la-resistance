@@ -5,7 +5,7 @@ z<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <link href="css/ResistanceStyle.css" rel="stylesheet" type="text/css">
 
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-<script type="text/javascript" src="http://epeli.github.io/underscore.string/dist/underscore.string.min.js"></script>
+<script type="text/javascript" src="http://underscorejs.org/underscore-min.js"></script>
 <script type="text/javascript" src="js/HeaderWidget.js"></script>
 <script type="text/javascript" src="js/ProfileWidget.js"></script>
 

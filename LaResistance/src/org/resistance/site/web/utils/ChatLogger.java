@@ -7,8 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Stack;
 
 import org.apache.commons.logging.LogFactory;
@@ -22,7 +20,7 @@ import org.springframework.web.context.request.async.DeferredResult;
  */
 @Service ( "chatLogger" )
 @ManagedResource
-public class ChatLogger extends DeferredResponder<String, Long> implements Observer
+public class ChatLogger extends DeferredResponder<String, Long>
 {
     private static final String           CHAT_FORMAT = "%s %s: %s";
 
@@ -108,30 +106,14 @@ public class ChatLogger extends DeferredResponder<String, Long> implements Obser
         return messages;
     }
 
+    @ManagedOperation ( description = "get the whole log" )
     public synchronized Stack<String> getAllMessages()
     {
         return messagesSince( 0L );
     }
 
-    @Override
-    public void update( Observable o, Object arg )
+    void systemUpdate( String message, Object... args )
     {
-        if ( o instanceof UserTracker && arg instanceof Pair<?, ?> )
-        {
-            if ( (boolean) ( (Pair<?, ?>) arg ).getKey() )
-            {
-                say(
-                    "::",
-                    String.format( "%s is ONLINE!",
-                        ( (ShabaUser) ( (Pair<?, ?>) arg ).getValue() ).getUsername() ) );
-            } else
-            {
-                say(
-                    "::",
-                    String.format( "%s has LEFT!",
-                        ( (ShabaUser) ( (Pair<?, ?>) arg ).getValue() ).getUsername() ) );
-            }
-        }
-
+        say( "::", String.format( message, args ) );
     }
 }

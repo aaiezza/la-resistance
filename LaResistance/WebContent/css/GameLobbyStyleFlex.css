@@ -24,6 +24,12 @@ div.rightPane {
 	width: calc(25% - ( 16px + .5em));
 }
 
+
+.me td{
+	background: lightgray;
+	padding: 1px 1px 1px 10px
+}
+
 .gameLobby {
 	float: left;
 	position: relative;

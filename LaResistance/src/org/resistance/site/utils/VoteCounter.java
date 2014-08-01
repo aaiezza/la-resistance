@@ -1,37 +1,36 @@
 package org.resistance.site.utils;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
-import org.springframework.stereotype.Service;
+import org.resistance.site.Player;
 
 /**
  * @author Alex Aiezza
  */
-@Service
 public class VoteCounter
 {
-    private final ArrayList<Boolean> votes;
+    private final HashMap<Player, Boolean> votes;
 
     public VoteCounter()
     {
-        votes = new ArrayList<Boolean>();
+        votes = new HashMap<Player, Boolean>();
     }
 
-    public synchronized void vote( boolean _vote )
+    public synchronized boolean vote( Player player, boolean _vote )
     {
-        votes.add( _vote );
-    }
-
-    public synchronized void resetVoteCounter()
-    {
-        votes.clear();
+        if ( !votes.containsKey( player ) )
+        {
+            return false;
+        }
+        votes.put( player, _vote );
+        return true;
     }
 
     public synchronized VoteResults getResults()
     {
         VoteResults results = new VoteResults();
 
-        for ( boolean vote : votes )
+        for ( boolean vote : votes.values() )
         {
             if ( vote )
             {
@@ -47,7 +46,7 @@ public class VoteCounter
 
     public class VoteResults
     {
-        protected int approve, deny;
+        private int approve, deny;
 
         public int approves()
         {
@@ -58,7 +57,5 @@ public class VoteCounter
         {
             return deny;
         }
-
     }
-
 }
