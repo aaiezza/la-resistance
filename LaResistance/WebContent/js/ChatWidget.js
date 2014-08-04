@@ -6,7 +6,7 @@ var ChatWidget = function()
     // ///////////////////////////////
     // Widget Constructor Function //
     /////////////////////////////////
-    global.makeChatWidget = function( parentElement )
+    global.makeChatWidget = function( parentElement, stompClient )
     {
         //////////////////
         ///// Fields /////
@@ -26,60 +26,49 @@ var ChatWidget = function()
         
         var stickyScroll = 0;
         
+        stompClient.subscribe('/queue/chat', updateChat );
+        
+        stompClient.subscribe('/app/chat');
+
+        stompClient.subscribe('/user/queue/chatSpecial', updateAdminChat );
+        
         //////////////////////////////
         // Private Instance Methods //
         //////////////////////////////
-        function sayIt( say )
+        function updateChat( response ) {
+            $($.parseJSON(response.body)).each( function() {
+                chatLog.append(this).append("\n");
+            });
+            scrollDown();                              
+        }
+        
+        function updateAdminChat(response) {
+            var messages = $.parseJSON( response.body ).messages;
+            if (messages.length <= 0)
+            {
+                messages = [ "No Messages!" ];
+            }
+            chatLog.append("\t~ ~ ~\n");
+            $(messages).each(function(i, message)
+            {
+                chatLog.append("  ").append(message).append("\n");
+            });
+            chatLog.append("\t~ ~ ~\n");
+        
+            stickyScroll = 0;
+            scrollDown();                              
+        }
+        
+        function sayItSocket( sayIt )
         {
-            say = say.trim();
+            sayIt = sayIt.trim();
             $("#chat").val("");
 
-            if (!say)
+            if (!sayIt)
             {
                 return;
             }
-            
-            $.ajax({
-                url: "sayIt",
-                type: "POST",
-                dataType: "json",
-                headers: { "say": say }
-            }).done(function(response)
-            {
-                if (Object.keys(response).length > 0)
-                {
-                    if (Object.keys(response.messages).length <= 0)
-                    {
-                        response.messages = [ "No Messages!" ];
-                    }
-                    chatLog.append("\t~ ~ ~\n");
-                    $(response.messages).each(function(i, message)
-                    {
-                        chatLog.append("  ").append(message).append("\n");
-                    });
-                    chatLog.append("\t~ ~ ~\n");
-                }
-                
-                stickyScroll = 0;
-                scrollDown();
-            });
-        }
-
-        function updateChat()
-        {
-            $.get("updateChat").done( function(log)
-            {
-                if ( log == "timeout" )
-                {
-                    return;
-                }
-                
-                $(log).each( function() {
-                    chatLog.append(this).append("\n");
-                });
-                scrollDown();
-                
-            }).always( updateChat );
+            stompClient.send( "/app/say", {}, JSON.stringify( sayIt ) )
         }
         
         function scrollDown()
@@ -98,7 +87,7 @@ var ChatWidget = function()
                 
         chatButton.click(function()
         {
-            sayIt($("#chat").val());
+            sayItSocket($("#chat").val());
         });
 
         chatInput.keypress(function(event)
@@ -120,10 +109,11 @@ var ChatWidget = function()
             },
             init : function()
             {
-                updateChat();
+
             },
             log : function(message)
             {
+                return stompClient;
             }
         };
     };

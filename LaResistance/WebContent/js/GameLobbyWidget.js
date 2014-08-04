@@ -30,16 +30,37 @@ var GameLobbyWidget = function()
 
         var createGameButton = $( "<input id='newGameButton' type='button' value='Start a Resistance'>" );
         
-        var chatWidget = makeChatWidget( chatView ).init();
-        
         var activeGames = [];
         
         var gameViewWidget;
         
+        var chatWidget;
+        
         var me = $("#p_user").html();
         
         var gameIDtoFocusOn;
+        
+        // I WISHSHSHSHSSH
+        //var lobbySock = new SockJS("ws://" + location.host + "/LaResistance/lobbyUpdate");
+        
+        var lobbySock = new SockJS("lobbyUpdate", null, {protocols_whitelist : ["xhr-polling"], debug: true});
+        var stompClient = Stomp.over( lobbySock );
+        
+        stompClient.connect({}, function(frame) {
+            console.log('Connected: ' + frame);
+            chatWidget = makeChatWidget( chatView, stompClient );
 
+            stompClient.subscribe('/queue/activeUsers', updateActiveUsers );
+            
+            stompClient.subscribe('/app/activeUsers');
+            
+            stompClient.subscribe('/queue/activeGames', updateActiveGames );
+
+            stompClient.subscribe('/user/queue/activeGames', updateActiveGames );
+            
+            stompClient.subscribe('/app/activeGames');
+        });
+        
         //////////////////////////////
         // Private Instance Methods //
         //////////////////////////////
@@ -52,6 +73,63 @@ var GameLobbyWidget = function()
                     alert(this);
                 });
             }
+        }
+        
+        function updateActiveGames( response ) {
+            var res = $($.parseJSON(response.body));
+
+            activeGames = [];
+            $(".game").remove();
+            
+            $( res ).each( function() {
+                activeGames.push(this);
+            });
+            
+            $(activeGames).each( function( i, game ) {
+                var gameLink = $("<h2>").append(game.gameID).addClass("game");
+                gameLink.click( function() {
+                    if ( !$(this).hasClass("selected") )
+                    {
+                        if ( gameViewWidget )
+                            gameViewWidget.unsubscribe();
+                        gameViewWidget = makeGameViewWidget( gameView, game, setGameIDtoFocusOn, stompClient );
+                    }
+                    
+                    $(".game").removeClass("selected");
+                    $(this).addClass("selected");
+                });
+                
+                $("#gameList").prepend( gameLink );
+            });
+            
+            if ( gameViewWidget ) gameViewWidget.clearIfGameCanceled( activeGames );
+            
+            var gameID = getGameIDtoFocusOn();
+            
+            if ( gameID && _.contains( _.map( activeGames, function(game){ return game.gameID; } ), gameID ) )
+            {
+                $(".game").each( function() {
+                    if( $(this).html() == gameID )
+                    {
+                        $(this).click();
+                        return false;
+                    }
+                });
+            }                             
+        }
+        
+        function updateActiveUsers( response ) {
+            var res = $($.parseJSON(response.body));
+            
+            $("#userList tbody").remove();
+            
+            $( res ).each( function() {
+                $("#userList")
+                .append( $("<tr><td>" + this.username + "</td>").addClass("user").toggleClass( "me", this.username == me )
+                );
+            });
+            
+            $("#userList").trigger("update")//.trigger("sorton",[[[0,0]]]);
         }
         
         function setGameIDtoFocusOn( gameID )
@@ -71,75 +149,6 @@ var GameLobbyWidget = function()
             $.post("createGame").done( alertErrors );
         }
         
-        function retrieveActiveGames( forceGet )
-        {
-            // SEND REQUEST TO SERVER
-            $.get("activeGames/" + forceGet).done( function(response)
-            {
-                if ( response == "timeout" )
-                {
-                    return;
-                }
-                
-                activeGames = [];
-                $(".game").remove();
-                if ( gameViewWidget ) gameViewWidget.empty();
-                
-                $(response).each( function() {
-                    activeGames.push(this);
-                });
-                
-                $(activeGames).each( function( i, game ) {
-                    var gameLink = $("<h2>").append(game.gameID).addClass("game");
-                    gameLink.click( function() {
-                        $(".game").removeClass("selected");
-                        $(this).addClass("selected");
-
-                        gameViewWidget = makeGameViewWidget( gameView, game, setGameIDtoFocusOn );
-                    });
-                    
-                    $("#gameList").prepend( gameLink );
-                });
-                
-                var gameID = getGameIDtoFocusOn();
-                
-                if ( gameID && _.contains( _.map( activeGames, function(game){ return game.gameID; } ), gameID ) )
-                {
-                    $(".game").each( function() {
-                        if( $(this).html() == gameID )
-                        {
-                            $(this).click();
-                            return false;
-                        }
-                    });
-                }
-
-            }).always( function(){retrieveActiveGames(false);} );
-        };
-
-        function getUsersOnline( forceGet )
-        {
-            $.get("usersOnline/" + forceGet)
-            .done( function( response ) {
-                
-                if ( response == "timeout" )
-                {
-                    return;
-                }
-
-                $("#userList tbody").remove();
-                
-                $( response ).each( function() {
-                    $("#userList")
-                    .append( $("<tr><td>" + this.username + "</td>").addClass("user").toggleClass( "me", this.username == me )
-                    );
-                });
-                
-                $("#userList").trigger("update")//.trigger("sorton",[[[0,0]]]);
-            })
-            .always( function(){ getUsersOnline(false) } );
-        };
-
         //////////////////////////////////////////
         // Find Pieces and Enliven DOM Fragment //
         //////////////////////////////////////////
@@ -168,12 +177,14 @@ var GameLobbyWidget = function()
             init : function()
             {
                 $("#userList").tablesorter();
-                getUsersOnline(true);
-                retrieveActiveGames(true);
             },
             log : function(message)
             {
 
+            },
+            getChatWidget : function()
+            {
+                return chatWidget;
             }
         };
     };

@@ -7,15 +7,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.LogFactory;
-import org.resistance.site.web.utils.DeferredResponder;
+import org.resistance.site.web.utils.MessageRelayer;
 import org.resistance.site.web.utils.ShabaUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.async.DeferredResult;
 
 @Service
-public class GameTracker extends DeferredResponder<Game, Boolean>
+public class GameTracker extends MessageRelayer<List<Game>>
 {
+    public static final String      RELAY_DESTINATION = "/queue/activeGames";
+
+    public static final String      SUBSCRIPTION_URL  = "/activeGames";
+
     private final Map<String, Game> games;
 
     private final BoardFactory      BOARD_FACTORY;
@@ -30,7 +33,7 @@ public class GameTracker extends DeferredResponder<Game, Boolean>
 
     public boolean registerGame( final String user )
     {
-        Game game = new Game( user, BOARD_FACTORY );
+        Game game = new Game( user, BOARD_FACTORY, TEMPLATE );
 
         for ( final Game g : games.values() )
         {
@@ -43,7 +46,7 @@ public class GameTracker extends DeferredResponder<Game, Boolean>
         games.put( game.getGameID(), game );
         LOGGER.info( String.format( "Game: %s REGISTERED", game ) );
 
-        sendResults();
+        broadcastPayload();
 
         return true;
     }
@@ -56,7 +59,7 @@ public class GameTracker extends DeferredResponder<Game, Boolean>
             LOGGER.info( String.format( "Game: %s UNREGISTERED", game ) );
         }
 
-        sendResults();
+        broadcastPayload();
 
         return game != null;
     }
@@ -73,7 +76,7 @@ public class GameTracker extends DeferredResponder<Game, Boolean>
 
         return null;
     }
-    
+
     public Game getGameUsernameIsPlayerIn( String playerName )
     {
         for ( Game g : games.values() )
@@ -120,16 +123,26 @@ public class GameTracker extends DeferredResponder<Game, Boolean>
     }
 
     @Override
-    protected List<Game> getResult( Boolean resultRestrictor )
+    protected List<Game> getPayload()
     {
-        return resultRestrictor ? getActiveGames() : Collections.<Game> emptyList();
+        return getActiveGames();
     }
 
     @Override
-    protected synchronized void doBeforeSendingSingleResult(
-            DeferredResult<List<Game>> deferredResult,
-            Pair<ShabaUser, Boolean> userAndRestrictor )
+    public void onSubscription( ShabaUser user )
     {
-        userAndRestrictor.setValue( true );
+        onSubscription( user, UPDATE_USER );
+    }
+
+    @Override
+    public String getRelayDestination()
+    {
+        return RELAY_DESTINATION;
+    }
+
+    @Override
+    public String toString()
+    {
+        return games.toString();
     }
 }

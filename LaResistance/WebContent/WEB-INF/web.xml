@@ -5,7 +5,7 @@
 	id="WebApp_ID" version="3.0">
 
 	<display-name>LaResistance</display-name>
-	
+
 	<!-- The definition of the Root Spring Container shared by all Servlets 
 		and Filters -->
 	<context-param>
@@ -60,7 +60,10 @@
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
 		<init-param>
 			<param-name>contextConfigLocation</param-name>
-			<param-value>/WEB-INF/spring/ResistanceServlet/servlet-context.xml</param-value>
+			<param-value>
+				/WEB-INF/spring/ResistanceServlet/servlet-socket-handlers.xml
+				/WEB-INF/spring/ResistanceServlet/servlet-context.xml
+			</param-value>
 		</init-param>
 		<init-param>
 			<param-name>listings</param-name>

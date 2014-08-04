@@ -13,21 +13,24 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.async.DeferredResult;
 
 /**
  * @author Alex Aiezza
  */
 @Service ( "chatLogger" )
 @ManagedResource
-public class ChatLogger extends DeferredResponder<String, Long>
+public class ChatLogger extends MessageRelayer<List<String>>
 {
-    private static final String           CHAT_FORMAT = "%s %s: %s";
+    public static final String            RELAY_DESTINATION = "/queue/chat";
 
-    private static final int              CHAT_CAP    = 100;
+    public static final String            SUBSCRIPTION_URL  = "/chat";
 
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
-                                                              "([MM-dd-yyyy] HH:mm:ss)" );
+    private static final String           CHAT_FORMAT       = "%s %s: %s";
+
+    private static final int              CHAT_CAP          = 100;
+
+    private static final SimpleDateFormat DATE_FORMAT       = new SimpleDateFormat(
+                                                                    "([MM-dd-yyyy] HH:mm:ss)" );
 
     private Map<Long, String>             log;
 
@@ -56,22 +59,27 @@ public class ChatLogger extends DeferredResponder<String, Long>
             }
         }
 
-        sendResults();
+        broadcastPayload();
     }
 
     @Override
-    protected void doBeforeSendingSingleResult(
-            DeferredResult<List<String>> deferredResult,
-            Pair<ShabaUser, Long> userAndRestrictor )
+    protected List<String> getPayload()
     {
-        LOGGER.debug( String.format( "\n\t\tThe wait is OVER for %s", userAndRestrictor.getKey()
-                .getUsername() ) );
+        long currentTime = System.currentTimeMillis() - 100;
+
+        return messagesSince( currentTime );
     }
 
     @Override
-    protected List<String> getResult( Long resultRestrictor )
+    public String getRelayDestination()
     {
-        return messagesSince( resultRestrictor );
+        return RELAY_DESTINATION;
+    }
+
+    @Override
+    public void onSubscription( ShabaUser user )
+    {
+        onSubscription( user, NO_UPDATE );
     }
 
     public synchronized String lastMessage()
@@ -97,7 +105,7 @@ public class ChatLogger extends DeferredResponder<String, Long>
 
         for ( Entry<Long, String> entry : log.entrySet() )
         {
-            if ( entry.getKey() > when )
+            if ( entry.getKey() >= when )
             {
                 messages.push( entry.getValue() );
             }
@@ -116,4 +124,5 @@ public class ChatLogger extends DeferredResponder<String, Long>
     {
         say( "::", String.format( message, args ) );
     }
+
 }

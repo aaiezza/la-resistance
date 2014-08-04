@@ -3,6 +3,7 @@ package org.resistance.site.web;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,12 +18,13 @@ import org.resistance.site.web.utils.ShabaUser;
 import org.resistance.site.web.utils.UserTracker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -33,29 +35,33 @@ public class GameLobbyController
 {
     private final Log                         LOGGER;
 
-    private final UserTracker                 USER_TRACKER;
-
     private final ShabaJdbcUserDetailsManager USER_MAN;
 
     private final GameTracker                 GAME_TRACKER;
 
+    private final UserTracker                 USER_TRACKER;
+
     @Autowired
     public GameLobbyController(
         @Qualifier ( "GameLobby_Logger" ) Log logger,
-        UserTracker userTracker,
         ShabaJdbcUserDetailsManager userManager,
         PrintBeans beanPrinter,
-        GameTracker gameTracker )
+        UserTracker userTracker,
+        GameTracker gameTracker,
+        SimpMessagingTemplate template )
     {
         LOGGER = logger;
 
-        USER_TRACKER = userTracker;
-
         USER_MAN = userManager;
+
+        USER_TRACKER = userTracker;
 
         GAME_TRACKER = gameTracker;
 
         LOGGER.debug( beanPrinter.printBeans() );
+
+        USER_TRACKER.setTemplate( template );
+        GAME_TRACKER.setTemplate( template );
     }
 
     @RequestMapping ( method = GET, value = "/gameLobby" )
@@ -68,14 +74,31 @@ public class GameLobbyController
         return new ModelAndView( "gameLobby", "username", user.getUsername() );
     }
 
-    @RequestMapping ( method = GET, value = "usersOnline/{forceGet}" )
-    @ResponseBody
-    public DeferredResult<List<ShabaUser>> updateUsersOnline( @PathVariable boolean forceGet )
-            throws InterruptedException
+    @SubscribeMapping ( Game.SUBSCRIPTION_URL )
+    public Game subscribeToActiveGameUpdates(
+            @DestinationVariable String gameID,
+            Principal principal )
     {
-        ShabaUser user = USER_MAN.getShabaUser();
+        Game g = GAME_TRACKER.getGame( gameID );
 
-        return USER_TRACKER.registerRequest( user, forceGet );
+        if ( g != null )
+        {
+            g.onSubscription( USER_MAN.loadShabaUserByUsername( principal.getName() ) );
+        }
+
+        return g;
+    }
+
+    @SubscribeMapping ( GameTracker.SUBSCRIPTION_URL )
+    public void subscribeToActiveGamesUpdates( Principal principal )
+    {
+        GAME_TRACKER.onSubscription( USER_MAN.loadShabaUserByUsername( principal.getName() ) );
+    }
+
+    @SubscribeMapping ( UserTracker.SUBSCRIPTION_URL )
+    public void subscribeToActiveUserUpdates( Principal principal )
+    {
+        USER_TRACKER.onSubscription( USER_MAN.loadShabaUserByUsername( principal.getName() ) );
     }
 
     // TODO BETTER ERROR HANDLING!!!
@@ -95,24 +118,7 @@ public class GameLobbyController
         return Collections.<String> emptyList();
     }
 
-    @RequestMapping ( method = GET, value = "updateGame/{gameID}" )
-    @ResponseBody
-    public DeferredResult<List<Game>> getGameUpdate(
-            @PathVariable String gameID,
-            @RequestParam boolean forceGet )
-    {
-        ShabaUser user = USER_MAN.getShabaUser();
-
-        Game g = GAME_TRACKER.getGame( gameID );
-
-        if ( g != null )
-        {
-            return g.registerRequest( user, forceGet );
-        }
-        
-        return null;
-    }
-
+    // TODO BETTER ERROR HANDLING!!!
     @RequestMapping ( method = POST, value = "cancelGame/{gameID}" )
     @ResponseBody
     public List<String> cancelGame( @PathVariable String gameID )
@@ -128,13 +134,6 @@ public class GameLobbyController
         }
 
         return Collections.<String> emptyList();
-    }
-
-    @RequestMapping ( method = GET, value = "activeGames/{forceGet}" )
-    @ResponseBody
-    public DeferredResult<List<Game>> getActiveGames( @PathVariable boolean forceGet )
-    {
-        return GAME_TRACKER.registerRequest( USER_MAN.getShabaUser(), forceGet );
     }
 
     // TODO BETTER ERROR HANDLING!!!
@@ -188,5 +187,4 @@ public class GameLobbyController
 
         return Collections.<String> emptyList();
     }
-
 }

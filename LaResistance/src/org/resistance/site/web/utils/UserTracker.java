@@ -15,7 +15,6 @@ import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.async.DeferredResult;
 
 import com.google.common.collect.Collections2;
 
@@ -24,8 +23,12 @@ import com.google.common.collect.Collections2;
  */
 @Service
 @ManagedResource
-public class UserTracker extends DeferredResponder<ShabaUser, Boolean>
+public class UserTracker extends MessageRelayer<List<ShabaUser>>
 {
+    public static final String    RELAY_DESTINATION   = "/queue/activeUsers";
+
+    public static final String    SUBSCRIPTION_URL    = "/activeUsers";
+
     private static final String   LOGGED_IN           = "%s successfully Logged in!";
 
     private static final String   LOGGED_OUT          = "%s has Logged out!";
@@ -52,6 +55,7 @@ public class UserTracker extends DeferredResponder<ShabaUser, Boolean>
         GAME_TRACKER = gameTracker;
     }
 
+
     synchronized void addUser( final ShabaUser user )
     {
         if ( !onlineUsers.contains( user ) )
@@ -61,7 +65,7 @@ public class UserTracker extends DeferredResponder<ShabaUser, Boolean>
 
             CHAT_LOGGER.systemUpdate( CHAT_UPDATE_ONLINE, user.getUsername() );
 
-            sendResults();
+            broadcastPayload();
         }
     }
 
@@ -80,21 +84,25 @@ public class UserTracker extends DeferredResponder<ShabaUser, Boolean>
         if ( g != null )
             g.dismissPlayer( g.getPlayerFromUsername( user.getUsername() ) );
 
-        sendResults();
+        broadcastPayload();
     }
 
     @Override
-    protected List<ShabaUser> getResult( Boolean resultRestrictor )
+    protected List<ShabaUser> getPayload()
     {
-        return resultRestrictor ? getLoggedInUsers() : Collections.<ShabaUser> emptyList();
+        return getLoggedInUsers();
     }
 
     @Override
-    protected synchronized void doBeforeSendingSingleResult(
-            DeferredResult<List<ShabaUser>> deferredResult,
-            Pair<ShabaUser, Boolean> userAndRestrictor )
+    public String getRelayDestination()
     {
-        userAndRestrictor.setValue( true );
+        return RELAY_DESTINATION;
+    }
+
+    @Override
+    public void onSubscription( ShabaUser user )
+    {
+        onSubscription( user, UPDATE_ALL_SUBSCRIBERS );
     }
 
     @ManagedOperation ( description = "View Active Users" )

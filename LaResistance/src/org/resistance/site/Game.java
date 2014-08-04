@@ -10,20 +10,27 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.logging.LogFactory;
 import org.resistance.site.mech.GameState;
 import org.resistance.site.utils.RandomPicker;
-import org.resistance.site.web.utils.DeferredResponder;
+import org.resistance.site.web.utils.MessageRelayer;
 import org.resistance.site.web.utils.ShabaUser;
-import org.springframework.web.context.request.async.DeferredResult;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 /**
  * @author Alex Aiezza
  */
-public class Game extends DeferredResponder<Game, Boolean>
+public class Game extends MessageRelayer<Game>
 {
-    private final static String TO_STRING_FORMAT = "(Host:%s, spies:%d,players:%d)";
+    private static final String RELAY_DESTINATION_FORMAT = "/queue/game/%s";
 
-    private final static int    DEFAULT_PLAYERS  = 5;
+    public static final String  RELAY_DESTINATION        = "/queue/game/{gameID}";
+
+    public static final String  SUBSCRIPTION_URL         = "/game/{gameID}";
+
+    private static final String TO_STRING_FORMAT         = "(ID:%s, spies:%d,players:%d)";
+
+    private static final int    DEFAULT_PLAYERS          = 5;
 
     private Board               board;
 
@@ -35,8 +42,13 @@ public class Game extends DeferredResponder<Game, Boolean>
 
     private final BoardFactory  BoardFactory;
 
-    public Game( final String hostName, final BoardFactory boardFactory )
+    public Game(
+        final String hostName,
+        final BoardFactory boardFactory,
+        SimpMessagingTemplate template )
     {
+        super( LogFactory.getLog( Game.class ), template );
+
         GAME_ID = GenerateID( hostName );
 
         host = new Player( hostName, GAME_ID );
@@ -61,7 +73,7 @@ public class Game extends DeferredResponder<Game, Boolean>
             assignRoles();
             appointLeader( true );
             state = LEADER_CHOOSING_TEAM;
-            sendResults();
+            broadcastPayload();
             return true;
         default:
             return false;
@@ -69,19 +81,21 @@ public class Game extends DeferredResponder<Game, Boolean>
     }
 
     @Override
-    protected List<Game> getResult( Boolean resultRestrictor )
+    protected Game getPayload()
     {
-        List<Game> game = new ArrayList<Game>(1);
-        game.add( this );
-        return resultRestrictor ? game : Collections.<Game> emptyList();
+        return this;
     }
 
     @Override
-    protected synchronized void doBeforeSendingSingleResult(
-            DeferredResult<List<Game>> deferredResult,
-            Pair<ShabaUser, Boolean> userAndRestrictor )
+    public String getRelayDestination()
     {
-        userAndRestrictor.setValue( true );
+        return String.format( RELAY_DESTINATION_FORMAT, GAME_ID );
+    }
+
+    @Override
+    public void onSubscription( ShabaUser user )
+    {
+        onSubscription( user, UPDATE_USER );
     }
 
     public boolean containsDuplicatePlayers( Game g )
@@ -118,7 +132,7 @@ public class Game extends DeferredResponder<Game, Boolean>
 
     public Player getPlayerFromUsername( String username )
     {
-        int p = getPlayers().indexOf( username );
+        int p = getPlayers().indexOf( new Player( username, GAME_ID ) );
         return getPlayers().get( p );
     }
 
@@ -245,7 +259,7 @@ public class Game extends DeferredResponder<Game, Boolean>
             return false;
         }
         board.getPlayers().add( player );
-        sendResults();
+        broadcastPayload();
         return true;
     }
 
@@ -256,8 +270,10 @@ public class Game extends DeferredResponder<Game, Boolean>
         {
             return false;
         }
-        sendResults();
-        return board.getPlayers().remove( player );
+        boolean dismissed = board.getPlayers().remove( player );
+        if ( dismissed )
+            broadcastPayload();
+        return dismissed;
     }
 
     // TODO static int numerical state handling

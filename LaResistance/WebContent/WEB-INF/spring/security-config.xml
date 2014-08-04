@@ -61,7 +61,9 @@
 	<http auto-config="true" security="none" pattern="/login*" />
 	<http auto-config="true" security="none" pattern="/signup*" />
 	<http auto-config="true" security="none" pattern="/vote*" />
-
+	
+	<http auto-config="true" security="none" pattern="/lobbyUpdate/info*" />
+	
 	<!-- Paths that need securing -->
 	<http auto-config="false" entry-point-ref="loginUrlAuthenticationEntryPoint">
 		<intercept-url pattern="/results*" access="ROLE_ADMIN" />

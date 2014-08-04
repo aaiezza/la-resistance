@@ -13,6 +13,8 @@
 
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script type="text/javascript" src="http://underscorejs.org/underscore-min.js"></script>
+<script type="text/javascript" src="http://cdn.sockjs.org/sockjs-0.3.js"></script>
+<script type="text/javascript" src="js/stomp.js"></script>
 <script type="text/javascript" src="js/jquery.tablesorter.js"></script>
 
 <script type="text/javascript" src="js/HeaderWidget.js"></script>

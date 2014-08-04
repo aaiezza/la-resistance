@@ -14,6 +14,17 @@ http://www.codercorp.com/blog/spring/security-spring/tracking-logged-in-users-us
 
 http://mrather.blogspot.com/2010/02/extending-usernamepasswordauthenticatio.html#comment-form
 
+http://gerrydevstory.com/2014/03/04/stock-ticker-demo-webapp-using-spring-4-websocket/#comment-1467
+
+http://stackoverflow.com/questions/24890450/spring-stomp-subscribemapping-for-user-destination
+
+http://docs.spring.io/spring/docs/current/spring-framework-reference/html/websocket.html
+
+https://github.com/sockjs/sockjs-client
+https://github.com/jmesnil/stomp-websocket
+
+http://jmesnil.net/stomp-websocket/doc/
+
  = = = =  GAME LOBBY = = = =
 1) Game Panel listing all games
    - Games waiting for players

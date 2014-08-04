@@ -9,24 +9,24 @@
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations" value="/resources/laResistance.properties" />
 	</bean>
-	
+
 	<context:component-scan base-package="org.resistance.site">
 		<context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation"/>
 	</context:component-scan>
-	
+
 	<!-- Import Logger beans -->
 	<import resource="loggingBeans.xml" />
-	
+
 	<!-- Import the Users data source -->
 	<import resource="userDatabaseBeans.xml" />
 
 	<!-- Import WebSecurityConfig -->
 	<import resource="security-config.xml" />
-	
+
 	<context:mbean-server />
-	
+
 	<context:mbean-export />
-	
+
 	<!-- bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource" p:basename="classpath:resources/laResistance" / -->
 	
 </beans>

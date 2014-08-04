@@ -8,7 +8,6 @@ import org.apache.commons.logging.Log;
 import org.resistance.site.Game;
 import org.resistance.site.GameTracker;
 import org.resistance.site.Player;
-import org.resistance.site.utils.VoteCounter;
 import org.resistance.site.web.utils.ShabaJdbcUserDetailsManager;
 import org.resistance.site.web.utils.ShabaUser;
 import org.springframework.beans.factory.annotation.Autowired;
