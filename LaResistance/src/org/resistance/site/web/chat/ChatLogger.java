@@ -1,4 +1,4 @@
-package org.resistance.site.web.utils;
+package org.resistance.site.web.chat;
 
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -10,7 +10,11 @@ import java.util.Map.Entry;
 import java.util.Stack;
 
 import org.apache.commons.logging.LogFactory;
+import org.resistance.site.web.utils.MessageRelayer;
+import org.resistance.site.web.utils.ShabaUser;
 import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedOperationParameter;
+import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +42,7 @@ public class ChatLogger extends MessageRelayer<List<String>>
 
     public ChatLogger()
     {
-        super( LogFactory.getLog( ChatLogger.class ) );
+        super( LogFactory.getLog( ChatLogger.class ), RELAY_DESTINATION );
         log = Collections.synchronizedMap( new LinkedHashMap<Long, String>() );
 
     }
@@ -68,12 +72,6 @@ public class ChatLogger extends MessageRelayer<List<String>>
         long currentTime = System.currentTimeMillis() - 100;
 
         return messagesSince( currentTime );
-    }
-
-    @Override
-    public String getRelayDestination()
-    {
-        return RELAY_DESTINATION;
     }
 
     @Override
@@ -120,7 +118,15 @@ public class ChatLogger extends MessageRelayer<List<String>>
         return messagesSince( 0L );
     }
 
-    void systemUpdate( String message, Object... args )
+    @ManagedOperation ( description = "Automatically formats message input" )
+    @ManagedOperationParameters ( {
+            @ManagedOperationParameter (
+                name = "message",
+                description = "The message to update the chat log with.\n(Given String will be formatted)" ),
+            @ManagedOperationParameter (
+                name = "args",
+                description = "Arguments to fill into message" ) } )
+    public void systemUpdate( String message, Object... args )
     {
         say( "::", String.format( message, args ) );
     }

@@ -7,11 +7,11 @@ import org.resistance.site.mech.Role;
  */
 public class Player
 {
-    private final String GAME_ID;
+    private final String     GAME_ID;
 
-    private final String name;
+    private final String     name;
 
-    protected transient Role       role;
+    protected transient Role role;
 
     public Player( String name, String gameID )
     {

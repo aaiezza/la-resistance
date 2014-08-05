@@ -59,7 +59,7 @@ public class BoardFactory
 
             break findBoard;
         }
-        
+
         boardDBsc.close();
 
         return board;

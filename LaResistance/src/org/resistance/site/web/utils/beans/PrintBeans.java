@@ -1,4 +1,4 @@
-package org.resistance.site.web.utils;
+package org.resistance.site.web.utils.beans;
 
 import java.util.Arrays;
 

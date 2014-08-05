@@ -7,8 +7,8 @@ import java.security.Principal;
 import java.util.HashMap;
 
 import org.apache.commons.logging.Log;
-import org.resistance.site.web.utils.ChatLogger;
-import org.resistance.site.web.utils.NaughtyWordTransformer;
+import org.resistance.site.web.chat.ChatLogger;
+import org.resistance.site.web.chat.NaughtyWordTransformer;
 import org.resistance.site.web.utils.ShabaJdbcUserDetailsManager;
 import org.resistance.site.web.utils.ShabaUser;
 import org.springframework.beans.factory.annotation.Autowired;

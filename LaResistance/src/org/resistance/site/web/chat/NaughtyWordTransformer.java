@@ -1,11 +1,11 @@
-package org.resistance.site.web.utils;
+package org.resistance.site.web.chat;
 
 import java.util.HashMap;
 
 public class NaughtyWordTransformer
 {
     public final HashMap<String, String> FILTHY_MAP = new HashMap<String, String>();
-    
+
     public NaughtyWordTransformer()
     {
         FILTHY_MAP.put( "fuck", "pajamas" );
@@ -25,10 +25,10 @@ public class NaughtyWordTransformer
         String betterWordz [] = naughtyWords.split( " " );
 
         StringBuilder betterWords = new StringBuilder();
-        
-        for( String word : betterWordz )
+
+        for ( String word : betterWordz )
         {
-            for( String filth : FILTHY_MAP.keySet() )
+            for ( String filth : FILTHY_MAP.keySet() )
             {
                 if ( word.toLowerCase().contains( filth.toLowerCase() ) )
                 {

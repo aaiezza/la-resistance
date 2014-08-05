@@ -56,7 +56,7 @@ public class ShabaHttpSessionListener extends HttpSessionEventPublisher implemen
             ShabaUser user = USER_MAN.getShabaUser();
 
             if ( user != null )
-            USER_TRACKER.removeUser( user );
+                USER_TRACKER.removeUser( user );
 
         }
     }

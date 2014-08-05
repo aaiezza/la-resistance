@@ -23,8 +23,7 @@ public class MultiPropertyLoader
         {
             System.getProperties().load( resource.getInputStream() );
             return true;
-        }
-        catch ( IOException e )
+        } catch ( IOException e )
         {
             return false;
         }
@@ -48,8 +47,7 @@ public class MultiPropertyLoader
         {
             propertyFiles = propertyValue.split( ";" );
             load( propertyFiles );
-        }
-        else
+        } else
         {
             throw new IllegalArgumentException( PROPERTY_NOT_DEFINED_ERROR );
         }

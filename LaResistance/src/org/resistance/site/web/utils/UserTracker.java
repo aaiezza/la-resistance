@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.resistance.site.Game;
 import org.resistance.site.GameTracker;
+import org.resistance.site.web.chat.ChatLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -49,7 +50,7 @@ public class UserTracker extends MessageRelayer<List<ShabaUser>>
         ChatLogger chatLogger,
         GameTracker gameTracker )
     {
-        super( loginLogger );
+        super( loginLogger, RELAY_DESTINATION );
         onlineUsers = Collections.synchronizedList( new ArrayList<ShabaUser>() );
         CHAT_LOGGER = chatLogger;
         GAME_TRACKER = gameTracker;
@@ -91,12 +92,6 @@ public class UserTracker extends MessageRelayer<List<ShabaUser>>
     protected List<ShabaUser> getPayload()
     {
         return getLoggedInUsers();
-    }
-
-    @Override
-    public String getRelayDestination()
-    {
-        return RELAY_DESTINATION;
     }
 
     @Override

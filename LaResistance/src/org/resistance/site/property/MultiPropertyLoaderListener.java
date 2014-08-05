@@ -31,8 +31,7 @@ public class MultiPropertyLoaderListener implements ServletContextListener
         try
         {
             _propertyLoader.load();
-        }
-        catch ( Exception e )
+        } catch ( Exception e )
         {
             System.err.println( e.getMessage() );
             System.exit( 1 );

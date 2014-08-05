@@ -18,7 +18,7 @@ public final class Mission implements Comparable<Mission>
     public final int          MinimumFails;
 
     private ArrayList<Player> team;
-    
+
     private final VoteCounter votes;
 
     public Mission( int missionNumber, int teamSize, int minimumFails )
@@ -27,7 +27,7 @@ public final class Mission implements Comparable<Mission>
         TeamSize = teamSize;
         team = new ArrayList<Player>( teamSize );
         MinimumFails = minimumFails;
-        votes =  new VoteCounter();
+        votes = new VoteCounter();
     }
 
     public void addPlayerToTeam( Player player ) throws UnsupportedOperationException

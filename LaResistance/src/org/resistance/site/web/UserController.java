@@ -71,8 +71,8 @@ public class UserController
     {
         return new ModelAndView( "userManagement" );
     }
-    
-    @RequestMapping( method = GET, value = "whoAmI" )
+
+    @RequestMapping ( method = GET, value = "whoAmI" )
     @ResponseBody
     public String getCurrentUser()
     {

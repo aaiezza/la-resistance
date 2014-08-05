@@ -105,7 +105,7 @@ public class Board
         {
             voteLog.put( currentMission, new VoteCounter() );
         }
-        
+
         return voteLog.get( currentMission ).vote( player, _vote );
     }
 

@@ -15,7 +15,7 @@ public class SignUpFormValidator implements Validator
     {
         return UserForm.class.equals( clazz );
     }
-    
+
     public void validateRequiredFields( Object target, Errors errors )
     {
         ValidationUtils.rejectIfEmptyOrWhitespace( errors, "first_name", "First Name required" );
@@ -28,9 +28,9 @@ public class SignUpFormValidator implements Validator
     public void validate( Object target, Errors errors )
     {
         validateRequiredFields( target, errors );
-        
+
         ValidationUtils.rejectIfEmptyOrWhitespace( errors, "password", "Password required" );
-        
+
         UserForm form = (UserForm) target;
 
         if ( !StringUtils.isEmpty( form.getPassword() ) )

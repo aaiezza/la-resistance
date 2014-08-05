@@ -26,7 +26,7 @@ public class GameTracker extends MessageRelayer<List<Game>>
     @Autowired
     public GameTracker( BoardFactory boardFactory )
     {
-        super( LogFactory.getLog( GameTracker.class ) );
+        super( LogFactory.getLog( GameTracker.class ), RELAY_DESTINATION );
         BOARD_FACTORY = boardFactory;
         games = Collections.synchronizedMap( new HashMap<String, Game>() );
     }
@@ -132,12 +132,6 @@ public class GameTracker extends MessageRelayer<List<Game>>
     public void onSubscription( ShabaUser user )
     {
         onSubscription( user, UPDATE_USER );
-    }
-
-    @Override
-    public String getRelayDestination()
-    {
-        return RELAY_DESTINATION;
     }
 
     @Override
