@@ -9,7 +9,7 @@
 
 	<websocket:message-broker application-destination-prefix="/app">
 		<websocket:stomp-endpoint path="/lobbyUpdate">
-			<websocket:sockjs/>
+			<websocket:sockjs websocket-enabled="true" session-cookie-needed="true"  client-library-url="http://cdn.sockjs.org/sockjs-0.3.js"/>
 		</websocket:stomp-endpoint>
 		<websocket:simple-broker prefix="/queue/"/>
     </websocket:message-broker>

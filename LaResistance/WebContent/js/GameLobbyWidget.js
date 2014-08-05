@@ -40,10 +40,8 @@ var GameLobbyWidget = function()
         
         var gameIDtoFocusOn;
         
-        // I WISHSHSHSHSSH
-        //var lobbySock = new SockJS("ws://" + location.host + "/LaResistance/lobbyUpdate");
-        
-        var lobbySock = new SockJS("lobbyUpdate", null, {protocols_whitelist : ["xhr-polling"], debug: true});
+        var lobbySock = new SockJS("http://" + location.host + ":8081/LaResistance/lobbyUpdate", null, {protocols_whitelist : ["websocket"], debug: true});
+        //var lobbySock = new SockJS("lobbyUpdate", null, {protocols_whitelist : ["websocket"], debug: true});
         var stompClient = Stomp.over( lobbySock );
         
         stompClient.connect({}, function(frame) {
@@ -60,6 +58,11 @@ var GameLobbyWidget = function()
             
             stompClient.subscribe('/app/activeGames');
         });
+        
+        window.onbeforeunload = function()
+        {
+            stompClient.close();
+        }
         
         //////////////////////////////
         // Private Instance Methods //
