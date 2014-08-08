@@ -48,15 +48,15 @@ public class Game extends MessageRelayer<Game>
 
     private static final int    DEFAULT_PLAYERS          = 5;
 
-    private static final String MES_TEAM_ON_MISSION      = "<span>Your Team is out on their Mission!</span>";
-
     private static final String MES_WINNER               = "<span id='winner' class='%1$s'>The %1$sS are Victorious!</span>";
 
     private static final String MES_MISSION_SUCCESS      = "<span id='successful'>The mission was a Success! (%d : %d)</span>";
 
     private static final String MES_MISSION_FAILURE      = "<span id='failure'>The mission was a Failure! (%d : %d)</span>";
 
-    private static final String MES_TEAM_DENY            = "<span id='failure'>The Resistance did NOT agree with that Team!</span>";
+    private static final String MES_TEAM_APPROVE         = "<span>Your Team is out on their Mission!<br/>(%d : %d)</span>";
+
+    private static final String MES_TEAM_DENY            = "<span id='failure'>The Resistance did NOT agree with that Team!<br/>(%d : %d)</span>";
 
     private Board               board;
 
@@ -126,18 +126,20 @@ public class Game extends MessageRelayer<Game>
             if ( board.getTeamVoter().getResults().isPasses() )
             {
                 state = TEAM_VOTES_ON_MISSION;
-                message = MES_TEAM_ON_MISSION;
+                message = String.format( MES_TEAM_APPROVE, board.getTeamVoter().getResults()
+                        .approves(), board.getTeamVoter().getResults().denies() );
             } else
             {
                 if ( !board.prepareForTeamVote() )
                 {
                     // SPIES WIN
                     winningRole = SPY;
-                    message = String.format( MES_WINNER, winningRole );
+                    message += "<br/>" + String.format( MES_WINNER, winningRole );
                     state = GAME_OVER;
                     break;
                 }
-                message = MES_TEAM_DENY;
+                message = String.format( MES_TEAM_DENY, board.getLastTeamVoteResults().approves(),
+                    board.getLastTeamVoteResults().denies() );
                 appointLeader( false );
                 state = LEADER_CHOOSING_TEAM;
             }
@@ -157,7 +159,7 @@ public class Game extends MessageRelayer<Game>
             if ( !board.nextMission() )
             {
                 winningRole = board.getWinner();
-                message = String.format( MES_WINNER, winningRole );
+                message = "<br/>" + String.format( MES_WINNER, winningRole );
                 state = GAME_OVER;
             } else
             {
@@ -282,10 +284,21 @@ public class Game extends MessageRelayer<Game>
 
     public int getTeamVoteTracker()
     {
-        if ( state.equals( AWAITING_PLAYERS ) || state.equals( PLAYERS_LEARNING_ROLES ) ||
-                state.equals( GAME_OVER ) )
+        if ( state.equals( AWAITING_PLAYERS ) || state.equals( PLAYERS_LEARNING_ROLES ) )
         {
             return 0;
+        } else if ( state.equals( GAME_OVER ) )
+        {
+            if ( board.getCurrentMission() != null )
+            {
+                return board.getCurrentMission().getAllTeamVotes().size() - 1;
+            } else if ( board.getLastMission() != null )
+            {
+                return board.getLastMission().getAllTeamVotes().size() - 1;
+            } else
+            {
+                return -1;
+            }
         }
         return board.getTeamVoteTracker() - 1;
     }

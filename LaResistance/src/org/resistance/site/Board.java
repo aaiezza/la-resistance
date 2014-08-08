@@ -9,6 +9,7 @@ import org.resistance.site.mech.Mission;
 import org.resistance.site.mech.Missions;
 import org.resistance.site.mech.Role;
 import org.resistance.site.utils.VoteCounter;
+import org.resistance.site.utils.VoteCounter.VoteResults;
 
 /**
  * @author Alex Aiezza
@@ -20,6 +21,8 @@ public class Board
     private final Missions     missions;
 
     private Mission            currentMission;
+
+    private Mission            lastMission;
 
     private final int          num_players;
 
@@ -73,6 +76,9 @@ public class Board
      */
     boolean nextMission()
     {
+        if ( currentMission != null )
+            lastMission = currentMission;
+
         currentMission = missions.nextMission();
 
         if ( currentMission == null )
@@ -88,9 +94,19 @@ public class Board
         return currentMission;
     }
 
+    public Mission getLastMission()
+    {
+        return lastMission;
+    }
+
     VoteCounter getTeamVoter()
     {
         return currentMission.getTeamVotes();
+    }
+
+    VoteResults getLastTeamVoteResults()
+    {
+        return currentMission.getLastTeamVotes().getResults();
     }
 
     public Player getCurrentLeader()

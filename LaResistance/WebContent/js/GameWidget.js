@@ -412,14 +412,11 @@ var GameWidget = function()
                     //Game Info
                     var infoTable = displayGameInfo(false);
 
+                    update(infoTable, true);
+
                     if (_.contains(activeGame.team, me.username))
                     {
                         missionVoter(infoTable, true);
-
-                    } else
-                    {
-                        infoTable
-                        .prepend($("<tr><td colspan='2'><h4>Your Team is out on their Mission!</h4></td></tr>"));
                     }
 
                     break;

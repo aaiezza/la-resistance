@@ -72,7 +72,7 @@ public final class Mission implements Comparable<Mission>
     {
         return missionVotes;
     }
-    
+
     public Boolean isSuccessful()
     {
         if ( missionVotes.acceptingVotes() )
@@ -106,6 +106,16 @@ public final class Mission implements Comparable<Mission>
         }
         return teamVotes.get( teamVotes.size() - 1 );
     }
+
+    public VoteCounter getLastTeamVotes()
+    {
+        if ( teamVotes.size() <= 1 )
+        {
+            return null;
+        }
+        return teamVotes.get( teamVotes.size() - 2 );
+    }
+
 
     public void emptyTeam()
     {
@@ -156,15 +166,15 @@ public final class Mission implements Comparable<Mission>
 
         out.append( " [" );
 
-        for ( int p = 0; p < team.size(); p ++ )
+        for ( int p = 0; p < team.size(); p++ )
         {
             out.append( team.get( p ) );
-            if ( p+1< team.size() )
+            if ( p + 1 < team.size() )
             {
                 out.append( ", " );
             }
         }
-        
+
         out.append( "]" );
 
         return out.toString();
