@@ -54,14 +54,14 @@ div.rightPane {
 }
 
 #gameList {
-	width: -moz-calc(100% - 350px);
-	width: -webkit-calc(100% - 350px);
-	width: calc(100% - 350px);
+	width: -moz-calc(100% - 250px);
+	width: -webkit-calc(100% - 250px);
+	width: calc(100% - 250px);
 	text-align: center;
 }
 
 #gameView {
-	width: 350px;
+	width: 250px;
 	background-color: lightgray;
 }
 

@@ -8,19 +8,31 @@ public class NaughtyWordTransformer
 
     public NaughtyWordTransformer()
     {
-        FILTHY_MAP.put( "fuck", "pajamas" );
+        FILTHY_MAP.put( "fuck", "frack" );
         FILTHY_MAP.put( "shit", "poop" );
+        FILTHY_MAP.put( "sh!t", "poop" );
         FILTHY_MAP.put( "pussy", "kitten" );
         FILTHY_MAP.put( "damn", "darn" );
         FILTHY_MAP.put( "bitch", "meany" );
-        FILTHY_MAP.put( "dick", "a dragon" );
-        FILTHY_MAP.put( "d!ck", "a dragon" );
+        FILTHY_MAP.put( "b!tch", "meany" );
+        FILTHY_MAP.put( "dick", "bearded dragon" );
+        FILTHY_MAP.put( "d!ck", "bearded dragon" );
         FILTHY_MAP.put( "vagina", "taco" );
-        FILTHY_MAP.put( "penis", "finger" );
+        FILTHY_MAP.put( "vag!na", "taco" );
+        FILTHY_MAP.put( "penis", "toe" );
+        FILTHY_MAP.put( "pen!s", "toe" );
         FILTHY_MAP.put( "fag", "I " );
+        FILTHY_MAP.put( "nigger", "narf" );
+        FILTHY_MAP.put( "nigga", "narfa" );
+        FILTHY_MAP.put( "spic", "span" );
+        FILTHY_MAP.put( "wop", "whopper" );
+        FILTHY_MAP.put( "black", "white" );
+        FILTHY_MAP.put( "white", "black" );
+        FILTHY_MAP.put( "cunt", "bunny" );
+        FILTHY_MAP.put( "ass", "butt" );
     }
 
-    public final String makeNice( String naughtyWords )
+    public final String makeNice( String naughtyWords, boolean includeNestedWords )
     {
         String betterWordz [] = naughtyWords.split( " " );
 
@@ -28,16 +40,30 @@ public class NaughtyWordTransformer
 
         for ( String word : betterWordz )
         {
-            for ( String filth : FILTHY_MAP.keySet() )
+            if ( includeNestedWords )
             {
-                if ( word.toLowerCase().contains( filth.toLowerCase() ) )
-                {
-                    word = word.toLowerCase().replaceAll( filth, FILTHY_MAP.get( filth ) );
-                }
+                word = searchNestedWords( word );
             }
-            betterWords.append( FILTHY_MAP.getOrDefault( word.toLowerCase(), word ) ).append( " " );
+            else
+            {
+                word = FILTHY_MAP.getOrDefault( word.toLowerCase(), word );
+            }
+            betterWords.append( word ).append( " " );
         }
 
-        return betterWords.toString();
+        return betterWords.toString().trim();
+    }
+
+    private final String searchNestedWords( String word )
+    {
+        for ( String filth : FILTHY_MAP.keySet() )
+        {
+            if ( word.toLowerCase().contains( filth.toLowerCase() ) )
+            {
+                word = word.toLowerCase().replaceAll( filth, FILTHY_MAP.get( filth ) );
+                break;
+            }
+        }
+        return word;
     }
 }

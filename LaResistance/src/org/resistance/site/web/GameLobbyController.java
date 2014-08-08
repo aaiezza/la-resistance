@@ -9,9 +9,11 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
+import org.json.JSONObject;
 import org.resistance.site.Game;
 import org.resistance.site.GameTracker;
 import org.resistance.site.Player;
+import org.resistance.site.mech.GameState;
 import org.resistance.site.web.utils.ShabaJdbcUserDetailsManager;
 import org.resistance.site.web.utils.ShabaUser;
 import org.resistance.site.web.utils.UserTracker;
@@ -24,6 +26,7 @@ import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -64,18 +67,25 @@ public class GameLobbyController
         GAME_TRACKER.setTemplate( template );
     }
 
+    // * *///////////////////////////////
+    // * ALL USERS CAN ACCESS ///////////
+    // * *///////////////////////////////
+
     @RequestMapping ( method = GET, value = "/gameLobby" )
     public ModelAndView getGameLobbyPage()
     {
         ShabaUser user = USER_MAN.getShabaUser();
+        user.eraseCredentials();
 
         LOGGER.debug( String.format( "%s is looking for recruitment!", user.getUsername() ) );
 
-        return new ModelAndView( "gameLobby", "username", user.getUsername() );
+        JSONObject jsonUser = new JSONObject( user );
+
+        return new ModelAndView( "gameLobby", "user", jsonUser );
     }
 
     @SubscribeMapping ( Game.SUBSCRIPTION_URL )
-    public Game subscribeToActiveGameUpdates(
+    public void subscribeToActiveGameUpdates(
             @DestinationVariable String gameID,
             Principal principal )
     {
@@ -85,8 +95,6 @@ public class GameLobbyController
         {
             g.onSubscription( USER_MAN.loadShabaUserByUsername( principal.getName() ) );
         }
-
-        return g;
     }
 
     @SubscribeMapping ( GameTracker.SUBSCRIPTION_URL )
@@ -118,6 +126,27 @@ public class GameLobbyController
         return Collections.<String> emptyList();
     }
 
+    // * *////////////////////////////////
+    // * OWNER OF GAME CAN ACCESS ////////
+    // * *////////////////////////////////
+
+    // TODO BETTER ERROR HANDLING!!!
+    @RequestMapping ( method = POST, value = "startGame/{gameID}" )
+    @ResponseBody
+    public List<String> startGame( @PathVariable String gameID )
+    {
+        ShabaUser user = USER_MAN.getShabaUser();
+
+        if ( !GAME_TRACKER.getGame( gameID ).startGame( new Player( user.getUsername(), gameID ) ) )
+        {
+            ArrayList<String> out = new ArrayList<String>();
+            out.add( "You cannot start this game!" );
+            return out;
+        }
+
+        return Collections.<String> emptyList();
+    }
+
     // TODO BETTER ERROR HANDLING!!!
     @RequestMapping ( method = POST, value = "cancelGame/{gameID}" )
     @ResponseBody
@@ -125,8 +154,12 @@ public class GameLobbyController
     {
         ShabaUser user = USER_MAN.getShabaUser();
 
-        if ( !GAME_TRACKER.getGame( gameID ).getHost().getName().equals( user.getUsername() ) ||
-                !GAME_TRACKER.unRegisterGame( gameID ) )
+        Game g = GAME_TRACKER.getGame( gameID );
+
+        boolean cannotCancel = !g.getState().equals( GameState.GAME_OVER ) &&
+                ( !g.getHost().equals( user.getUsername() ) && !USER_MAN.checkForAdminRights( user ) );
+
+        if ( cannotCancel || !GAME_TRACKER.unRegisterGame( gameID ) )
         {
             ArrayList<String> out = new ArrayList<String>();
             out.add( "This Game cannot be Canceled" );
@@ -135,6 +168,37 @@ public class GameLobbyController
 
         return Collections.<String> emptyList();
     }
+
+    // TODO BETTER ERROR HANDLING!!!
+    @RequestMapping ( method = POST, value = "updateMaxPlayers/{gameID}/{nPlayers}" )
+    @ResponseBody
+    public List<String> updateMaxPlayers( @PathVariable String gameID, @PathVariable int nPlayers )
+    {
+        ShabaUser user = USER_MAN.getShabaUser();
+
+        Game game;
+
+        if ( USER_MAN.checkForAdminRights( user ) )
+        {
+            game = GAME_TRACKER.getGame( gameID );
+        } else
+        {
+            game = GAME_TRACKER.getGameFromHostUsername( user.getUsername() );
+        }
+
+        if ( game == null || !game.makeBoard( nPlayers ) )
+        {
+            ArrayList<String> out = new ArrayList<String>();
+            out.add( String.format( "This Game cannot have %d players", nPlayers ) );
+            return out;
+        }
+
+        return Collections.<String> emptyList();
+    }
+
+    // * *////////////////////////////////
+    // * NON OWNER OF GAME CAN ACCESS ////
+    // * *////////////////////////////////
 
     // TODO BETTER ERROR HANDLING!!!
     @RequestMapping ( method = POST, value = "joinGame/{gameID}" )
@@ -153,36 +217,38 @@ public class GameLobbyController
         return Collections.<String> emptyList();
     }
 
+    // * *////////////////////////////////
+    // * ANY PLAYER OF A GAME CAN ACCESS /
+    // * *////////////////////////////////
+
     // TODO BETTER ERROR HANDLING!!!
     @RequestMapping ( method = POST, value = "unJoinGame/{gameID}" )
     @ResponseBody
-    public List<String> unJoinGame( @PathVariable String gameID )
+    public List<String> unJoinGame(
+            @PathVariable String gameID,
+            @RequestParam ( required = false ) String username )
     {
         ShabaUser user = USER_MAN.getShabaUser();
+        Game game;
 
-        if ( !GAME_TRACKER.getGame( gameID )
-                .dismissPlayer( new Player( user.getUsername(), gameID ) ) )
+        if ( username != null )
         {
-            ArrayList<String> out = new ArrayList<String>();
-            out.add( "You cannot leave this game!" );
-            return out;
-        }
-
-        return Collections.<String> emptyList();
-    }
-
-    // TODO This is the big one!
-    @RequestMapping ( method = POST, value = "startGame/{gameID}" )
-    @ResponseBody
-    public List<String> startGame( @PathVariable String gameID )
-    {
-        ShabaUser user = USER_MAN.getShabaUser();
-
-        if ( !GAME_TRACKER.getGame( gameID ).startGame( new Player( user.getUsername(), gameID ) ) )
+            game = GAME_TRACKER.getGameFromHostUsername( user.getUsername() );
+            if ( game != null && !game.dismissPlayer( new Player( username, gameID ) ) )
+            {
+                ArrayList<String> out = new ArrayList<String>();
+                out.add( "You cannot remove this player!" );
+                return out;
+            }
+        } else
         {
-            ArrayList<String> out = new ArrayList<String>();
-            out.add( "You cannot start this game!" );
-            return out;
+            game = GAME_TRACKER.getGame( gameID );
+            if ( !game.dismissPlayer( new Player( user.getUsername(), gameID ) ) )
+            {
+                ArrayList<String> out = new ArrayList<String>();
+                out.add( "You cannot leave this game!" );
+                return out;
+            }
         }
 
         return Collections.<String> emptyList();

@@ -49,7 +49,7 @@ img {
 
 body {
 	font-family: "Helvetica Neue", Verdana, Arial, sans-serif;
-	color: #444;
+	color: #333;
 	font-size: 62.5%;
 	text-rendering: optimizeLegibility;
 	background: #fff;
@@ -100,7 +100,7 @@ a:hover {
 #core {
 	padding: 30px;
 	margin-top: 45px;
-	height: 93%;
+	max-height: 93%;
 	text-align: center;
 	
 }

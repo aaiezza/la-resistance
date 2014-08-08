@@ -103,6 +103,7 @@ public class GameTracker extends MessageRelayer<List<Game>>
 
         if ( game == null )
         {
+            // Game does not exist exception
             return false;
         }
 
@@ -110,6 +111,7 @@ public class GameTracker extends MessageRelayer<List<Game>>
         {
             if ( !g.equals( game ) && g.getPlayers().contains( player ) )
             {
+                // Player already in ANOTHER game
                 return false;
             }
         }

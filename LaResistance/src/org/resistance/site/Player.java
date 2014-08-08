@@ -5,13 +5,15 @@ import org.resistance.site.mech.Role;
 /**
  * @author Alex Aiezza
  */
-public class Player
+public class Player implements Cloneable
 {
     private final String     GAME_ID;
 
     private final String     name;
 
     protected transient Role role;
+
+    private boolean          roleLearned = false;
 
     public Player( String name, String gameID )
     {
@@ -39,6 +41,26 @@ public class Player
         return name;
     }
 
+    public void setRoleLearned()
+    {
+        roleLearned = true;
+    }
+
+    public boolean isRoleLearned()
+    {
+        return roleLearned;
+    }
+
+    @Override
+    protected Player clone() throws CloneNotSupportedException
+    {
+        Player p = new Player( name, GAME_ID );
+        
+        p.roleLearned = roleLearned;
+        
+        return p;
+    }
+
     @Override
     public int hashCode()
     {
@@ -58,6 +80,6 @@ public class Player
     @Override
     public String toString()
     {
-        return String.format( "%s\n %s", name, role );
+        return String.format( "(%s, %s)", name, role );
     }
 }

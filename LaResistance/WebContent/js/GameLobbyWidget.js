@@ -2,68 +2,83 @@
 var GameLobbyWidget = function()
 {
     var global = this;
-    
+
+    if (window.orientation == 0)
+    {
+        alert("For best results in the lobby, rotate device");
+    }
+
     /////////////////////////////////
     // Widget Constructor Function //
     /////////////////////////////////
-    global.makeGameLobbyWidget = function( parentElement )
+    global.makeGameLobbyWidget = function(parentElement)
     {
         //////////////////
         ///// Fields /////
         //////////////////
 
         var container = parentElement;
-        
-        var logoutOption = $( "#logoutOption" );
-        
-        var gameAndChatBlock = $( "<div id='gameAndChatBlock'>" ).addClass( "gameLobby" ).addClass( "leftPane" );
-        
-        var gameBlock = $( "<div id='gameBlock'>" );
-        
-        var gameList = $( "<div id='gameList'>").addClass( "gameLobby" );
-        
-        var gameView = $( "<div id='gameView'>" ).addClass( "gameLobby" );
-        
-        var chatView = $( "<div id='chatView'>" ).addClass( "gameLobby" );
-        
-        var userList = $( "<div id='userBlock'>" ).append( $("<table id='userList'>").addClass( "gameLobby" ) ).addClass( "gameLobby" ).addClass( "rightPane" );
 
-        var createGameButton = $( "<input id='newGameButton' type='button' value='Start a Resistance'>" );
-        
+        var logoutOption = $("#logoutOption");
+
+        var gameAndChatBlock = $("<div id='gameAndChatBlock'>").addClass(
+        "gameLobby").addClass("leftPane");
+
+        var gameBlock = $("<div id='gameBlock'>");
+
+        var gameList = $("<div id='gameList'>").addClass("gameLobby");
+
+        var gameView = $("<div id='gameView'>").addClass("gameLobby");
+
+        var chatView = $("<div id='chatView'>").addClass("gameLobby");
+
+        var userList = $("<div id='userBlock'>").append(
+        $("<table id='userList'>").addClass("gameLobby")).addClass("gameLobby")
+        .addClass("rightPane");
+
+        var createGameButton = $("<input id='newGameButton' type='button' value='Start a Resistance'>");
+
         var activeGames = [];
-        
+
         var gameViewWidget;
-        
+
         var chatWidget;
-        
-        var me = $("#p_user").html();
-        
+
+        var me = $.parseJSON($("#p_user").html());
+
         var gameIDtoFocusOn;
-        
-        var lobbySock = new SockJS("http://" + location.host + ":8081/LaResistance/lobbyUpdate", null, {protocols_whitelist : ["websocket"], debug: true});
-        //var lobbySock = new SockJS("lobbyUpdate", null, {protocols_whitelist : ["websocket"], debug: true});
-        var stompClient = Stomp.over( lobbySock );
-        
-        stompClient.connect({}, function(frame) {
+
+        var lobbySock = new SockJS("http://" + location.host
+        + ":8081/LaResistance/lobbyUpdate", null, {
+            /* protocols_whitelist : [ "websocket" ], */
+            debug : true
+        });
+        var stompClient = Stomp.over(lobbySock);
+
+        stompClient
+        .connect(
+        {},
+        function(frame)
+        {
             console.log('Connected: ' + frame);
-            chatWidget = makeChatWidget( chatView, stompClient );
+            chatWidget = makeChatWidget(chatView, stompClient);
 
-            stompClient.subscribe('/queue/activeUsers', updateActiveUsers );
-            
+            stompClient.subscribe('/queue/activeUsers', updateActiveUsers);
+
             stompClient.subscribe('/app/activeUsers');
-            
-            stompClient.subscribe('/queue/activeGames', updateActiveGames );
 
-            stompClient.subscribe('/user/queue/activeGames', updateActiveGames );
-            
+            stompClient.subscribe('/queue/activeGames', updateActiveGames);
+
+            stompClient.subscribe('/user/queue/activeGames', updateActiveGames);
+
             stompClient.subscribe('/app/activeGames');
         });
-        
+
         window.onbeforeunload = function()
         {
             stompClient.close();
         }
-        
+
         //////////////////////////////
         // Private Instance Methods //
         //////////////////////////////
@@ -77,98 +92,138 @@ var GameLobbyWidget = function()
                 });
             }
         }
-        
-        function updateActiveGames( response ) {
+
+        function updateActiveGames(response)
+        {
             var res = $($.parseJSON(response.body));
 
             activeGames = [];
             $(".game").remove();
-            
-            $( res ).each( function() {
+
+            $(res).each(function()
+            {
                 activeGames.push(this);
             });
-            
-            $(activeGames).each( function( i, game ) {
-                var gameLink = $("<h2>").append(game.gameID).addClass("game");
-                gameLink.click( function() {
-                    if ( !$(this).hasClass("selected") )
-                    {
-                        if ( gameViewWidget )
-                            gameViewWidget.unsubscribe();
-                        gameViewWidget = makeGameViewWidget( gameView, game, setGameIDtoFocusOn, stompClient );
-                    }
-                    
-                    $(".game").removeClass("selected");
-                    $(this).addClass("selected");
-                });
-                
-                $("#gameList").prepend( gameLink );
-            });
-            
-            if ( gameViewWidget ) gameViewWidget.clearIfGameCanceled( activeGames );
-            
-            var gameID = getGameIDtoFocusOn();
-            
-            if ( gameID && _.contains( _.map( activeGames, function(game){ return game.gameID; } ), gameID ) )
+
+            if (gameViewWidget)
+                gameViewWidget.clearIfGameCanceled();
+
+            $(activeGames).each(
+            function(i, game)
             {
-                $(".game").each( function() {
-                    if( $(this).html() == gameID )
+                var gameLink = $("<h2>").append(game.gameID).addClass("game");
+                gameLink.click(function()
+                {
+                    if (!$(this).hasClass("selected"))
+                    {
+                        if (gameViewWidget)
+                            gameViewWidget.unsubscribe();
+                        gameViewWidget = makeGameViewWidget(gameView, game,
+                        setGameIDtoFocusOn, stompClient);
+                        $(".game").removeClass("selected");
+                        $(this).addClass("selected");
+                    } else
+                    {
+                        $(".game").removeClass("selected");
+                        gameViewWidget.clear();
+                    }
+                });
+
+                $("#gameList").prepend(gameLink);
+
+                var imInGame = false;
+
+                $(game.players).each(function()
+                {
+                    if (this.name == me.username)
+                    {
+                        imInGame = true;
+                        return false;
+                    }
+                });
+
+                if (imInGame)
+                {
+                    setGameIDtoFocusOn(game.gameID);
+                }
+
+                if (!gameViewWidget && game.host.name == me.username)
+                {
+                    setGameIDtoFocusOn(game.gameID);
+                }
+            });
+
+            var gameID = getGameIDtoFocusOn();
+
+            if (gameID && _.contains(_.map(activeGames, function(game)
+            {
+                return game.gameID;
+            }), gameID))
+            {
+                $(".game").each(function()
+                {
+                    if ($(this).html() == gameID)
                     {
                         $(this).click();
                         return false;
                     }
                 });
-            }                             
+            }
         }
-        
-        function updateActiveUsers( response ) {
+
+        function updateActiveUsers(response)
+        {
             var res = $($.parseJSON(response.body));
-            
+
             $("#userList tbody").remove();
-            
-            $( res ).each( function() {
-                $("#userList")
-                .append( $("<tr><td>" + this.username + "</td>").addClass("user").toggleClass( "me", this.username == me )
-                );
+
+            $(res).each(
+            function()
+            {
+                $("#userList").append(
+                $("<tr><td>" + this.username + "</td>").addClass("user")
+                .toggleClass("me", this.username == me.username));
             });
-            
+
             $("#userList").trigger("update")//.trigger("sorton",[[[0,0]]]);
         }
-        
-        function setGameIDtoFocusOn( gameID )
+
+        function setGameIDtoFocusOn(gameID)
         {
             gameIDtoFocusOn = gameID;
         }
-        
+
         function getGameIDtoFocusOn()
         {
             var id = gameIDtoFocusOn;
             gameIDtoFocusOn = null;
             return id;
         }
-        
+
         function createGame()
         {
-            $.post("createGame").done( alertErrors );
+            $.post("createGame").done(alertErrors);
         }
-        
+
         //////////////////////////////////////////
         // Find Pieces and Enliven DOM Fragment //
         //////////////////////////////////////////
-        headerWidget.addOption( logoutOption );
+        headerWidget.addOption(logoutOption);
 
         gameList.append(createGameButton);
-        
+
         gameBlock.append(gameList).append(gameView);
-        
+
         gameAndChatBlock.append(gameBlock).append(chatView);
-        
+
         container.append(gameAndChatBlock).append(userList);
-        
-        $("#userList").append( $("<thead><tr><th class='header'>Users Online</th>") ).append( $("<tbody>") );
-        
-        createGameButton.click( createGame );
-        
+
+        $("#userList").append(
+        $("<thead><tr><th class='header'>Users Online</th>")).append(
+        $("<tbody>"));
+
+        createGameButton.click(createGame);
+
         /////////////////////////////
         // Public Instance Methods //
         /////////////////////////////

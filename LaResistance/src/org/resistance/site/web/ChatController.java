@@ -74,12 +74,12 @@ public class ChatController
                 TEMPLATE.convertAndSendToUser( user.getUsername(), "/queue/chatSpecial", map );
                 break;
             default:
-                CHAT_LOG.say( user.getUsername(), NAUGHTY_CONTROL.makeNice( sayIt ) );
+                CHAT_LOG.say( user.getUsername(), NAUGHTY_CONTROL.makeNice( sayIt, true ) );
                 LOGGER.info( CHAT_LOG.lastMessage() );
             }
         } else
         {
-            CHAT_LOG.say( user.getUsername(), NAUGHTY_CONTROL.makeNice( sayIt ) );
+            CHAT_LOG.say( user.getUsername(), NAUGHTY_CONTROL.makeNice( sayIt, true ) );
             LOGGER.info( CHAT_LOG.lastMessage() );
         }
     }

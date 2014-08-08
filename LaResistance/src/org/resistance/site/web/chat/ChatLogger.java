@@ -25,6 +25,8 @@ import org.springframework.stereotype.Service;
 @ManagedResource
 public class ChatLogger extends MessageRelayer<List<String>>
 {
+    private static final String           USER_ENTERED_CHAT = "[%s] has entered Resistance Lobby";
+
     public static final String            RELAY_DESTINATION = "/queue/chat";
 
     public static final String            SUBSCRIPTION_URL  = "/chat";
@@ -78,6 +80,7 @@ public class ChatLogger extends MessageRelayer<List<String>>
     public void onSubscription( ShabaUser user )
     {
         onSubscription( user, NO_UPDATE );
+        systemUpdate( USER_ENTERED_CHAT, user );
     }
 
     public synchronized String lastMessage()
@@ -118,17 +121,18 @@ public class ChatLogger extends MessageRelayer<List<String>>
         return messagesSince( 0L );
     }
 
-    @ManagedOperation ( description = "Automatically formats message input" )
-    @ManagedOperationParameters ( {
-            @ManagedOperationParameter (
-                name = "message",
-                description = "The message to update the chat log with.\n(Given String will be formatted)" ),
-            @ManagedOperationParameter (
-                name = "args",
-                description = "Arguments to fill into message" ) } )
     public void systemUpdate( String message, Object... args )
     {
-        say( "::", String.format( message, args ) );
+        systemUpdate( String.format( message, args ) );
+    }
+
+    @ManagedOperation ( description = "Automatically formats message input" )
+    @ManagedOperationParameters ( { @ManagedOperationParameter (
+        name = "message",
+        description = "The message to update the chat log with.\n(Given String will be formatted)" ) } )
+    public void systemUpdate( String message )
+    {
+        say( "::", message );
     }
 
 }

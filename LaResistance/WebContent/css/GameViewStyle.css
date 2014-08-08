@@ -5,3 +5,15 @@ p {
 .selected {
 	background: red;
 }
+
+.player {
+	background: #C79898;
+}
+
+.host {
+	text-decoration: underline;
+}
+
+#playerAdjuster {
+	width: 45px;
+}

@@ -61,6 +61,7 @@
 	<http auto-config="true" security="none" pattern="/login*" />
 	<http auto-config="true" security="none" pattern="/signup*" />
 	<http auto-config="true" security="none" pattern="/vote*" />
+	<http auto-config="true" security="none" pattern="/game/*" />
 	
 	<http auto-config="true" security="none" pattern="/lobbyUpdate/info*" />
 	

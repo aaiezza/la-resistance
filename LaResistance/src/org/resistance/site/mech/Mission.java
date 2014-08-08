@@ -2,6 +2,7 @@ package org.resistance.site.mech;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.resistance.site.Player;
 import org.resistance.site.utils.VoteCounter;
@@ -11,15 +12,19 @@ import org.resistance.site.utils.VoteCounter;
  */
 public final class Mission implements Comparable<Mission>
 {
-    public final int          MissionNumber;
+    public final int                MissionNumber;
 
-    public final int          TeamSize;
+    public final int                TeamSize;
 
-    public final int          MinimumFails;
+    public final int                MinimumFails;
 
-    private ArrayList<Player> team;
+    private ArrayList<Player>       team;
 
-    private final VoteCounter votes;
+    private final List<VoteCounter> teamVotes;
+
+    private final VoteCounter       missionVotes;
+
+    private boolean                 teamIsFinal;
 
     public Mission( int missionNumber, int teamSize, int minimumFails )
     {
@@ -27,27 +32,110 @@ public final class Mission implements Comparable<Mission>
         TeamSize = teamSize;
         team = new ArrayList<Player>( teamSize );
         MinimumFails = minimumFails;
-        votes = new VoteCounter();
+        missionVotes = new VoteCounter( teamSize );
+        teamVotes = Collections.synchronizedList( new ArrayList<VoteCounter>() );
+        teamIsFinal = false;
     }
 
     public void addPlayerToTeam( Player player ) throws UnsupportedOperationException
     {
-        if ( team.size() >= TeamSize )
+        if ( teamIsFull() || teamIsFinal || team.contains( player ) )
         {
-            throw new UnsupportedOperationException( "Team is Full!" );
+            throw new UnsupportedOperationException( "Cannot add this player to the Team!" );
         }
 
         team.add( player );
     }
 
-    public void submitVote( Player player, boolean _vote )
+    public void dismissPlayerFromTeam( Player player ) throws UnsupportedOperationException
     {
-        if ( !team.contains( player ) )
+        if ( !team.contains( player ) || teamIsFinal )
+        {
+            throw new UnsupportedOperationException( "Cannot remove this player from the Team!" );
+        }
+
+        team.remove( player );
+    }
+
+    public boolean submitMissionVote( Player player, boolean _vote )
+    {
+        if ( !team.contains( player ) || !teamIsFull() )
+        {
+            return false;
+        }
+
+        // If player already voted, this will not work
+        return missionVotes.vote( player, _vote );
+    }
+
+    public VoteCounter getMissionVotes()
+    {
+        return missionVotes;
+    }
+    
+    public Boolean isSuccessful()
+    {
+        if ( missionVotes.acceptingVotes() )
+        {
+            return null;
+        }
+        return missionVotes.getResults().isFailed( MinimumFails );
+    }
+
+    public void submitTeamVote( Player player, boolean _vote )
+    {
+        if ( !teamIsFull() )
         {
             return;
         }
+
         // If player already voted, this will not work
-        votes.vote( player, _vote );
+        getTeamVotes().vote( player, _vote );
+    }
+
+    public List<VoteCounter> getAllTeamVotes()
+    {
+        return teamVotes;
+    }
+
+    public VoteCounter getTeamVotes()
+    {
+        if ( teamVotes.size() <= 0 )
+        {
+            return null;
+        }
+        return teamVotes.get( teamVotes.size() - 1 );
+    }
+
+    public void emptyTeam()
+    {
+        teamIsFinal = false;
+        team.clear();
+    }
+
+    public Boolean isTeamVoteSuccessful()
+    {
+        VoteCounter teamVotes = getTeamVotes();
+        if ( teamVotes == null )
+        {
+            return null;
+        }
+        return teamVotes.getResults().denies() < MinimumFails;
+    }
+
+    public boolean teamIsFull()
+    {
+        return team.size() >= TeamSize;
+    }
+
+    public void finalizeTeam()
+    {
+        teamIsFinal = true;
+    }
+
+    public List<Player> getTeam()
+    {
+        return team;
     }
 
     @Override
@@ -66,9 +154,18 @@ public final class Mission implements Comparable<Mission>
             out.append( " *" );
         }
 
-        out.append( "\n" );
+        out.append( " [" );
 
-        team.forEach( ( p ) -> out.append( String.format( " %s\n", p.getName() ) ) );
+        for ( int p = 0; p < team.size(); p ++ )
+        {
+            out.append( team.get( p ) );
+            if ( p+1< team.size() )
+            {
+                out.append( ", " );
+            }
+        }
+        
+        out.append( "]" );
 
         return out.toString();
     }

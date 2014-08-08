@@ -2,12 +2,12 @@ package org.resistance.site;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import org.resistance.site.mech.Mission;
 import org.resistance.site.mech.Missions;
+import org.resistance.site.mech.Role;
 import org.resistance.site.utils.VoteCounter;
 
 /**
@@ -15,35 +15,31 @@ import org.resistance.site.utils.VoteCounter;
  */
 public class Board
 {
-    private final Missions                  missions;
+    private final int          MAX_CONSECUTIVE_FAILED_TEAM_VOTES = 5;
 
-    private Mission                         currentMission;
+    private final Missions     missions;
 
-    private final int                       teamVoteTracker;
+    private Mission            currentMission;
 
-    private final Map<Mission, VoteCounter> voteLog;
+    private final int          num_players;
 
-    private final int                       num_players;
+    private final int          num_spies;
 
-    private final int                       num_spies;
+    private final List<Player> players;
 
-    private final List<Player>              players;
+    private Player             currentLeader;
 
-    private Player                          currentLeader;
+    private Role               WINNER;
 
     public Board( final int num_players, final int num_spies, final Missions missions )
     {
         this.missions = missions;
-
-        teamVoteTracker = 0;
 
         this.num_spies = num_spies;
 
         this.num_players = num_players;
 
         players = Collections.synchronizedList( new ArrayList<Player>() );
-
-        voteLog = Collections.synchronizedMap( new LinkedHashMap<Mission, VoteCounter>( 5 ) );
     }
 
     public int getNumPlayers()
@@ -56,9 +52,18 @@ public class Board
         return players;
     }
 
-    public int getTeamVoteTracker()
+    Role getWinner()
     {
-        return teamVoteTracker;
+        return WINNER;
+    }
+
+    int getTeamVoteTracker()
+    {
+        if ( currentMission == null )
+        {
+            return 0;
+        }
+        return currentMission.getAllTeamVotes().size();
     }
 
     /**
@@ -70,12 +75,22 @@ public class Board
     {
         currentMission = missions.nextMission();
 
+        if ( currentMission == null )
+        {
+            WINNER = missions.getWinner();
+        }
+
         return currentMission != null;
     }
 
     public Mission getCurrentMission()
     {
         return currentMission;
+    }
+
+    VoteCounter getTeamVoter()
+    {
+        return currentMission.getTeamVotes();
     }
 
     public Player getCurrentLeader()
@@ -92,25 +107,42 @@ public class Board
         currentLeader = player;
     }
 
+    boolean prepareForTeamVote()
+    {
+        currentMission.emptyTeam();
+        currentMission.getAllTeamVotes().add( new VoteCounter( num_players ) );
+        return currentMission.getAllTeamVotes().size() <= MAX_CONSECUTIVE_FAILED_TEAM_VOTES;
+    }
+
     void rotateLeadership()
     {
         int nextLeader = players.indexOf( currentLeader ) + 1;
         currentLeader = nextLeader >= players.size() ? players.get( 0 ) : players.get( nextLeader );
     }
 
-    // TODO
-    boolean submitVote( Player player, boolean _vote )
+    boolean submitMissionVote( Player player, boolean _vote )
     {
-        if ( !voteLog.containsKey( currentMission ) )
+        boolean missionVote = currentMission.submitMissionVote( player, _vote );
+        if ( !currentMission.getMissionVotes().acceptingVotes() )
         {
-            voteLog.put( currentMission, new VoteCounter() );
+            if ( currentMission.isSuccessful() )
+            {
+                missions.succeedMission( currentMission );
+            } else
+            {
+                missions.failMission( currentMission );
+            }
         }
-
-        return voteLog.get( currentMission ).vote( player, _vote );
+        return missionVote;
     }
 
     public int getNumSpies()
     {
         return num_spies;
+    }
+
+    Set<Mission> getMissions()
+    {
+        return missions.getMissions();
     }
 }

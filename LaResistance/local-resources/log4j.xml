@@ -35,7 +35,7 @@
         <level value="INFO" />
     </logger>
     
-    <logger name="org.springframework.web.socket.sockjs">
+    <logger name="org.springframework.web.socket">
         <level value="OFF" />
     </logger>
 

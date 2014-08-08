@@ -5,12 +5,10 @@
 
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale = 0.750, maximum-scale = 0.750" />
+<meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0" />
 
 <link href="css/ResistanceStyle.css" rel="stylesheet" type="text/css">
-<link href="css/GameLobbyStyle.css" rel="stylesheet" type="text/css">
-<link href="css/GameViewStyle.css" rel="stylesheet" type="text/css">
-<link href="css/ChatViewStyle.css" rel="stylesheet" type="text/css">
+<link href="css/GameStyle.css" rel="stylesheet" type="text/css">
 <link href="css/contextMenu.css" rel="stylesheet" type="text/css">
 
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
@@ -21,22 +19,23 @@
 <script type="text/javascript" src="js/jquery.tablesorter.js"></script>
 
 <script type="text/javascript" src="js/HeaderWidget.js"></script>
-<script type="text/javascript" src="js/GameLobbyWidget.js"></script>
-<script type="text/javascript" src="js/GameViewWidget.js"></script>
-<script type="text/javascript" src="js/ChatWidget.js"></script>
-
+<c:choose>
+	<c:when test="${not empty user}">
+		<script type="text/javascript" src="js/GameWidget.js"></script>
+	</c:when>
+	<c:otherwise>
+		<script type="text/javascript" src="js/MonitorWidget.js"></script>
+	</c:otherwise>
+</c:choose>
 <link rel="icon" type="image/ico" href="images/favicon.ico">
 
-<title>Resistance Lobby</title>
+<title>${game}</title>
 
 </head>
 <body>
-    <c:url value="j_spring_security_logout" var="logoutUrl" />
-
 	<div id="header" class="group linkProfile"></div>
 	<div id="core"></div>
 
-	<a id="logoutOption" href="${logoutUrl}">Logout</a>
 	<p id="p_user" style="display:none">${user}</p>
 </body>
 </html>

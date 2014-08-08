@@ -14,7 +14,7 @@ var ChatWidget = function()
 
         var container = parentElement;
         
-        var chatLog = $( "<textarea id='chatLog' disabled>" );
+        var chatLog = $( "<textarea id='chatLog' readonly>" );
         
         var chatInput = $( "<input id='chat' type='text'>" );
         
