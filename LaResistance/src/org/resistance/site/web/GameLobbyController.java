@@ -157,7 +157,7 @@ public class GameLobbyController
         Game g = GAME_TRACKER.getGame( gameID );
 
         boolean cannotCancel = !g.getState().equals( GameState.GAME_OVER ) &&
-                ( !g.getHost().equals( user.getUsername() ) && !USER_MAN.checkForAdminRights( user ) );
+                ( !g.getHost().getName().equals( user.getUsername() ) && !USER_MAN.checkForAdminRights( user ) );
 
         if ( cannotCancel || !GAME_TRACKER.unRegisterGame( gameID ) )
         {
