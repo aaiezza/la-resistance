@@ -54,7 +54,7 @@ public class Missions
             {
                 break;
             }
-            
+
             if ( successes >= goal )
             {
                 WINNER = LOYAL;

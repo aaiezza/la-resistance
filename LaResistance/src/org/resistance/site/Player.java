@@ -55,9 +55,9 @@ public class Player implements Cloneable
     protected Player clone() throws CloneNotSupportedException
     {
         Player p = new Player( name, GAME_ID );
-        
+
         p.roleLearned = roleLearned;
-        
+
         return p;
     }
 

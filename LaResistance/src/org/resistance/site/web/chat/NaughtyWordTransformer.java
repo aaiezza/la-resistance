@@ -43,8 +43,7 @@ public class NaughtyWordTransformer
             if ( includeNestedWords )
             {
                 word = searchNestedWords( word );
-            }
-            else
+            } else
             {
                 word = FILTHY_MAP.getOrDefault( word.toLowerCase(), word );
             }

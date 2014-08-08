@@ -87,7 +87,7 @@ public class VoteCounter
             }
             return deny < approve;
         }
-        
+
         public Boolean isFailed( int minFailsToFail )
         {
             return deny < minFailsToFail;
