@@ -69,7 +69,7 @@ var GameMonitorWidget = function()
         } ];
 
         var lobbySock = new SockJS("http://" + location.host
-            + ":8081/LaResistance/lobbyUpdate", null, {
+            + ":8081/resist/lobbyUpdate", null, {
             protocols_whitelist : [ "websocket" ],
             debug : true
         });

@@ -25,6 +25,8 @@ https://github.com/jmesnil/stomp-websocket
 
 http://jmesnil.net/stomp-websocket/doc/
 
+http://stackoverflow.com/questions/8521251/spring-securitypassword-encoding-in-db-and-in-applicationconext
+
  = = = =  GAME LOBBY = = = =
 1) Game Panel listing all games
    - Games waiting for players

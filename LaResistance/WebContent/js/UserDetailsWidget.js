@@ -28,7 +28,7 @@ var UserDetailsWidget = function()
             var username = $( "#user" ).html();
             parseAuthorities;
 
-            userDetails = $.ajax({url:"/LaResistance/getUser/" + username,type:"POST",async:false}).done(function( response )
+            userDetails = $.ajax({url:"/resist/getUser/" + username,type:"POST",async:false}).done(function( response )
             {
                 var user = response.user;
 

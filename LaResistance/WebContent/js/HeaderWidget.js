@@ -15,8 +15,8 @@ var HeaderWidget = function()
         var container = parentElement;
 
         var urls = {
-            resistFistIMG : "/LaResistance/images/PSMfist.jpg",
-            profileUrl : "/LaResistance/profile",
+            resistFistIMG : "/resist/images/PSMfist.jpg",
+            profileUrl : "/resist/profile",
         };
 
         var headerBar = $( "<div id='header-inner' class='group'>" );
