@@ -14,7 +14,7 @@ z<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <link rel="icon" type="image/ico" href="images/favicon.ico">
 
-<title>${username}'s<br/>Profile Page</title>
+<title>${username}'s Profile Page</title>
 
 </head>
 <body>
@@ -27,7 +27,7 @@ z<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 	<div id="header" class="group"></div>
 	<div id="core">
 		<h2>You are now logged in ${username}</h2>
-		<h3>
+		<h3 style="margin-bottom:40px;">
 			<c:if test="${user}">
 				<a href='${gameLobbyUrl}'>Game Lobby</a> |
 			</c:if>
@@ -48,10 +48,7 @@ z<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 			<input type="image"
 				src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif"
 				border="0" name="submit"
-				alt="PayPal - The safer, easier way to pay online!"> <img
-				alt="" border="0"
-				src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1"
-				height="1">
+				alt="PayPal - The safer, easier way to pay online!">
 		</form>
 
 	</div>

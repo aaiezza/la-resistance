@@ -4,6 +4,7 @@ import static org.resistance.site.web.utils.ShabaJdbcUserDetailsManager.ADMIN;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.resistance.site.web.utils.ShabaJdbcUserDetailsManager;
 import org.resistance.site.web.utils.ShabaUser;
@@ -112,7 +114,7 @@ public class UserController
     @RequestMapping ( method = POST, value = "getUser/{someusername}" )
     @ResponseBody
     public HashMap<String, Object> getUser( @PathVariable ( "someusername" ) String username )
-            throws SQLException
+            throws SQLException, UnsupportedEncodingException
     {
         if ( !USER_MAN.userExists( username ) )
         {
@@ -193,7 +195,7 @@ public class UserController
     @RequestMapping ( method = POST, value = "deleteUser/{someusername}" )
     private void deleteUser(
             @PathVariable ( "someusername" ) String username,
-            HttpServletResponse response )
+            HttpServletResponse response ) throws UnsupportedEncodingException
     {
         USER_MAN.deleteUser( username );
 
@@ -205,7 +207,7 @@ public class UserController
     @RequestMapping ( method = GET, value = "userDetails/{user}" )
     private ModelAndView userDetails(
             @PathVariable String user,
-            @RequestParam ( required = false ) String message )
+            @RequestParam ( required = false ) String message ) throws UnsupportedEncodingException
     {
         HashMap<String, Object> map = new HashMap<String, Object>();
 
@@ -255,7 +257,8 @@ public class UserController
         {
             suValidator.validateRequiredFields( userToUpdate, result );
 
-            if ( !userToUpdate.getPassword().equals( shabaUser.getPassword() ) &&
+            if ( !DigestUtils.sha1Hex( userToUpdate.getPassword() )
+                    .equals( shabaUser.getPassword() ) &&
                     !USER_MAN.checkForAdminRights( USER_MAN.getShabaUser() ) )
             {
                 result.rejectValue( "password", "Wrong Password" );

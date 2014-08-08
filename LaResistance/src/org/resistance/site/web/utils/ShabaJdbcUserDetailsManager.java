@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
@@ -103,7 +104,7 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
             public void setValues( PreparedStatement ps ) throws SQLException
             {
                 ps.setString( 1, user.getUsername() );
-                ps.setString( 2, user.getPassword() );
+                ps.setString( 2, DigestUtils.sha1Hex( user.getPassword() ) );
                 ps.setBoolean( 3, true );
                 ps.setString( 4, user.getFirst_name() );
                 ps.setString( 5, user.getLast_name() );
@@ -222,7 +223,7 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
             logger.debug( "Reauthenticating user '" + username + "' for password change request." );
 
             authenticationManager.authenticate( new UsernamePasswordAuthenticationToken( username,
-                    oldPassword ) );
+                    DigestUtils.sha1Hex( oldPassword ) ) );
         } else
         {
             logger.debug( "No authentication manager set. Password won't be re-checked." );
@@ -230,7 +231,8 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
 
         logger.debug( "Changing password for user '" + username + "'" );
 
-        getJdbcTemplate().update( DEF_CHANGE_PASSWORD_SQL, newPassword, username );
+        getJdbcTemplate().update( DEF_CHANGE_PASSWORD_SQL, DigestUtils.sha1Hex( newPassword ),
+            username );
 
         SecurityContextHolder.getContext().setAuthentication(
             createNewAuthentication( currentUser, newPassword ) );
@@ -279,7 +281,7 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
 
         logger.debug( "Changing password for user '" + username + "'" );
 
-        getJdbcTemplate().update( DEF_CHANGE_PASSWORD_SQL, newPassword, username );
+        getJdbcTemplate().update( DEF_CHANGE_PASSWORD_SQL, DigestUtils.sha1Hex( newPassword ), username );
 
         userCache.removeUserFromCache( username );
     }

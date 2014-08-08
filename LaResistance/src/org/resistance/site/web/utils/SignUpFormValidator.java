@@ -10,6 +10,8 @@ import org.springframework.validation.Validator;
  */
 public class SignUpFormValidator implements Validator
 {
+    private final static String ACCEPTABLE_USERNAME = "[\\w]{3,16}";
+
     @Override
     public boolean supports( Class<?> clazz )
     {
@@ -44,6 +46,11 @@ public class SignUpFormValidator implements Validator
         if ( form.getUsername().contains( " " ) )
         {
             errors.rejectValue( "username", "Username contains space" );
+        }
+
+        if ( !form.getUsername().matches( ACCEPTABLE_USERNAME ) )
+        {
+            errors.rejectValue( "username", "Username must only be 3 to 16 characters [a-zA-Z0-9_]" );
         }
     }
 }

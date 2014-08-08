@@ -32,6 +32,7 @@
 	<!-- JDBC -->
 	<authentication-manager alias="authMan">
 		<authentication-provider user-service-ref="jdbcUserService">
+		<password-encoder hash="sha"/>
 			<!-- jdbc-user-service data-source-ref="dataSource" users-by-username-query="SELECT 
 				username,password, enabled FROM users WHERE username=?" authorities-by-username-query="SELECT 
 				username, role FROM user_role WHERE username =? " / -->
