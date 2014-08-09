@@ -428,6 +428,14 @@ var GameWidget = function()
 
                     update(infoTable, true);
 
+                    $("#role").remove();
+
+                    gameInfoBlock.before($(
+                    "<div id='role'>Return To Lobby</div><br/>").click(function()
+                    {
+                        window.close();
+                    }));
+
                 default:
                     console.log("DEFUALT GAME STATE?!");
                     break;

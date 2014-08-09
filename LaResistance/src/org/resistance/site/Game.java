@@ -159,7 +159,7 @@ public class Game extends MessageRelayer<Game>
             if ( !board.nextMission() )
             {
                 winningRole = board.getWinner();
-                message = "<br/>" + String.format( MES_WINNER, winningRole );
+                message += "<br/>" + String.format( MES_WINNER, winningRole );
                 state = GAME_OVER;
             } else
             {

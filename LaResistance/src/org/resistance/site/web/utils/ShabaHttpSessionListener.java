@@ -6,14 +6,17 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationListener;
 import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.session.SessionDestroyedEvent;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
 
 @Service
 public class ShabaHttpSessionListener extends HttpSessionEventPublisher implements
-        ApplicationContextAware
+        ApplicationContextAware, ApplicationListener<SessionDestroyedEvent>
 {
     private final ShabaJdbcUserDetailsManager USER_MAN;
 
@@ -58,6 +61,20 @@ public class ShabaHttpSessionListener extends HttpSessionEventPublisher implemen
             if ( user != null )
                 USER_TRACKER.removeUser( user );
 
+        }
+    }
+
+    @Override
+    public void onApplicationEvent( SessionDestroyedEvent event )
+    {
+        for ( SecurityContext securityContext : event.getSecurityContexts() )
+        {
+            UserDetails ud = (UserDetails) securityContext.getAuthentication().getPrincipal();
+
+            ShabaUser user = USER_MAN.loadShabaUserByUsername( ud.getUsername() );
+
+            if ( user != null )
+                USER_TRACKER.removeUser( user );
         }
     }
 }

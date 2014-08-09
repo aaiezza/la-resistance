@@ -5,7 +5,7 @@
 
 <html>
 <head>
-<meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0" />
+<meta name="viewport" content="initial-scale = 0.75,maximum-scale = 0.75" />
 
 <link href="css/ResistanceStyle.css" rel="stylesheet" type="text/css">
 <link href="css/GameStyle.css" rel="stylesheet" type="text/css">

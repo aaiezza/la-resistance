@@ -21,6 +21,8 @@ var GameViewWidget = function()
 
         me.admin = false;
 
+        var gameStarted = false;
+
         $(me.authorities).each(function()
         {
             if (this.authority == "ROLE_ADMIN")
@@ -181,9 +183,16 @@ var GameViewWidget = function()
             // If the game is in progress, you are given the link to view it
             else if (activeGame.state != "AWAITING_PLAYERS")
             {
-                container.append("<h1>GAME IN PROGRESS</h1>").append(
+                var gamePortal = $(
                 "<a href='" + activeGame.monitorURL + "'>" + activeGame.gameID
-                + "</a>");
+                + "</a>").click(function(event)
+                {
+                    event.preventDefault();
+                    window.open(activeGame.monitorURL, '_blank');
+                    window.focus();
+                });
+                container.append("<h1>GAME IN PROGRESS</h1>")
+                .append(gamePortal);
             } else
             {
 
@@ -250,7 +259,7 @@ var GameViewWidget = function()
             stompClient.subscribe("/user/queue/game/" + activeGame.gameID,
             updateGame),
 
-            stompClient.subscribe("/app/game/" + activeGame.gameID), ];
+            stompClient.subscribe("/app/game/" + activeGame.gameID) ];
 
         /////////////////////////////
         // Public Instance Methods //

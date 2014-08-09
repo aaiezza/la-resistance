@@ -19,7 +19,6 @@ z<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 </head>
 <body>
 	<c:url value="gameLobby" var="gameLobbyUrl" />
-	<c:url value="results" var="resultsUrl" />
 	<c:url value="userManagement" var="userManagementUrl" />
 	<c:url value="j_spring_security_logout" var="logoutUrl" />
 	<c:url value="userDetails/${username}" var="userDetailsUrl" />
@@ -33,9 +32,6 @@ z<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 			</c:if>
 			<c:if test="${user}">
 				<a href='${userDetailsUrl}'>Update your Info</a>
-			</c:if>
-			<c:if test="${admin}">
-				| <a href="${resultsUrl}">Vote Results</a>
 			</c:if>
 		</h3>
 
