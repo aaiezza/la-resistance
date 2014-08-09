@@ -2,6 +2,10 @@
 	overflow: overlay;
 }
 
+body {
+	overflow: hidden;
+}
+
 div.leftPane, div.rightPane {
 	float: left;
 	border-color: darkslategray;
@@ -24,13 +28,13 @@ div.rightPane {
 	width: calc(25% - ( 16px + .5em));
 }
 
-
-.me td{
+.me td {
 	background: lightgray;
 	padding: 1px 1px 1px 10px
 }
 
 .gameLobby {
+	margin: 0 auto;
 	float: left;
 	position: relative;
 	background-color: gray;
@@ -59,8 +63,9 @@ div.rightPane {
 	background-color: #00D500;
 }
 
-#gameList, #gameView, #gameBlock {
-	min-height: 350px;
+#gameList, #gameView, #gameBlock, #userBlock {
+	max-height: 350px;
+	height: 350px;
 }
 
 #gameList {
@@ -68,9 +73,17 @@ div.rightPane {
 	text-align: center;
 }
 
+#gameList, #userBlock {
+	overflow-y: auto;
+}
+
 #gameView {
-	width: 250px;;
 	background-color: lightgray;
+}
+
+#gameView, #userBlock {
+	max-width: 250px;
+	width: 250px;
 }
 
 #chatView {
@@ -84,4 +97,23 @@ div.rightPane {
 	display: flex;
 	flex-direction: column;
 	position: relative;
+}
+
+#userList {
+	width: 100%;
+	font-size: medium;
+}
+
+#userList tbody {
+	text-align: left;
+}
+
+#newGameButton {
+	position: absolute;
+	left: -moz-calc(40% - 15px);
+	left: -webkit-calc(40% - 15px);
+	left: calc(40% - 15px);
+	top: -moz-calc(87%);
+	top: -webkit-calc(87%);
+	top: calc(87%);
 }

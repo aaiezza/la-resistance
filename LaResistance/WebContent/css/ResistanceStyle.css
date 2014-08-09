@@ -19,6 +19,7 @@ div {
 }
 
 #header {
+	z-index: 3;
 	width: 100.0%;
 	height: 50.0px;
 	background: #333;
@@ -98,9 +99,8 @@ a:hover {
 }
 
 #core {
-	padding: 30px;
-	margin-top: 45px;
-	max-height: 93%;
+	/* padding: 30px; */
+	margin-top: 50px;
 	text-align: center;
 	
 }

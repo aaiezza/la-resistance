@@ -1,7 +1,5 @@
 package org.resistance.site.web.utils;
 
-import javax.servlet.http.HttpSessionEvent;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -45,25 +43,6 @@ public class ShabaHttpSessionListener extends HttpSessionEventPublisher implemen
         }
     }
 
-    /**
-     * @see org.springframework.security.web.session.HttpSessionEventPublisher#sessionDestroyed(javax.servlet.http.HttpSessionEvent)
-     */
-    @Override
-    public void sessionDestroyed( HttpSessionEvent event )
-    {
-        super.sessionDestroyed( event );
-        SecurityContext context = ( (SecurityContext) event.getSession().getAttribute(
-            "SPRING_SECURITY_CONTEXT" ) );
-        if ( context != null )
-        {
-            ShabaUser user = USER_MAN.getShabaUser();
-
-            if ( user != null )
-                USER_TRACKER.removeUser( user );
-
-        }
-    }
-
     @Override
     public void onApplicationEvent( SessionDestroyedEvent event )
     {
@@ -71,10 +50,13 @@ public class ShabaHttpSessionListener extends HttpSessionEventPublisher implemen
         {
             UserDetails ud = (UserDetails) securityContext.getAuthentication().getPrincipal();
 
-            ShabaUser user = USER_MAN.loadShabaUserByUsername( ud.getUsername() );
+            if ( USER_TRACKER.contains( ud ) )
+            {
+                ShabaUser user = USER_MAN.loadShabaUserByUsername( ud.getUsername() );
 
-            if ( user != null )
-                USER_TRACKER.removeUser( user );
+                if ( user != null )
+                    USER_TRACKER.removeUser( user );
+            }
         }
     }
 }

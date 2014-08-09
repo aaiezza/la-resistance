@@ -22,7 +22,7 @@ var GameLobbyWidget = function()
         var logoutOption = $("#logoutOption");
 
         var gameAndChatBlock = $("<div id='gameAndChatBlock'>").addClass(
-        "gameLobby").addClass("leftPane");
+        "gameLobby");
 
         var gameBlock = $("<div id='gameBlock'>");
 
@@ -33,8 +33,7 @@ var GameLobbyWidget = function()
         var chatView = $("<div id='chatView'>").addClass("gameLobby");
 
         var userList = $("<div id='userBlock'>").append(
-        $("<table id='userList'>").addClass("gameLobby")).addClass("gameLobby")
-        .addClass("rightPane");
+        $("<table id='userList'>").addClass("gameLobby")).addClass("gameLobby");
 
         var createGameButton = $("<input id='newGameButton' type='button' value='Start a Resistance'>");
 
@@ -214,9 +213,9 @@ var GameLobbyWidget = function()
 
         gameBlock.append(gameList).append(gameView);
 
-        gameAndChatBlock.append(gameBlock).append(chatView);
+        gameAndChatBlock.append(gameBlock.append(userList)).append(chatView);
 
-        container.append(gameAndChatBlock).append(userList);
+        container.append(gameAndChatBlock);
 
         $("#userList").append(
         $("<thead><tr><th class='header'>Users Online</th>")).append(

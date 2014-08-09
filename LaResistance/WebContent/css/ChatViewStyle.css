@@ -1,21 +1,19 @@
-#chatLog {
-	color: white;
-	overflow: auto;
+#chatLogBlock {
+	overflow-y: auto;
 	margin: 0 auto;
 	width: 100%;
 	max-width: 100%;
 	min-height: 200px;
+	max-height: 200px;
 	height: -moz-calc(100% - 28px);
 	height: -webkit-calc(100% - 28px);
 	height: calc(100% - 28px);
-	max-height: -moz-calc(100% - 28px);
-	max-height: -webkit-calc(100% - 28px);
-	max-height: calc(100% - 28px);
 	background-color: transparent;
+	color: white;
 	border: 0;
 	padding: 0;
 	text-rendering: optimizeLegibility;
-	font-size: large;
+	text-align: left;
 	position: relative;
 }
 
@@ -35,7 +33,16 @@
 	background-color: #ddd;
 }
 
+#chatLog {
+	width: 100%;
+	font-size: medium;
+}
+
 #chatSubmit {
 	margin: 0 auto;
 	padding: 1px 3px;
+}
+
+.said {
+	float: left;
 }

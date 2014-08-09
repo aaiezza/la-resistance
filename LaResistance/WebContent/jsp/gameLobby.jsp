@@ -12,6 +12,7 @@
 <link href="css/GameViewStyle.css" rel="stylesheet" type="text/css">
 <link href="css/ChatViewStyle.css" rel="stylesheet" type="text/css">
 <link href="css/contextMenu.css" rel="stylesheet" type="text/css">
+<link href="css/emoji.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script type="text/javascript" src="http://underscorejs.org/underscore-min.js"></script>
@@ -19,6 +20,7 @@
 <script type="text/javascript" src="js/stomp.js"></script>
 <script type="text/javascript" src="js/contextMenu.js"></script>
 <script type="text/javascript" src="js/jquery.tablesorter.js"></script>
+<script type="text/javascript" src="js/emoji.js"></script>
 
 <script type="text/javascript" src="js/HeaderWidget.js"></script>
 <script type="text/javascript" src="js/GameLobbyWidget.js"></script>
