@@ -67,7 +67,7 @@ var GameWidget = function()
 
         var lobbySock = new SockJS("http://" + location.host
         + ":8081/resist/lobbyUpdate", null, {
-            protocols_whitelist : [ "websocket" ],
+            /*protocols_whitelist : [ "websocket" ],*/
             debug : true
         });
         var stompClient = Stomp.over(lobbySock);

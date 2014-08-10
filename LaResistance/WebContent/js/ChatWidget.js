@@ -34,7 +34,7 @@ var ChatWidget = function()
 
         stompClient.subscribe('/app/chat');
 
-        stompClient.subscribe('/user/queue/chatSpecial', updateAdminChat);
+        stompClient.subscribe('/user/queue/chatSpecial', updateSpecialChat);
 
         //////////////////////////////
         // Private Instance Methods //
@@ -51,12 +51,13 @@ var ChatWidget = function()
             scrollDown();
         }
 
-        function updateAdminChat(response)
+        function updateSpecialChat(response)
         {
             var messages = $.parseJSON(response.body).messages;
             if (messages.length <= 0)
             {
-                messages = [ "No Messages!" ];
+                chatLog.empty();
+                return;
             }
             chatLog
             .append($("<tr><td style='padding: 1px 1px 1px 15px;'>~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~</td></tr>"));

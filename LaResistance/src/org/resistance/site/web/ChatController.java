@@ -1,7 +1,5 @@
 package org.resistance.site.web;
 
-import static org.resistance.site.web.utils.ShabaJdbcUserDetailsManager.ADMIN;
-
 import java.io.IOException;
 import java.security.Principal;
 import java.util.HashMap;
@@ -59,26 +57,17 @@ public class ChatController
 
         ShabaUser user = USER_MAN.loadShabaUserByUsername( principle.getName() );
 
-        // IF you're an ADMIN you get some fun tools here!
-        if ( user.getAuthorities().contains( ADMIN ) )
+        switch ( sayIt )
         {
-            switch ( sayIt )
-            {
-            case "/clear":
-                CHAT_LOG.clearLog();
-                map.put( "messages", new String [] { "Chat Log Cleared!" } );
-                TEMPLATE.convertAndSendToUser( user.getUsername(), "/queue/chatSpecial", map );
-                break;
-            case "/all":
-                map.put( "messages", CHAT_LOG.getAllMessages() );
-                TEMPLATE.convertAndSendToUser( user.getUsername(), "/queue/chatSpecial", map );
-                break;
-            default:
-                CHAT_LOG.say( user.getUsername(), NAUGHTY_CONTROL.makeNice( sayIt, true ) );
-                LOGGER.info( CHAT_LOG.lastMessage() );
-            }
-        } else
-        {
+        case "/clear":
+            map.put( "messages", new String [0] );
+            TEMPLATE.convertAndSendToUser( user.getUsername(), "/queue/chatSpecial", map );
+            break;
+        case "/all":
+            map.put( "messages", CHAT_LOG.getAllMessages() );
+            TEMPLATE.convertAndSendToUser( user.getUsername(), "/queue/chatSpecial", map );
+            break;
+        default:
             CHAT_LOG.say( user.getUsername(), NAUGHTY_CONTROL.makeNice( sayIt, true ) );
             LOGGER.info( CHAT_LOG.lastMessage() );
         }

@@ -62,7 +62,6 @@
 	<http auto-config="true" security="none" pattern="/login*" />
 	<http auto-config="true" security="none" pattern="/signup*" />
 	<http auto-config="true" security="none" pattern="/vote*" />
-	<http auto-config="true" security="none" pattern="/game/*" />
 	
 	<http auto-config="true" security="none" pattern="/lobbyUpdate/info*" />
 	
@@ -74,6 +73,7 @@
 		<intercept-url pattern="/userDetails*" access="ROLE_USER" />
 		<intercept-url pattern="/gameLobby*" access="ROLE_USER" />
 		<intercept-url pattern="/profile*" access="ROLE_USER" />
+		<intercept-url pattern="/gameLobby*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<intercept-url pattern="/**" access="ROLE_USER" />
 
 		<!-- form-login login-page="/login" username-parameter="username"
