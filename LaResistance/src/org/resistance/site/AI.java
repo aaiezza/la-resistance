@@ -33,11 +33,12 @@ public class AI extends Player
         return new AI( String.format( NAME_FORMAT, aiNumber ), gameID );
     }
 
+    @SuppressWarnings ( "static-access" )
     void updateGame( Game game ) throws InterruptedException
     {
         if ( lastGameState.equals( game.getState() ) )
         {
-            LOGGER.info( "NO NEED TO UPDATE: " + getName() );
+            LOGGER.debug( "NO NEED TO UPDATE: " + getName() );
             return;
         }
 
@@ -45,9 +46,10 @@ public class AI extends Player
 
         lastGameState = activeGame.getState();
 
-        LOGGER.info( "I could use an UPDATE: " + getName() + " - " + lastGameState );
+        LOGGER.debug( "I could use an UPDATE: " + getName() + " - " + lastGameState );
 
-        Thread.currentThread().sleep( 2000 );
+        // Replicate "thinking"
+        Thread.currentThread().sleep( ( (long) Math.ceil( Math.random() * 5000 ) ) );
 
         switch ( activeGame.getState() )
         {
@@ -124,11 +126,21 @@ public class AI extends Player
 
         List<Player> team = activeGame.getDefaultScopeBoard().getCurrentMission().getTeam();
 
+        int dislikes = getRole() == SPY ? team.size() -
+                activeGame.getDefaultScopeBoard().getCurrentMission().MinimumFails : activeGame
+                .getDefaultScopeBoard().getCurrentMission().MinimumFails;
+
         for ( Player p : team )
         {
             if ( !likePlayer( p, null ) )
             {
-                return activeGame.getTeamVoteTracker() == 4;
+                dislikes--;
+            }
+
+
+            if ( dislikes == 0 )
+            {
+                return false;
             }
         }
 
@@ -188,6 +200,10 @@ public class AI extends Player
 
         if ( getRole() == SPY )
         {
+            if ( activeGame.getTeamVoteTracker() == 4 )
+            {
+                return false;
+            }
             if ( getSpyCount( team ) < minFails )
             {
                 return pick.getRole() == SPY ||
@@ -210,12 +226,14 @@ public class AI extends Player
                 }
                 if ( !m.isSuccessful() && m.getTeam().contains( pick ) )
                 {
-                    choose = false;
+                    choose = Math.random() >= ( (double) m.getMissionVotes().getResults().denies() ) /
+                            ( (double) m.TeamSize );
                     break;
                 }
             }
 
-            return choose || ( picks != null && picks.size() < ( requirement - team.size() ) );
+            return choose || ( picks != null && picks.size() < ( requirement - team.size() ) ) ||
+                    ( activeGame.getTeamVoteTracker() == 4 && Math.random() > 0.50 );
         }
     }
 

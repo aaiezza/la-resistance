@@ -112,6 +112,11 @@ public class LoginController
         {
             error = exception.getMessage();
         }
+        
+        if ( error.equals("User is disabled") )
+        {
+            error += "\nPlease Await Administrator Approval!";
+        }
 
         return error;
     }

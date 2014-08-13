@@ -127,29 +127,6 @@ var GameWidget = function()
                 {}
             } ];
 
-            var successes = 0;
-
-            var failures = 0;
-
-            $(activeGame.missions).each(function()
-            {
-                if (this.successful == undefined)
-                {
-                    return false;
-                }
-
-                if (this.successful)
-                {
-                    successes++;
-                } else
-                {
-                    failures++;
-                }
-            });
-
-            activeGame.successes = successes;
-            activeGame.failures = failures;
-
             fillWidget();
         }
 
@@ -342,7 +319,9 @@ var GameWidget = function()
                         .append($("<tr id='leaderChoose'>")
                         .append(
                         $("<td class='leader' colspan='2'>Choose Your Team!<br/>("
-                        + activeGame.teamSizeRequirement + ")</td>")));
+                        + activeGame.teamSizeRequirement
+                        + ((activeGame.missions[activeGame.currentMissionNumber - 1].MinimumFails > 1) ? "*"
+                        : "") + ")</td>")));
 
                         function setTeamUp()
                         {
@@ -475,11 +454,11 @@ var GameWidget = function()
             .append(
             $("<tr>").append(
             $("<td id='successfulMissions'>Successful Missions:</td>")).append(
-            $("<td>" + activeGame.successes + "</td>")))
+            $("<td>" + activeGame.successfulMissions + "</td>")))
             .append(
             $("<tr>")
             .append($("<td id='failedMissions'>Failed Missions:</td>")).append(
-            $("<td>" + activeGame.failures + "</td>")))
+            $("<td>" + activeGame.failedMissions + "</td>")))
             .append(
             $("<tr>")
             .append(

@@ -324,6 +324,11 @@ public class Game extends MessageRelayer<Game>
         return board.getMissions();
     }
 
+    public int getCurrentMissionNumber()
+    {
+        return ( board.getCurrentMission() == null ) ? 0 : board.getCurrentMission().MissionNumber;
+    }
+
     public List<String> getTeam()
     {
         if ( board.getCurrentMission() == null )
@@ -528,6 +533,19 @@ public class Game extends MessageRelayer<Game>
             board.getPlayers().addAll(
                 players.subList( 0, players.size() >= board.getNumPlayers() ? board.getNumPlayers()
                                                                            : players.size() ) );
+
+            int botCount = 0;
+            for ( Player p : board.getPlayers() )
+            {
+                if ( p instanceof AI )
+                {
+                    botCount++;
+                    board.getBots().add( (AI) p );
+                }
+            }
+
+            board.setNumBots( botCount );
+
             broadcastPayload();
             LOGGER.info( String.format( PLAYER_UPDATE_LOG, this ) );
         }

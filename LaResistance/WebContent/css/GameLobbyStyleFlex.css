@@ -73,7 +73,7 @@ div.rightPane {
 	text-align: center;
 }
 
-#gameList, #userBlock {
+#gameList, #userBlock, #gameView {
 	overflow-y: auto;
 }
 
