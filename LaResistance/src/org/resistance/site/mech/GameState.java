@@ -13,4 +13,9 @@ public enum GameState
     RESISTANCE_VOTES_ON_TEAM,
     TEAM_VOTES_ON_MISSION,
     GAME_OVER;
+    
+    public String getName()
+    {
+        return name();
+    }
 }

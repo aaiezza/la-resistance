@@ -24,7 +24,7 @@
 		<script type="text/javascript" src="js/GameWidget.js"></script>
 	</c:when>
 	<c:otherwise>
-		<script type="text/javascript" src="js/MonitorWidget.js"></script>
+		<script type="text/javascript" src="js/GameMonitorWidget.js"></script>
 	</c:otherwise>
 </c:choose>
 <link rel="icon" type="image/ico" href="images/favicon.ico">

@@ -90,6 +90,17 @@ var GameViewWidget = function()
             .done(alertErrors);
         }
 
+        function updateBotPlayers(event)
+        {
+            if (event)
+            {
+                event.preventDefault();
+            }
+            $.post(
+            "updateBotPlayers/" + activeGame.gameID + "/" + $(this).val())
+            .done(alertErrors);
+        }
+
         function cancelGame()
         {
             $.post("cancelGame/" + activeGame.gameID).done(alertErrors);
@@ -120,22 +131,42 @@ var GameViewWidget = function()
             $("<h3>").append("We have (").append(activeGame.players.length)
             .append(" of ").append(activeGame.maxPlayers).append(") members!"));
 
+            if (activeGame.botCount > 0)
+            {
+                container.append($("<h3>").append("There are ").append(
+                activeGame.botCount).append(" artificial members!"));
+            }
+
             // If Hosting the game, you can adjust number of players
             if (hosting)
             {
                 var playerAdjuster = $("<select id='playerAdjuster'/>").on(
                 "change", updateMaxPlayers);
+
                 for (var n = 5; n <= 10; n++)
                 {
                     playerAdjuster.append($("<option>" + n + "</option>").prop(
                     "selected", n == activeGame.maxPlayers));
                 }
+
+                var botAdjuster = $("<select id='botAdjuster'/>").on("change",
+                updateBotPlayers);
+
+                for (var n = 0; n <= activeGame.maxPlayers - 1; n++)
+                {
+                    botAdjuster.append($("<option>" + n + "</option>").prop(
+                    "selected", n == activeGame.botCount));
+                }
+
                 container
                 .append($(
                 "<div style='border:2px solid black;padding:5px;display:inline-block;margin-bottom:11px;'>")
                 .append(
                 "<label for='playerAdjuster'>Change number of Players</label><br/>")
-                .append(playerAdjuster));
+                .append(playerAdjuster)
+                .append(
+                "<br/><label for='botAdjuster'>Change number of bots</label><br/>")
+                .append(botAdjuster));
             }
 
             // Display current players
@@ -175,7 +206,10 @@ var GameViewWidget = function()
             if (activeGame.state == "GAME_OVER")
             {
                 container
-                .append("<h1>" + activeGame.updateMessage + "</h1>")
+                .append(
+                "<h1>"
+                + activeGame.updateMessage[activeGame.updateMessage.length - 1]
+                + "</h1>")
                 .append(
                 $("<input id='cancel' type='button' value='Retire Resistance'>")
                 .click(cancelGame));

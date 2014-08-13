@@ -148,6 +148,18 @@ public final class Mission implements Comparable<Mission>
         return team;
     }
 
+    public String getHTMLTeam()
+    {
+        StringBuilder out = new StringBuilder();
+
+        for ( Player p : team )
+        {
+            out.append( "<tr><td>" ).append( p.getName() ).append( "</td></tr>" );
+        }
+
+        return out.toString();
+    }
+
     @Override
     public int compareTo( Mission o )
     {

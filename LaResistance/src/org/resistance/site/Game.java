@@ -36,6 +36,8 @@ public class Game extends MessageRelayer<Game>
 {
     private static final String PLAYER_UPDATE_LOG        = "Number of Players Updated: %s";
 
+    private static final String BOT_UPDATE_LOG           = "Number of Bots Updated: %s";
+
     private static final String MONITOR_URL_FORMAT       = "game?gameID=%s";
 
     private static final String RELAY_DESTINATION_FORMAT = "/queue/game/%s";
@@ -44,19 +46,21 @@ public class Game extends MessageRelayer<Game>
 
     public static final String  SUBSCRIPTION_URL         = "/game/{gameID}";
 
-    private static final String TO_STRING_FORMAT         = "(ID:%s, spies:%d,players:%d)";
+    private static final String TO_STRING_FORMAT         = "(ID:%s, spies:%d,players:%d%s)";
+
+    private static final String TO_STRING_BOTS_FORMAT    = ",bots:%d";
 
     private static final int    DEFAULT_PLAYERS          = 5;
 
     private static final String MES_WINNER               = "<span id='winner' class='%1$s'>The %1$sS are Victorious!</span>";
 
-    private static final String MES_MISSION_SUCCESS      = "<span id='successful'>The mission was a Success! (%d : %d)</span>";
+    private static final String MES_MISSION_SUCCESS      = "<span id='successful'>Mission #%d was a Success! (%d : %d)<table class='teamFull'>%s</table></span>";
 
-    private static final String MES_MISSION_FAILURE      = "<span id='failure'>The mission was a Failure! (%d : %d)</span>";
+    private static final String MES_MISSION_FAILURE      = "<span id='failure'>Mission #%d was a Failure! (%d : %d)<table class='teamFull'>%s</table></span>";
 
-    private static final String MES_TEAM_APPROVE         = "<span>Your Team is out on their Mission!<br/>(%d : %d)</span>";
+    private static final String MES_TEAM_APPROVE         = "<span>%s's team is out on their Mission! (%d : %d)</span>";
 
-    private static final String MES_TEAM_DENY            = "<span id='failure'>The Resistance did NOT agree with that Team!<br/>(%d : %d)</span>";
+    private static final String MES_TEAM_DENY            = "<span id='failure'>The Resistance did NOT agree with that Team! (%d : %d)</span>";
 
     private Board               board;
 
@@ -68,9 +72,13 @@ public class Game extends MessageRelayer<Game>
 
     private final BoardFactory  BoardFactory;
 
+    private int                 successfulMissions       = 0;
+
+    private int                 failedMissions           = 0;
+
     private Role                winningRole;
 
-    String                      message                  = new String();
+    List<String>                message                  = new ArrayList<String>();
 
     @NotNull
     private String              broadcastingRoles        = new String();
@@ -105,6 +113,7 @@ public class Game extends MessageRelayer<Game>
         case AWAITING_PLAYERS:
             assignRoles();
             state = PLAYERS_LEARNING_ROLES;
+            message.clear();
             break;
         case PLAYERS_LEARNING_ROLES:
             appointLeader( true );
@@ -126,20 +135,21 @@ public class Game extends MessageRelayer<Game>
             if ( board.getTeamVoter().getResults().isPasses() )
             {
                 state = TEAM_VOTES_ON_MISSION;
-                message = String.format( MES_TEAM_APPROVE, board.getTeamVoter().getResults()
-                        .approves(), board.getTeamVoter().getResults().denies() );
+                message.add( String.format( MES_TEAM_APPROVE, getCurrentLeader(), board
+                        .getTeamVoter().getResults().approves(), board.getTeamVoter().getResults()
+                        .denies() ) );
             } else
             {
                 if ( !board.prepareForTeamVote() )
                 {
                     // SPIES WIN
                     winningRole = SPY;
-                    message += "<br/>" + String.format( MES_WINNER, winningRole );
+                    message.add( String.format( MES_WINNER, winningRole ) );
                     state = GAME_OVER;
                     break;
                 }
-                message = String.format( MES_TEAM_DENY, board.getLastTeamVoteResults().approves(),
-                    board.getLastTeamVoteResults().denies() );
+                message.add( String.format( MES_TEAM_DENY, board.getLastTeamVoteResults()
+                        .approves(), board.getLastTeamVoteResults().denies() ) );
                 appointLeader( false );
                 state = LEADER_CHOOSING_TEAM;
             }
@@ -147,19 +157,26 @@ public class Game extends MessageRelayer<Game>
         case TEAM_VOTES_ON_MISSION:
             if ( board.getCurrentMission().isSuccessful() )
             {
-                message = String.format( MES_MISSION_SUCCESS, board.getCurrentMission()
-                        .getMissionVotes().getResults().approves(), board.getCurrentMission()
-                        .getMissionVotes().getResults().denies() );
+                message.add( String.format( MES_MISSION_SUCCESS,
+                    board.getCurrentMission().MissionNumber, board.getCurrentMission()
+                            .getMissionVotes().getResults().approves(), board.getCurrentMission()
+                            .getMissionVotes().getResults().denies(), board.getCurrentMission()
+                            .getHTMLTeam() ) );
+                successfulMissions++;
             } else
             {
-                message = String.format( MES_MISSION_FAILURE, board.getCurrentMission()
-                        .getMissionVotes().getResults().approves(), board.getCurrentMission()
-                        .getMissionVotes().getResults().denies() );
+                message.add( String.format( MES_MISSION_FAILURE,
+                    board.getCurrentMission().MissionNumber, board.getCurrentMission()
+                            .getMissionVotes().getResults().approves(), board.getCurrentMission()
+                            .getMissionVotes().getResults().denies(), board.getCurrentMission()
+                            .getHTMLTeam() ) );
+                failedMissions++;
             }
+
             if ( !board.nextMission() )
             {
                 winningRole = board.getWinner();
-                message += "<br/>" + String.format( MES_WINNER, winningRole );
+                message.add( String.format( MES_WINNER, winningRole ) );
                 state = GAME_OVER;
             } else
             {
@@ -182,7 +199,28 @@ public class Game extends MessageRelayer<Game>
     {
         board.getPlayers().forEach( ( player ) -> {
             broadcastingRoles = player.getName();
-            broadcastPayload( player.getName() );
+
+            if ( player instanceof AI )
+            {
+                final Game game = this;
+                new Thread( new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        try
+                        {
+                            ( (AI) player ).updateGame( game );
+                        } catch ( InterruptedException e )
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                } ).start();
+            } else
+            {
+                broadcastPayload( player.getName() );
+            }
         } );
         broadcastingRoles = "";
     }
@@ -223,10 +261,9 @@ public class Game extends MessageRelayer<Game>
         broadcastingRoles = "";
     }
 
-    public String getUpdateMessage()
+    public List<String> getUpdateMessage()
     {
-        return message.isEmpty() ? message : String.format( "<tr><td colspan='2'>%s</td></tr>",
-            message );
+        return message;
     }
 
     public boolean containsDuplicatePlayers( Game g )
@@ -256,9 +293,25 @@ public class Game extends MessageRelayer<Game>
         return GAME_ID;
     }
 
+    public int getSuccessfulMissions()
+    {
+        return successfulMissions;
+    }
+
+    public int getFailedMissions()
+    {
+        return failedMissions;
+
+    }
+
     public int getMaxPlayers()
     {
         return board.getNumPlayers();
+    }
+
+    public int getBotCount()
+    {
+        return board.getNumBots();
     }
 
     public String getMonitorURL()
@@ -329,6 +382,11 @@ public class Game extends MessageRelayer<Game>
         return board.getPlayers().get( p );
     }
 
+    Board getDefaultScopeBoard()
+    {
+        return board;
+    }
+
     @Override
     public int hashCode()
     {
@@ -374,7 +432,8 @@ public class Game extends MessageRelayer<Game>
         if ( ( !broadcastingRoles.isEmpty() && getPlayerFromUsername( broadcastingRoles ).getRole() == SPY ) ||
                 state.equals( GAME_OVER ) )
         {
-            return board.getPlayers();
+            players.addAll( board.getPlayers() );
+            return players;
         }
 
         // HIDE THE ROLES!!!
@@ -400,8 +459,9 @@ public class Game extends MessageRelayer<Game>
     @Override
     public String toString()
     {
-        return String
-                .format( TO_STRING_FORMAT, GAME_ID, board.getNumSpies(), board.getNumPlayers() );
+        return String.format( TO_STRING_FORMAT, GAME_ID, board.getNumSpies(),
+            board.getNumPlayers(),
+            getBotCount() > 0 ? String.format( TO_STRING_BOTS_FORMAT, getBotCount() ) : "" );
     }
 
     static class GameIDGenerator
@@ -431,7 +491,6 @@ public class Game extends MessageRelayer<Game>
     /* AWAITING PLAYERS */
     /* ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** * */
     /* ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** * */
-
 
     /**
      * Called every time the number of players changes
@@ -476,11 +535,43 @@ public class Game extends MessageRelayer<Game>
         return board != null;
     }
 
+    /**
+     * Called every time the number of bots changes
+     * 
+     * @param numberOfBots
+     */
+    public synchronized boolean updateBotPlayers( int numberOfBots )
+    {
+        if ( !state.equals( AWAITING_PLAYERS ) || !board.setNumBots( numberOfBots ) )
+        {
+            return false;
+        }
+
+        for ( final AI bot : board.getBots() )
+        {
+            board.getPlayers().remove( bot );
+        }
+
+        board.getBots().clear();
+
+        for ( int b = 0; b < board.getNumBots(); b++ )
+        {
+            AI bot = AI.createAI( ( b + 1 ), GAME_ID );
+            board.getPlayers().add( bot );
+            board.getBots().add( bot );
+        }
+
+        broadcastPayload();
+        LOGGER.info( String.format( BOT_UPDATE_LOG, this ) );
+
+        return true;
+    }
+
     // TODO static int numerical state handling
     boolean addPlayer( Player player )
     {
         if ( !state.equals( AWAITING_PLAYERS ) || board.getPlayers().contains( player ) ||
-                board.getNumPlayers() <= board.getPlayers().size() )
+                board.isFull() )
         {
             // Wrong state exception
             // player already in THIS game
@@ -508,8 +599,7 @@ public class Game extends MessageRelayer<Game>
     // TODO static int numerical state handling
     public boolean startGame( Player player )
     {
-        if ( !state.equals( AWAITING_PLAYERS ) || !player.equals( host ) ||
-                board.getNumPlayers() != board.getPlayers().size() )
+        if ( !state.equals( AWAITING_PLAYERS ) || !player.equals( host ) || !board.isFull() )
         {
             return false;
         }

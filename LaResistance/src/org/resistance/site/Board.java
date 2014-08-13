@@ -30,6 +30,10 @@ public class Board
 
     private final List<Player> players;
 
+    private int                num_bots;
+
+    private final List<AI>     bots;
+
     private Player             currentLeader;
 
     private Role               WINNER;
@@ -43,6 +47,8 @@ public class Board
         this.num_players = num_players;
 
         players = Collections.synchronizedList( new ArrayList<Player>() );
+
+        bots = Collections.synchronizedList( new ArrayList<AI>() );
     }
 
     public int getNumPlayers()
@@ -53,6 +59,11 @@ public class Board
     public List<Player> getPlayers()
     {
         return players;
+    }
+
+    List<AI> getBots()
+    {
+        return bots;
     }
 
     Role getWinner()
@@ -155,6 +166,26 @@ public class Board
     public int getNumSpies()
     {
         return num_spies;
+    }
+
+    public int getNumBots()
+    {
+        return num_bots;
+    }
+
+    public boolean setNumBots( int nBots )
+    {
+        if ( ( nBots + ( players.size() - nBots ) ) > num_players )
+        {
+            return false;
+        }
+        num_bots = nBots;
+        return true;
+    }
+
+    public boolean isFull()
+    {
+        return players.size() >= num_players;
     }
 
     Set<Mission> getMissions()

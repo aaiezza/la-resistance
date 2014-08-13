@@ -62,19 +62,21 @@ var GameWidget = function()
 
         var subscriptions = [];
 
-        // TODO use the menu productively if it all
         var playerMenu = [];
 
         var lobbySock = new SockJS("http://" + location.host
         + ":8081/resist/lobbyUpdate", null, {
-            /*protocols_whitelist : [ "websocket" ],*/
+            /* protocols_whitelist : [ "websocket" ], */
             debug : true
         });
         var stompClient = Stomp.over(lobbySock);
 
         window.onbeforeunload = function()
         {
-            stompClient.close();
+            $(subscriptions).each(function()
+            {
+                this.unsubscribe();
+            });
         }
 
         //////////////////////////////
@@ -272,18 +274,33 @@ var GameWidget = function()
 
             function update(infoTable, prepend)
             {
-                if (_.isEmpty(activeGame.updateMessage))
+                if (activeGame.updateMessage.length <= 0)
                 {
                     return;
                 }
 
+                var m = 0;
+                var message = $("<tr><td colspan='2'></td></tr>");
+
                 if (prepend)
+                    infoTable.prepend(message);
+                else
+                    infoTable.append(message);
+
+                $(activeGame.updateMessage).each(
+                function()
                 {
-                    infoTable.prepend(activeGame.updateMessage);
-                } else
-                {
-                    infoTable.append(activeGame.updateMessage);
-                }
+                    m++;
+
+                    message.children("td").prepend("<p>" + this + "</p>");
+
+                    if (m == activeGame.updateMessage.length)
+                    {
+                        message.children("td:first-child").children(
+                        ":first-child").css("border-bottom",
+                        "thick solid black");
+                    }
+                });
             }
 
             switch (activeGame.state)
@@ -401,6 +418,8 @@ var GameWidget = function()
                     //Game Info
                     var infoTable = displayGameInfo(false);
 
+                    update(infoTable, true);
+
                     teamVoter(infoTable, true);
 
                     teamPickUpdates(infoTable, true);
@@ -431,7 +450,8 @@ var GameWidget = function()
                     $("#role").remove();
 
                     gameInfoBlock.before($(
-                    "<div id='role'>Return To Lobby</div><br/>").click(function()
+                    "<div id='role'>Return To Lobby</div><br/>").click(
+                    function()
                     {
                         window.close();
                     }));
@@ -450,8 +470,6 @@ var GameWidget = function()
 
             var infoTable = $("<table>").append(
             $("<thead>").append($("<tr>").append(userCell)));
-
-            // TODO ADD A LIST OF SPIES IF YOU ARE A SPY
 
             infoTable
             .append(
@@ -508,7 +526,7 @@ var GameWidget = function()
                 stompClient.subscribe("/user/queue/game/" + QueryString.gameID,
                 updateGame),
 
-                stompClient.subscribe("/app/game/" + QueryString.gameID), ];
+                stompClient.subscribe("/app/game/" + QueryString.gameID) ];
         });
 
         /////////////////////////////

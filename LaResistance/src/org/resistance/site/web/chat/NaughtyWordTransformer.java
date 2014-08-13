@@ -9,14 +9,16 @@ public class NaughtyWordTransformer
     public NaughtyWordTransformer()
     {
         FILTHY_MAP.put( "fuck", "frack" );
-        FILTHY_MAP.put( "shit", "poop" );
-        FILTHY_MAP.put( "sh!t", "poop" );
+        FILTHY_MAP.put( "shit", "\uD83D\uDCA9" );
+        FILTHY_MAP.put( "sh!t", "\uD83D\uDCA9" );
         FILTHY_MAP.put( "pussy", "kitten" );
         FILTHY_MAP.put( "damn", "darn" );
         FILTHY_MAP.put( "bitch", "meany" );
         FILTHY_MAP.put( "b!tch", "meany" );
         FILTHY_MAP.put( "dick", "bearded dragon" );
         FILTHY_MAP.put( "d!ck", "bearded dragon" );
+        FILTHY_MAP.put( "cock", "bearded dragon" );
+        FILTHY_MAP.put( "c0ck", "bearded dragon" );
         FILTHY_MAP.put( "vagina", "taco" );
         FILTHY_MAP.put( "vag!na", "taco" );
         FILTHY_MAP.put( "penis", "toe" );
@@ -30,6 +32,7 @@ public class NaughtyWordTransformer
         FILTHY_MAP.put( "white", "black" );
         FILTHY_MAP.put( "cunt", "bunny" );
         FILTHY_MAP.put( "ass", "butt" );
+        FILTHY_MAP.put( "tit", "boo-bee" );
     }
 
     public final String makeNice( String naughtyWords, boolean includeNestedWords )

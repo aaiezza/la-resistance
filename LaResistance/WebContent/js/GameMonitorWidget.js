@@ -11,9 +11,6 @@ var GameMonitorWidget = function()
         ///////////////////
         // /// Fields /////
         ///////////////////
-
-        var activeGame;
-
         var QueryString = function()
         {
             // This function is anonymous, is executed immediately and 
@@ -44,33 +41,17 @@ var GameMonitorWidget = function()
 
         var container = parentElement;
 
-        var me = $.parseJSON($("#p_user").html());
+        var activeGame;
 
-        me.admin = false;
+        var firstVisit = true;
 
-        $(me.authorities).each(function()
-        {
-            if (this.authority == "ROLE_ADMIN")
-            {
-                me.admin = true;
-                return false;
-            }
-        });
+        var gameInfoBlock = $("<div id='gameInfoBlock'>");
 
         var subscriptions = [];
 
-        // TODO use the menu productively
-        var playerMenu = [ {
-            name : 'Remove From Game',
-            img : 'images/delete.png',
-            title : 'remove user button',
-            fun : function()
-            {}
-        } ];
-
         var lobbySock = new SockJS("http://" + location.host
-            + ":8081/resist/lobbyUpdate", null, {
-            /*protocols_whitelist : [ "websocket" ],*/
+        + ":8081/resist/lobbyUpdate", null, {
+            /* protocols_whitelist : [ "websocket" ], */
             debug : true
         });
         var stompClient = Stomp.over(lobbySock);
@@ -97,6 +78,42 @@ var GameMonitorWidget = function()
         function updateGame(response)
         {
             activeGame = $.parseJSON(response.body);
+
+            if (firstVisit)
+            {
+                activeGame = $.parseJSON(activeGame);
+                firstVisit = false;
+            }
+
+            if (!$("#board"))
+            {
+                container.prepend($("<img id='board' src='images/boards/"
+                + activeGame.players.length + "_player (1024x756).jpg'>"));
+            }
+
+            var successes = 0;
+
+            var failures = 0;
+
+            $(activeGame.missions).each(function()
+            {
+                if (this.successful == undefined)
+                {
+                    return false;
+                }
+
+                if (this.successful)
+                {
+                    successes++;
+                } else
+                {
+                    failures++;
+                }
+            });
+
+            activeGame.successes = successes;
+            activeGame.failures = failures;
+
             fillWidget();
         }
 
@@ -104,6 +121,162 @@ var GameMonitorWidget = function()
         {
             container.empty();
 
+            container.append("<br/>");
+
+            function teamPickUpdates(infoTable, prepend)
+            {
+                // TEAM PICK UPDATES!
+                var teamRow = $("<tr>").append(
+                $("<td><h3>" + activeGame.currentLeader
+                + "</h3>Has Elected the Following Team:</td>")).append(
+                $("<td>").append("<table id='leadersTeam'>"));
+
+                if (prepend)
+                {
+                    infoTable.prepend(teamRow);
+                } else
+                {
+                    infoTable.append(teamRow);
+                }
+
+                $(activeGame.team).each(
+                function()
+                {
+                    $("#leadersTeam").append(
+                    $("<tr>").append("<td>" + this + "</td>"));
+                });
+
+                if (activeGame.team.length == activeGame.teamSizeRequirement)
+                {
+                    $("#leadersTeam").addClass("teamFull");
+                }
+            }
+
+            function update(infoTable, prepend)
+            {
+                if (_.isEmpty(activeGame.updateMessage))
+                {
+                    return;
+                }
+
+                if (prepend)
+                {
+                    infoTable.prepend(activeGame.updateMessage);
+                } else
+                {
+                    infoTable.append(activeGame.updateMessage);
+                }
+            }
+
+            switch (activeGame.state)
+            {
+                case "PLAYERS_LEARNING_ROLES":
+
+                    // TODO MORE GENERIC WAITING_ON... FUNCTION?
+
+                    var waitingOn = $("<h2>Waiting on </h2>");
+                    var p = false;
+                    $(activeGame.players).each(function()
+                    {
+                        if (!this.roleLearned && !_.isEmpty(this.name))
+                        {
+                            if (p)
+                                waitingOn.append(", ");
+                            waitingOn.append(this.name);
+                            p = true;
+                        }
+                    });
+                    container.append(waitingOn);
+                    return;
+                case "LEADER_CHOOSING_TEAM":
+                    gameInfoBlock.empty();
+
+                    //Game Info
+                    var infoTable = displayGameInfo(false);
+
+                    // If we came from another mission earlier, this will give the update
+                    update(infoTable, true);
+
+                    teamPickUpdates(infoTable, true);
+
+                    break;
+                case "RESISTANCE_VOTES_ON_TEAM":
+                    gameInfoBlock.empty();
+
+                    //Game Info
+                    var infoTable = displayGameInfo(false);
+
+                    teamPickUpdates(infoTable, true);
+
+                    break;
+                case "TEAM_VOTES_ON_MISSION":
+                    gameInfoBlock.empty();
+
+                    //Game Info
+                    var infoTable = displayGameInfo(false);
+
+                    update(infoTable, true);
+
+                    break;
+                case "GAME_OVER":
+                    gameInfoBlock.empty();
+
+                    //Game Info
+                    var infoTable = displayGameInfo(true);
+
+                    update(infoTable, true);
+
+                    gameInfoBlock.before($(
+                    "<div id='role'>Return To Lobby</div><br/>").click(
+                    function()
+                    {
+                        window.close();
+                    }));
+
+                default:
+                    console.log("DEFUALT GAME STATE?!");
+                    break;
+            }
+        }
+
+        function displayGameInfo(gameover)
+        {
+            var infoTable = $("<table>").append($("<thead>").append($("<tr>")));
+
+            infoTable
+            .append(
+            $("<tr>").append(
+            $("<td id='successfulMissions'>Successful Missions:</td>")).append(
+            $("<td>" + activeGame.successes + "</td>")))
+            .append(
+            $("<tr>")
+            .append($("<td id='failedMissions'>Failed Missions:</td>")).append(
+            $("<td>" + activeGame.failures + "</td>")))
+            .append(
+            $("<tr>")
+            .append(
+            $("<td><span style='font-size:small;'>Consecutive Failures to Assemble a Team:</span></td>"))
+            .append($("<td>" + activeGame.teamVoteTracker + "</td>")));
+
+            container.append(gameInfoBlock.append(infoTable));
+
+            if (gameover)
+            {
+                $(activeGame.players).each(
+                function()
+                {
+                    infoTable.append($("<tr class='" + this.role + "'>")
+                    .append($("<td>" + this.name + "</td>")).append(
+                    $("<td>" + this.role + "</td>")));
+                });
+            } else
+            {
+                infoTable.append($("<tr>")
+                .append($("<td>Current Leader:</td>")).append(
+                $("<td>" + activeGame.currentLeader + "</td>")));
+            }
+
+            return infoTable;
         }
 
         //////////////////////////////////////////
@@ -115,13 +288,13 @@ var GameMonitorWidget = function()
 
             subscriptions = [
                 stompClient.subscribe("/queue/game/" + QueryString.gameID,
-                    updateGame),
+                updateGame),
 
-                stompClient.subscribe("/user/queue/game/" + QueryString.gameID,
-                    updateGame),
-
-                stompClient.subscribe("/app/game/" + QueryString.gameID), ];
+                stompClient.subscribe("/app/gameMonitor/" + QueryString.gameID,
+                updateGame) ];
         });
+
+        $("body").css("overflow", "hidden");
 
         /////////////////////////////
         // Public Instance Methods //

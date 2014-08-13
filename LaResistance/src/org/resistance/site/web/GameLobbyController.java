@@ -84,6 +84,12 @@ public class GameLobbyController
         return new ModelAndView( "gameLobby", "user", jsonUser );
     }
 
+    @SubscribeMapping ( "gameMonitor/{gameID}" )
+    public String subscribeToActiveGameUpdates( @DestinationVariable String gameID )
+    {
+        return new JSONObject( GAME_TRACKER.getGame( gameID ) ).toString();
+    }
+
     @SubscribeMapping ( Game.SUBSCRIPTION_URL )
     public void subscribeToActiveGameUpdates(
             @DestinationVariable String gameID,
@@ -191,6 +197,33 @@ public class GameLobbyController
         {
             ArrayList<String> out = new ArrayList<String>();
             out.add( String.format( "This Game cannot have %d players", nPlayers ) );
+            return out;
+        }
+
+        return Collections.<String> emptyList();
+    }
+
+    // TODO BETTER ERROR HANDLING!!!
+    @RequestMapping ( method = POST, value = "updateBotPlayers/{gameID}/{nBots}" )
+    @ResponseBody
+    public List<String> updateBotPlayers( @PathVariable String gameID, @PathVariable int nBots )
+    {
+        ShabaUser user = USER_MAN.getShabaUser();
+
+        Game game;
+
+        if ( USER_MAN.checkForAdminRights( user ) )
+        {
+            game = GAME_TRACKER.getGame( gameID );
+        } else
+        {
+            game = GAME_TRACKER.getGameFromHostUsername( user.getUsername() );
+        }
+
+        if ( game == null || !game.updateBotPlayers( nBots ) )
+        {
+            ArrayList<String> out = new ArrayList<String>();
+            out.add( String.format( "This Game cannot have %d bots", nBots ) );
             return out;
         }
 

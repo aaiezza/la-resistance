@@ -3,7 +3,7 @@ h3, td {
 }
 
 
-#leadersTeam.teamFull {
+.teamFull {
 	background: #F58080;
 }
 
@@ -76,4 +76,15 @@ table tr td {
 
 #winner {
 	background: #AFA;
+}
+
+/*
+ USED BY THE GAME MONITOR
+*/
+
+#board {
+	width: 100%;
+	height: -moz-calc(100% - 50px);
+	height: -webkit-calc(100% - 50px);
+	height: calc(100% - 50px);
 }
