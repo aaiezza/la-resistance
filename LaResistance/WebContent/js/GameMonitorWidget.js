@@ -168,7 +168,7 @@ var GameMonitorWidget = function()
                 }
             }
 
-            switch (activeGame.state)
+            switch (activeGame.state.name)
             {
                 case "PLAYERS_LEARNING_ROLES":
 

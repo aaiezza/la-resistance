@@ -98,8 +98,6 @@ public class AI extends Player
 
         int requirement = activeGame.getDefaultScopeBoard().getCurrentMission().TeamSize;
 
-        // TODO
-
         Stack<Player> picks = new Stack<Player>();
         picks.addAll( activeGame.getDefaultScopeBoard().getPlayers() );
         Collections.shuffle( picks );
@@ -149,8 +147,6 @@ public class AI extends Player
 
     private boolean decideToDoDuty()
     {
-        // TODO
-
         if ( getRole() == SPY )
         {
             if ( activeGame.getFailedMissions() == 2 )

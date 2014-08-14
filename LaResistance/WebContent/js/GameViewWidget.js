@@ -133,12 +133,15 @@ var GameViewWidget = function()
 
             if (activeGame.botCount > 0)
             {
-                container.append($("<h3>").append("There are ").append(
-                activeGame.botCount).append(" artificial members!"));
+                container.append($("<h3>").append(
+                "There " + ((activeGame.botCount == 1) ? "is " : "are "))
+                .append(activeGame.botCount).append(
+                " artificial member"
+                + ((activeGame.botCount == 1) ? "!" : "s!")));
             }
 
             // If Hosting the game, you can adjust number of players
-            if (hosting)
+            if (hosting && activeGame.state == "AWAITING_PLAYERS")
             {
                 var playerAdjuster = $("<select id='playerAdjuster'/>").on(
                 "change", updateMaxPlayers);
@@ -167,6 +170,18 @@ var GameViewWidget = function()
                 .append(
                 "<br/><label for='botAdjuster'>Change number of bots</label><br/>")
                 .append(botAdjuster));
+
+                // If Hosting the game, you can remove a player from the game
+                $(".player").not(".host").each(function()
+                {
+                    var menu = _.clone(playerMenu[0]);
+                    var player = $(this).html();
+                    menu.fun = function()
+                    {
+                        unJoinGame(player);
+                    }
+                    $(this).contextMenu([ menu ]);
+                });
             }
 
             // Display current players
@@ -187,61 +202,33 @@ var GameViewWidget = function()
                 }
             });
 
-            // If Hosting the game, you can remove a player from the game
-            if (hosting)
-            {
-                $(".player").not(".host").each(function()
-                {
-                    var menu = _.clone(playerMenu[0]);
-                    var player = $(this).html();
-                    menu.fun = function()
-                    {
-                        unJoinGame(player);
-                    }
-                    $(this).contextMenu([ menu ]);
-                });
-            }
-
             //If the game is over, you only want to cancel it
             if (activeGame.state == "GAME_OVER")
             {
-                container
-                .append(
-                "<h1>"
+                container.append("<h1>"
                 + activeGame.updateMessage[activeGame.updateMessage.length - 1]
-                + "</h1>")
-                .append(
-                $("<input id='cancel' type='button' value='Retire Resistance'>")
+                + "</h1>");
+                appendGamePortal();
+                container.append($(
+                "<input id='cancel' type='button' value='Retire Resistance'>")
                 .click(cancelGame));
             }
             // If the game is in progress, you are given the link to view it
             else if (activeGame.state != "AWAITING_PLAYERS")
             {
-                var gamePortal = $(
-                "<a href='" + activeGame.monitorURL + "'>" + activeGame.gameID
-                + "</a>").click(function(event)
-                {
-                    event.preventDefault();
-                    window.open(activeGame.monitorURL, '_blank');
-                    window.focus();
-                });
-                container.append("<h1>GAME IN PROGRESS</h1>")
-                .append(gamePortal);
+                container.append("<h1>GAME IN PROGRESS</h1>");
+                appendGamePortal();
             } else
             {
 
                 // If Hosting the game, you can choose to start the game or cancel it
                 // Otherwise, you can join or unjoin it
-                if (activeGame.host.name == me.username)
+                if (hosting)
                 {
                     container
                     .append($(
                     "<input id='start' type='button' value='Start Resistance'>")
                     .click(startGame));
-                    container
-                    .append($(
-                    "<input id='cancel' type='button' value='Cancel Resistance'>")
-                    .click(cancelGame));
                 } else
                 {
                     var alreadyJoined = false;
@@ -281,6 +268,27 @@ var GameViewWidget = function()
                     }
                 }
             }
+            if (hosting || me.admin)
+            {
+                container
+                .append("<br/><br/>")
+                .append(
+                $("<input id='cancel' type='button' value='Cancel Resistance'>")
+                .click(cancelGame));
+            }
+        }
+
+        function appendGamePortal()
+        {
+            var gamePortal = $(
+            "<a href='" + activeGame.monitorURL + "'>" + activeGame.gameID
+            + "</a>").click(function(event)
+            {
+                event.preventDefault();
+                window.open(activeGame.monitorURL, '_blank');
+                window.focus();
+            });
+            container.append(gamePortal);
         }
 
         //////////////////////////////////////////

@@ -106,7 +106,7 @@ public class Game extends MessageRelayer<Game>
     /* ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** * */
     /* ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** * */
 
-    private boolean progressState()
+    private synchronized boolean progressState()
     {
         switch ( state )
         {
@@ -117,6 +117,7 @@ public class Game extends MessageRelayer<Game>
             break;
         case PLAYERS_LEARNING_ROLES:
             appointLeader( true );
+            
             if ( !board.nextMission() )
             {
                 // Bad logic error if we end up here =[
