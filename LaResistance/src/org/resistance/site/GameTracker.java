@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.LogFactory;
+import org.resistance.site.mech.AINamer;
 import org.resistance.site.web.utils.MessageRelayer;
 import org.resistance.site.web.utils.ShabaUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,17 +24,20 @@ public class GameTracker extends MessageRelayer<List<Game>>
 
     private final BoardFactory      BOARD_FACTORY;
 
+    private final AINamer           aiNamer;
+
     @Autowired
-    public GameTracker( BoardFactory boardFactory )
+    public GameTracker( BoardFactory boardFactory, AINamer ai_namer )
     {
         super( LogFactory.getLog( GameTracker.class ), RELAY_DESTINATION );
         BOARD_FACTORY = boardFactory;
         games = Collections.synchronizedMap( new HashMap<String, Game>() );
+        aiNamer = ai_namer;
     }
 
     public boolean registerGame( final String user )
     {
-        Game game = new Game( user, BOARD_FACTORY, TEMPLATE );
+        Game game = new Game( user, BOARD_FACTORY, TEMPLATE, aiNamer );
 
         for ( final Game g : games.values() )
         {

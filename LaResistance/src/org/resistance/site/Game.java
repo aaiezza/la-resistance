@@ -19,6 +19,7 @@ import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.logging.LogFactory;
+import org.resistance.site.mech.AINamer;
 import org.resistance.site.mech.GameState;
 import org.resistance.site.mech.Mission;
 import org.resistance.site.mech.Role;
@@ -80,13 +81,16 @@ public class Game extends MessageRelayer<Game>
 
     List<String>                message                  = new ArrayList<String>();
 
+    private final AINamer       aiNamer;
+
     @NotNull
     private String              broadcastingRoles        = new String();
 
     public Game(
         final String hostName,
         final BoardFactory boardFactory,
-        SimpMessagingTemplate template )
+        SimpMessagingTemplate template,
+        AINamer ai_namer )
     {
         super( LogFactory.getLog( Game.class ), template );
 
@@ -98,6 +102,8 @@ public class Game extends MessageRelayer<Game>
         BoardFactory = boardFactory;
         makeBoard( DEFAULT_PLAYERS );
         addPlayer( host );
+
+        aiNamer = ai_namer;
     }
 
     /* ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** * */
@@ -117,7 +123,7 @@ public class Game extends MessageRelayer<Game>
             break;
         case PLAYERS_LEARNING_ROLES:
             appointLeader( true );
-            
+
             if ( !board.nextMission() )
             {
                 // Bad logic error if we end up here =[
@@ -572,10 +578,11 @@ public class Game extends MessageRelayer<Game>
         }
 
         board.getBots().clear();
+        Stack<String> aiNames = aiNamer.getNames( board.getNumBots() );
 
         for ( int b = 0; b < board.getNumBots(); b++ )
         {
-            AI bot = AI.createAI( ( b + 1 ), GAME_ID );
+            AI bot = AI.createAI( aiNames.pop(), GAME_ID );
             board.getPlayers().add( bot );
             board.getBots().add( bot );
         }

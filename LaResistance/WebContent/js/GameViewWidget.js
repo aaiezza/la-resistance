@@ -212,13 +212,7 @@ var GameViewWidget = function()
                 container.append($(
                 "<input id='cancel' type='button' value='Retire Resistance'>")
                 .click(cancelGame));
-            }
-            // If the game is in progress, you are given the link to view it
-            else if (activeGame.state != "AWAITING_PLAYERS")
-            {
-                container.append("<h1>GAME IN PROGRESS</h1>");
-                appendGamePortal();
-            } else
+            } else if (activeGame.state == "AWAITING_PLAYERS")
             {
 
                 // If Hosting the game, you can choose to start the game or cancel it
@@ -257,18 +251,16 @@ var GameViewWidget = function()
                             .click(joinGame));
                         }
                     }
-
-                    // If you are an admin, you can cancel a game for a player
-                    if (me.admin)
-                    {
-                        container
-                        .append($(
-                        "<input id='cancel' type='button' value='Cancel Resistance'>")
-                        .click(cancelGame));
-                    }
                 }
             }
-            if (hosting || me.admin)
+            // If the game is in progress, you are given the link to view it
+            else
+            {
+                container.append("<h1>GAME IN PROGRESS</h1>");
+                appendGamePortal();
+            }
+
+            if ((hosting || me.admin) && activeGame.state != "GAME_OVER")
             {
                 container
                 .append("<br/><br/>")

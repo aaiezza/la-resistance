@@ -13,24 +13,22 @@ import org.resistance.site.mech.Mission;
 
 public class AI extends Player
 {
-    private static final String NAME_FORMAT   = "bot%d";
+    private Game      activeGame;
 
-    private Game                activeGame;
+    private boolean   choseTeam;
 
-    private boolean             choseTeam;
+    private GameState lastGameState = GameState.AWAITING_PLAYERS;
 
-    private GameState           lastGameState = GameState.AWAITING_PLAYERS;
-
-    private final Log           LOGGER        = LogFactory.getLog( AI.class );
+    private final Log LOGGER        = LogFactory.getLog( AI.class );
 
     private AI( String name, String gameID )
     {
         super( name, gameID );
     }
 
-    static AI createAI( final int aiNumber, final String gameID )
+    static AI createAI( final String aiName, final String gameID )
     {
-        return new AI( String.format( NAME_FORMAT, aiNumber ), gameID );
+        return new AI( aiName, gameID );
     }
 
     @SuppressWarnings ( "static-access" )
