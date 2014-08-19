@@ -1,18 +1,22 @@
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<c:url value="/" var="imagePath" />
 
 <html>
 <head>
-<meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0" />
+<meta name="viewport" content="initial-scale = 1.00,maximum-scale = 1.00"/>
 
-<link href="css/ResistanceStyle.css" rel="stylesheet" type="text/css">
+<link type="text/css" href="${imagePath}css/ResistanceStyle.css" rel="stylesheet"/>
 
-<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-<script type="text/javascript" src="http://underscorejs.org/underscore-min.js"></script>
-<script type="text/javascript" src="js/HeaderWidget.js"></script>
-<script type="text/javascript" src="js/SignupWidget.js"></script>
+<script type="text/javascript" src="${imagePath}js/lib/jquery-latest.min.js"></script>
+<script type="text/javascript" src="${imagePath}js/lib/underscore-min.js"></script>
 
-<link rel="icon" type="image/ico" href="images/favicon.ico">
+<script type="text/javascript" src="${imagePath}js/HeaderWidget.js"></script>
+<script type="text/javascript" src="${imagePath}js/SignupWidget.js"></script>
+
+<link type="image/ico" href="${imagePath}images/favicon.ico" rel="icon"/>
 
 <title>Enlist Today!</title>
 

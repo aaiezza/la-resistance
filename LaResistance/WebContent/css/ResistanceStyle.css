@@ -14,6 +14,10 @@ html, body {
     height: calc(100% - ( 16px + .5em));
 }
 
+td {
+	font-size: initial;
+}
+
 div {
     display: block;
 }
