@@ -1,19 +1,19 @@
 p {
-	font-size: large;
+    font-size: large;
 }
 
 .selected {
-	background: red;
+    background: red;
 }
 
 .player {
-	background: #C79898;
+    background: #C79898;
 }
 
 .host {
-	text-decoration: underline;
+    text-decoration: underline;
 }
 
 #playerAdjuster {
-	width: 45px;
+    width: 45px;
 }

@@ -13,7 +13,7 @@ var GameWidget = function()
         ///////////////////
         var QueryString = function()
         {
-            // This function is anonymous, is executed immediately and 
+            // This function is anonymous, is executed immediately and
             // the return value is assigned to QueryString!
             var query_string = {};
             var query = window.location.search.substring(1);
@@ -71,12 +71,20 @@ var GameWidget = function()
         });
         var stompClient = Stomp.over(lobbySock);
 
+        stompClient.ws.onclose = function()
+        {
+            alert("Poopsicles");
+        };
+
         window.onbeforeunload = function()
         {
-            $(subscriptions).each(function()
+            if (stompClient.connected)
             {
-                this.unsubscribe();
-            });
+                $(subscriptions).each(function()
+                {
+                    this.unsubscribe();
+                });
+            }
         }
 
         //////////////////////////////

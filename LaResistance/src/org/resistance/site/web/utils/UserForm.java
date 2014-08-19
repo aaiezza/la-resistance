@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * This class is only for passing a signup form object
- * 
+ *
  * @author Alex Aiezza
  */
 @SuppressWarnings ( "serial" )

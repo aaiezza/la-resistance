@@ -70,7 +70,7 @@ public class ResistanceController
 
     /**
      * Client informs server that it has learned it's role
-     * 
+     *
      * @param principal
      */
     @MessageMapping ( "learnedRole" )

@@ -5,24 +5,24 @@
                             http://www.springframework.org/schema/security
                             http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
-	<!-- For authentication: user-search-filter: the attribute name that contains 
-		the user name user-search-base: the base path where to find user information 
-		For authorization: group-search-filter: the attribute name that contains 
-		the full dn of a user group-search-base: the base path where to find role 
-		information group-role-attribute: the attribute name that contains the role 
-		type role-prefix: the prefix to be added when retrieving role values For 
-		server access: manager-dn: the full dn of the person that has access to an 
-		LDAP server manager-password: the password of the person that has access 
+	<!-- For authentication: user-search-filter: the attribute name that contains
+		the user name user-search-base: the base path where to find user information
+		For authorization: group-search-filter: the attribute name that contains
+		the full dn of a user group-search-base: the base path where to find role
+		information group-role-attribute: the attribute name that contains the role
+		type role-prefix: the prefix to be added when retrieving role values For
+		server access: manager-dn: the full dn of the person that has access to an
+		LDAP server manager-password: the password of the person that has access
 		to an LDAP server -->
 
-	<!-- authentication-manager> <ldap-authentication-provider user-search-filter="(uid={0})" 
-		user-search-base="ou=users" group-search-filter="(uniqueMember={0})" group-search-base="ou=groups" 
-		group-role-attribute="cn" role-prefix="ROLE_"> </ldap-authentication-provider> 
+	<!-- authentication-manager> <ldap-authentication-provider user-search-filter="(uid={0})"
+		user-search-base="ou=users" group-search-filter="(uniqueMember={0})" group-search-base="ou=groups"
+		group-role-attribute="cn" role-prefix="ROLE_"> </ldap-authentication-provider>
 		</authentication-manager -->
 
 	<!-- REAL LDAP server -->
 
-	<!-- ldap-server url="ldap://localhost:10389/o=mojo" manager-dn="uid=admin,ou=system" 
+	<!-- ldap-server url="ldap://localhost:10389/o=mojo" manager-dn="uid=admin,ou=system"
 		manager-password="secret" / -->
 
 	<!-- EMBEDDED LDAP -->
@@ -32,9 +32,9 @@
 	<!-- JDBC -->
 	<authentication-manager alias="authMan">
 		<authentication-provider user-service-ref="jdbcUserService">
-		<password-encoder hash="sha"/>
-			<!-- jdbc-user-service data-source-ref="dataSource" users-by-username-query="SELECT 
-				username,password, enabled FROM users WHERE username=?" authorities-by-username-query="SELECT 
+			<password-encoder hash="sha" />
+			<!-- jdbc-user-service data-source-ref="dataSource" users-by-username-query="SELECT
+				username,password, enabled FROM users WHERE username=?" authorities-by-username-query="SELECT
 				username, role FROM user_role WHERE username =? " / -->
 		</authentication-provider>
 	</authentication-manager>
@@ -47,11 +47,11 @@
 			value="select username,role from user_role where username = ?" />
 	</beans:bean>
 
-	<!-- If You don't want to use LDAP and can define all your users here, you 
+	<!-- If You don't want to use LDAP and can define all your users here, you
 		can use this. -->
-	<!-- authentication-manager> <authentication-provider> <user-service> <user 
-		name="Alex" password="password" authorities="ROLE_USER, ROLE_ADMIN"></user> 
-		<user name="resist" password="password" authorities="ROLE_USER"></user> </user-service> 
+	<!-- authentication-manager> <authentication-provider> <user-service> <user
+		name="Alex" password="password" authorities="ROLE_USER, ROLE_ADMIN"></user>
+		<user name="resist" password="password" authorities="ROLE_USER"></user> </user-service>
 		</authentication-provider> </authentication-manager -->
 
 	<!-- Make resources not need security -->
@@ -62,7 +62,7 @@
 	<http auto-config="true" security="none" pattern="/login*" />
 	<http auto-config="true" security="none" pattern="/signup*" />
 	<http auto-config="true" security="none" pattern="/vote*" />
-	
+
 	<!-- Paths that need securing -->
 	<http auto-config="false" entry-point-ref="loginUrlAuthenticationEntryPoint">
 		<intercept-url pattern="/userManagement*" access="ROLE_ADMIN" />
@@ -74,17 +74,15 @@
 		<intercept-url pattern="/lobbyUpdate/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<intercept-url pattern="/**" access="ROLE_USER" />
 
-		<!-- form-login login-page="/login" username-parameter="username"
-			password-parameter="password" always-use-default-target="true"
-			default-target-url="/profile" authentication-failure-url="/login?authfailed" / -->
+		<!-- form-login login-page="/login" username-parameter="username" password-parameter="password"
+			always-use-default-target="true" default-target-url="/profile" authentication-failure-url="/login?authfailed"
+			/ -->
 		<logout logout-success-url="/login?logout" />
 
-		<custom-filter position="FORM_LOGIN_FILTER"
-			ref="trackingUsernamePasswordAuthenticationFilter" />
+		<custom-filter position="FORM_LOGIN_FILTER" ref="trackingUsernamePasswordAuthenticationFilter" />
 	</http>
 
-	<beans:bean id="loginUrlAuthenticationEntryPoint"
-		class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+	<beans:bean id="loginUrlAuthenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
 		<beans:property name="loginFormUrl" value="/login" />
 	</beans:bean>
 
@@ -97,13 +95,11 @@
 		<beans:property name="passwordParameter" value="password" />
 	</beans:bean>
 
-	<beans:bean id="successHandler"
-		class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+	<beans:bean id="successHandler" class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
 		<beans:property name="defaultTargetUrl" value="/profile" />
 		<beans:property name="alwaysUseDefaultTargetUrl" value="true" />
 	</beans:bean>
-	<beans:bean id="failureHandler"
-		class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+	<beans:bean id="failureHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
 		<beans:property name="defaultFailureUrl" value="/login?authfailed" />
 	</beans:bean>
 

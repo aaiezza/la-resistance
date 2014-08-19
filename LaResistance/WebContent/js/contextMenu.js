@@ -159,7 +159,7 @@
             {
                 return !$(this).data('iw-menuData');
             });
-            //to change basetrigger on refresh  
+            //to change basetrigger on refresh
             menuData.option.baseTrigger = this;
             iMethods.contextMenuBind.call(newElm, menuData.menuSelector,
                 menuData.option);

@@ -9,18 +9,18 @@
 
 	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
 
-	<!-- Handles HTTP GET requests for /resources/** by efficiently serving 
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving
 		up static resources in the ${webappRoot}/resources directory -->
 	<mvc:resources mapping="/resources/**" location="/local-resources/" />
 
 	<!-- activates annotation driven binding -->
 	<mvc:annotation-driven />
 
-	<!-- Needed to allow properties that are loaded here, to be read by the 
+	<!-- Needed to allow properties that are loaded here, to be read by the
 		BeanPostProcessor so they may make it into the java classes -->
 	<context:property-placeholder location="/resources/laResistance.properties" />
 
-	<!-- Resolves views selected for rendering by @Controllers to .jsp resources 
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources
 		in the /jsp directory -->
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">

@@ -1,81 +1,81 @@
 h3, td {
-	margin: 0 auto;
+    margin: 0 auto;
 }
 
 
 .teamFull {
-	background: #F58080;
+    background: #F58080;
 }
 
 #role {
-	text-align: center;
-	padding: 10px;
-	background: #D50000;
-	font-size: medium;
-	margin: 5px auto;
-	display: inline-block;
+    text-align: center;
+    padding: 10px;
+    background: #D50000;
+    font-size: medium;
+    margin: 5px auto;
+    display: inline-block;
 }
 
 #role.revealed {
-	font-size: xx-large;
-	font-weight: bolder;
+    font-size: xx-large;
+    font-weight: bolder;
 }
 
 #gameInfoBlock {
-	background: whitesmoke;
-	border: 5px solid black;
-	text-align: center;
-	margin: 0 auto;
-	display: inline-block;
+    background: whitesmoke;
+    border: 5px solid black;
+    text-align: center;
+    margin: 0 auto;
+    display: inline-block;
 }
 
 table {
-	margin: inherit;
-	font-size: x-large;
+    margin: inherit;
+    font-size: x-large;
 }
 
 table tr td {
-	border: 1px solid black;
+    border: 1px solid black;
 }
 
 .leader {
-	background: #F50000;
+    background: #F50000;
 }
 
 .member.teammate td {
-	background: #F58080;
+    background: #F58080;
 }
 
 .member.disabled td {
-	background: gray;
+    background: gray;
 }
 
 #successfulMissions {
-	background: #D0D0F5;
+    background: #D0D0F5;
 }
 
 #failedMissions {
-	background: #F5D0D0;
+    background: #F5D0D0;
 }
 
 #approve, #successful {
-	background: #AFA;
+    background: #AFA;
 }
 
 #reject, #failure {
-	background: #FAA;
+    background: #FAA;
 }
 
 .SPY {
-	background: #F5D0D0;
+    background: #F5D0D0;
 }
 
 .LOYAL {
-	background: #D0D0F5;
+    background: #D0D0F5;
 }
 
 #winner {
-	background: #AFA;
+    background: #AFA;
 }
 
 /*
@@ -83,8 +83,8 @@ table tr td {
 */
 
 #board {
-	width: 100%;
-	height: -moz-calc(100% - 50px);
-	height: -webkit-calc(100% - 50px);
-	height: calc(100% - 50px);
+    width: 100%;
+    height: -moz-calc(100% - 50px);
+    height: -webkit-calc(100% - 50px);
+    height: calc(100% - 50px);
 }

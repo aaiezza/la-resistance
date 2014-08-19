@@ -1,106 +1,106 @@
 html, body, div, span, p, a {
-	margin: 0.0;
-	padding: 0.0;
-	font-size: 100.0%;
-	vertical-align: baseline;
-	border: 0.0;
-	outline: 0.0;
-	background: transparent;
+    margin: 0.0;
+    padding: 0.0;
+    font-size: 100.0%;
+    vertical-align: baseline;
+    border: 0.0;
+    outline: 0.0;
+    background: transparent;
 }
 
 html, body {
-	height: -moz-calc(100% - ( 16px + .5em));
-	height: -webkit-calc(100% - ( 16px + .5em));
-	height: calc(100% - ( 16px + .5em));
+    height: -moz-calc(100% - ( 16px + .5em));
+    height: -webkit-calc(100% - ( 16px + .5em));
+    height: calc(100% - ( 16px + .5em));
 }
 
 div {
-	display: block;
+    display: block;
 }
 
 #header {
-	z-index: 3;
-	width: 100.0%;
-	height: 50.0px;
-	background: #333;
-	position: fixed;
-	top: 0.0;
+    z-index: 3;
+    width: 100.0%;
+    height: 50.0px;
+    background: #333;
+    position: fixed;
+    top: 0.0;
 }
 
 img {
-	height: 50.0px;
-	width: 50.0px;
+    height: 50.0px;
+    width: 50.0px;
 }
 
 #header-inner {
-	position: relative;
-	max-width: 970.0px;
-	margin: 0.0 auto;
-	padding: 0.0 12.0px;
-	text-align: center;
+    position: relative;
+    max-width: 970.0px;
+    margin: 0.0 auto;
+    padding: 0.0 12.0px;
+    text-align: center;
 }
 
 .group:after {
-	content: ".";
-	display: inline-block;
-	height: 0.0;
-	clear: both;
-	visibility: hidden;
+    content: ".";
+    display: inline-block;
+    height: 0.0;
+    clear: both;
+    visibility: hidden;
 }
 
 body {
-	font-family: "Helvetica Neue", Verdana, Arial, sans-serif;
-	color: #333;
-	font-size: 62.5%;
-	text-rendering: optimizeLegibility;
-	background: #fff;
+    font-family: "Helvetica Neue", Verdana, Arial, sans-serif;
+    color: #333;
+    font-size: 62.5%;
+    text-rendering: optimizeLegibility;
+    background: #fff;
 }
 
 #logo {
-	float: left;
-	padding: 0.0 20.0px 0.0 0.0;
-	text-align: left;
+    float: left;
+    padding: 0.0 20.0px 0.0 0.0;
+    text-align: left;
 }
 
 #title {
-	display: inline-block;
-	position: absolute;
-	color: white;
+    display: inline-block;
+    position: absolute;
+    color: white;
 }
 
 #logo, #logo span {
-	display: block;
-	background-repeat: no-repeat;
-	background-position: 0.0 50.0%;
+    display: block;
+    background-repeat: no-repeat;
+    background-position: 0.0 50.0%;
 }
 
 .group {
-	position: relative;
+    position: relative;
 }
 
 #options {
-	font-size: large;
-	margin-top: 10px;
-	float: right;
-	color: #A50000;
+    font-size: large;
+    margin-top: 10px;
+    float: right;
+    color: #A50000;
 }
 
 a {
-	text-decoration: none;
+    text-decoration: none;
 }
 
 a:visited, a:link {
-	color: #D50000;
+    color: #D50000;
 }
 
 a:hover {
-	background-color: slategray;
-	font-style: italic;
+    background-color: slategray;
+    font-style: italic;
 }
 
 #core {
-	/* padding: 30px; */
-	margin-top: 50px;
-	text-align: center;
-	
+    /* padding: 30px; */
+    margin-top: 50px;
+    text-align: center;
+    
 }

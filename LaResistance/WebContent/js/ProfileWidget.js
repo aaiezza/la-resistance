@@ -6,30 +6,29 @@ var ProfileWidget = function()
     /////////////////////////////////
     // Widget Constructor Function //
     /////////////////////////////////
-    global.makeProfileWidget = function( parentElement )
+    global.makeProfileWidget = function(parentElement)
     {
         ////////////////////////
         /////    Fields    /////
         ////////////////////////
 
         var container = parentElement;
-        
-        var manageUsersOption = $( "#userManagementOption" );
-        
-        var logoutOption = $( "#logoutOption" );
-        
+
+        var manageUsersOption = $("#userManagementOption");
+
+        var logoutOption = $("#logoutOption");
+
         //////////////////////////////
         // Private Instance Methods //
         //////////////////////////////
 
-
         //////////////////////////////////////////
         // Find Pieces and Enliven DOM Fragment //
         //////////////////////////////////////////
-        headerWidget.addOption( logoutOption );
-        
-        headerWidget.addOption( manageUsersOption );
-        
+        headerWidget.addOption(logoutOption);
+
+        headerWidget.addOption(manageUsersOption);
+
         /////////////////////////////
         // Public Instance Methods //
         /////////////////////////////
@@ -40,11 +39,11 @@ var ProfileWidget = function()
             },
             update : function()
             {
-                
+
             },
-            log : function( message )
+            log : function(message)
             {
-                
+
             }
         };
     };
@@ -52,5 +51,5 @@ var ProfileWidget = function()
 
 $(document).ready(function()
 {
-    profileWidget = makeProfileWidget( $ ( "#core" ) );
+    profileWidget = makeProfileWidget($("#core"));
 });

@@ -35,52 +35,52 @@ import org.springframework.util.Assert;
 public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
 {
     /**
-     * 
+     *
      */
     public final static String           QUERY_NUMBER_OF_USERS_SQL   = "SELECT COUNT(username) FROM users WHERE username = ?";
 
     /**
-     * 
+     *
      */
     public final static String           QUERY_USER_BY_USERNAME      = "SELECT users.username, password, enabled, first_name, last_name, email, role FROM users LEFT JOIN user_role ON users.username=user_role.username WHERE users.username = ?";
 
     /**
-     * 
+     *
      */
     public final static String           NEW_USER_SQL                = "INSERT INTO users (username, password, enabled, first_name, last_name, email) VALUES ( ?, ?, ?, ?, ?, ? )";
 
     /**
-     * 
+     *
      */
     public final static String           NEW_USER_ROLE_SQL           = "INSERT INTO user_role (username, role) VALUES( ?, ? )";
 
     /**
-     * 
+     *
      */
     public final static String           DELETE_USER_SQL             = "DELETE FROM users WHERE username = ?";
 
     /**
-     * 
+     *
      */
     public final static String           DELETE_USER_ROLE_SQL        = "DELETE FROM user_role WHERE username = ?";
 
     /**
-     * 
+     *
      */
     public final static String           SELECT_ALL_USERS_SQL        = "SELECT users.username, password, enabled, first_name, last_name, email, role FROM users LEFT JOIN user_role ON users.username=user_role.username";
 
     /**
-     * 
+     *
      */
     public final static String           SELECT_ALL_ROLES_SQL        = "SELECT role FROM roles";
 
     /**
-     * 
+     *
      */
     public final static String           DELETE_USER_AUTHORITIES_SQL = "delete from user_role where username = ?";
 
     /**
-     * 
+     *
      */
     public final static String           UPDATE_USER_SQL             = "UPDATE users SET enabled = ?, first_name = ?, last_name = ?, email = ? WHERE username = ?";
 

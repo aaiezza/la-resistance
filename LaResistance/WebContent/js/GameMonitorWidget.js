@@ -13,7 +13,7 @@ var GameMonitorWidget = function()
         ///////////////////
         var QueryString = function()
         {
-            // This function is anonymous, is executed immediately and 
+            // This function is anonymous, is executed immediately and
             // the return value is assigned to QueryString!
             var query_string = {};
             var query = window.location.search.substring(1);

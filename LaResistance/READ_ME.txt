@@ -32,7 +32,7 @@ http://stackoverflow.com/questions/8521251/spring-securitypassword-encoding-in-d
    - Games waiting for players
    - Games in play and can spectate
    - Games in play and cannot spectate
-   
+
 2) The ability to create a game and host it
 
 3) Highlighted game displayed and its status

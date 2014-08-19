@@ -67,7 +67,7 @@ public abstract class MessageRelayer <T>
      * broker's message relayer is not a created bean until this context is
      * declared. This circular dependency makes it impossible to inject those
      * beans at server start up.
-     * 
+     *
      * @param logger
      */
     protected MessageRelayer( Log logger, String defaultDestination )
@@ -91,7 +91,7 @@ public abstract class MessageRelayer <T>
 
     /**
      * If there is no default destination, this will set it to null
-     * 
+     *
      * @param logger
      * @param template
      */
@@ -150,7 +150,7 @@ public abstract class MessageRelayer <T>
     /**
      * The only reason to override this method in a subclass is if instances
      * that are updating their subscribers are unique every time.
-     * 
+     *
      * @return The URL corresponding to the subscription channel that a STOMP
      *         client would be subscribed to to receive updates.
      */
@@ -162,7 +162,7 @@ public abstract class MessageRelayer <T>
     /**
      * Intercept the subscription event from a client in a Controller and call
      * this method to enable logging of subscriptions
-     * 
+     *
      * @param user
      */
     protected final void onSubscription( ShabaUser user, int initialAction )
@@ -183,7 +183,7 @@ public abstract class MessageRelayer <T>
     }
 
     /**
-     * 
+     *
      * @param user
      *            The user subscribing to this
      */

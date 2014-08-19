@@ -22,9 +22,9 @@
 <body>
     <c:url value="j_spring_security_logout" var="logoutUrl" />
 
-	<div id="header" class="group linkProfile"></div>
-	<div id="core"></div>
+    <div id="header" class="group linkProfile"></div>
+    <div id="core"></div>
 
-	<a id="logoutOption" href="${imagePath}${logoutUrl}">Logout</a>
+    <a id="logoutOption" href="${imagePath}${logoutUrl}">Logout</a>
 </body>
 </html>

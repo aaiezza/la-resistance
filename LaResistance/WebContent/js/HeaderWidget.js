@@ -2,11 +2,11 @@
 var HeaderWidget = function()
 {
     var global = this;
-    
+
     /////////////////////////////////
     // Widget Constructor Function //
     /////////////////////////////////
-    global.makeHeaderWidget = function( parentElement )
+    global.makeHeaderWidget = function(parentElement)
     {
         ////////////////////////
         /////    Fields    /////
@@ -19,48 +19,53 @@ var HeaderWidget = function()
             profileUrl : "/resist/profile",
         };
 
-        var headerBar = $( "<div id='header-inner' class='group'>" );
-        
-        var logo = $( "<div id='logo'>" ).append( $( "<img id='_logo' alt='resistLogo' />" ).attr( "src", urls.resistFistIMG ) );
-        
-        var title = $( "<h2 id='title'>" );
-        
-        var options = $( "<span id='options'>" );
+        var headerBar = $("<div id='header-inner' class='group'>");
+
+        var logo = $("<div id='logo'>").append(
+        $("<img id='_logo' alt='resistLogo' />")
+        .attr("src", urls.resistFistIMG));
+
+        var title = $("<h2 id='title'>");
+
+        var options = $("<span id='options'>");
 
         //////////////////////////////
         // Private Instance Methods //
         //////////////////////////////
         function adjustHeaderTitle()
         {
-            $("#title").css("left", "calc( 50% - " + $("#title").width() / 2 + "px )");
-            $("#title").css("left", "-moz-calc( 50% - " + $("#title").width() / 2 + "px )");
-            $("#title").css("left", "-webkit-calc( 50% - " + $("#title").width() / 2 + "px )");
-        };
+            $("#title").css("left",
+            "calc( 50% - " + $("#title").width() / 2 + "px )");
+            $("#title").css("left",
+            "-moz-calc( 50% - " + $("#title").width() / 2 + "px )");
+            $("#title").css("left",
+            "-webkit-calc( 50% - " + $("#title").width() / 2 + "px )");
+        }
+        ;
 
         //////////////////////////////////////////
         // Find Pieces and Enliven DOM Fragment //
         //////////////////////////////////////////
-        container.append( headerBar );
-        
-        headerBar.append( logo ).append( title ).append( options );
+        container.append(headerBar);
 
-        $("#title").change( adjustHeaderTitle );
+        headerBar.append(logo).append(title).append(options);
 
-        $("#title").html( $("title").html() ).change();
+        $("#title").change(adjustHeaderTitle);
 
-        if( $(container).hasClass("linkProfile") )
+        $("#title").html($("title").html()).change();
+
+        if ($(container).hasClass("linkProfile"))
         {
             $("img#_logo").wrap($("<a>").attr('href', urls.profileUrl)).hover(
-                    function()
-                    {
-                        $(this).parent().parent().fadeTo(50, 0.45);
-                    }, function()
-                    {
-                        $(this).parent().parent().fadeTo(50, 1.0);
-                    })
-                .attr( 'title', 'Back to Profile' );
+            function()
+            {
+                $(this).parent().parent().fadeTo(50, 0.45);
+            }, function()
+            {
+                $(this).parent().parent().fadeTo(50, 1.0);
+            }).attr('title', 'Back to Profile');
         }
-        
+
         /////////////////////////////
         // Public Instance Methods //
         /////////////////////////////
@@ -69,35 +74,35 @@ var HeaderWidget = function()
             {
                 return container;
             },
-            addOption : function ( element )
+            addOption : function(element)
             {
-                if ( !element.length )
+                if (!element.length)
                 {
                     return;
                 }
-                
-                options.prepend( element );
 
-                if ( options.children().length > 1 )
+                options.prepend(element);
+
+                if (options.children().length > 1)
                 {
-                    element.after( " | " );
+                    element.after(" | ");
                 }
 
             },
             update : function()
             {
-                
+
             },
-            log : function( message )
+            log : function(message)
             {
-                
+
             }
         };
     };
-    
+
 }();
 
 $(document).ready(function()
 {
-    headerWidget = makeHeaderWidget( $("#header") );
+    headerWidget = makeHeaderWidget($("#header"));
 });

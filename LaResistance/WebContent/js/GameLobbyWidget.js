@@ -46,7 +46,7 @@ var GameLobbyWidget = function()
         var me = $.parseJSON($("#p_user").html());
 
         var gameIDtoFocusOn;
-        
+
         var subscriptions = [];
 
         var lobbySock = new SockJS("http://" + location.host
@@ -56,33 +56,38 @@ var GameLobbyWidget = function()
         });
         var stompClient = Stomp.over(lobbySock);
 
-        stompClient
-        .connect(
-        {},
-        function(frame)
+        stompClient.ws.onclose = function()
+        {
+            alert("Poopsicles");
+        };
+
+        stompClient.connect({}, function(frame)
         {
             console.log('Connected: ' + frame);
             chatWidget = makeChatWidget(chatView, stompClient);
 
             subscriptions = [
-            stompClient.subscribe('/queue/activeUsers', updateActiveUsers),
+                stompClient.subscribe('/queue/activeUsers', updateActiveUsers),
 
-            stompClient.subscribe('/app/activeUsers'),
+                stompClient.subscribe('/app/activeUsers'),
 
-            stompClient.subscribe('/queue/activeGames', updateActiveGames),
+                stompClient.subscribe('/queue/activeGames', updateActiveGames),
 
-            stompClient.subscribe('/user/queue/activeGames', updateActiveGames),
+                stompClient.subscribe('/user/queue/activeGames',
+                updateActiveGames),
 
-            stompClient.subscribe('/app/activeGames') ];
+                stompClient.subscribe('/app/activeGames') ];
         });
 
         window.onbeforeunload = function()
         {
-            $(subscriptions).each(function()
+            if (stompClient.connected)
             {
-                this.unsubscribe();
-            });
-            stompClient.close();
+                $(subscriptions).each(function()
+                {
+                    this.unsubscribe();
+                });
+            }
         }
 
         //////////////////////////////

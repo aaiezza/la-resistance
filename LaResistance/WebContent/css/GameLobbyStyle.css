@@ -1,107 +1,107 @@
 #core {
-	overflow: overlay;
+    overflow: overlay;
 }
 
 body {
-	overflow: hidden;
+    overflow: hidden;
 }
 
 div.leftPane, div.rightPane {
-	float: left;
-	border-color: darkslategray;
-	border-style: solid solid solid hidden;
-	border-width: 5px;
-	padding: .5em;
-	height: -moz-calc(100% - ( 16px + .5em));
-	height: -webkit-calc(100% - ( 16px + .5em));
-	height: calc(100% - ( 16px + .5em));
+    float: left;
+    border-color: darkslategray;
+    border-style: solid solid solid hidden;
+    border-width: 5px;
+    padding: .5em;
+    height: -moz-calc(100% - ( 16px + .5em));
+    height: -webkit-calc(100% - ( 16px + .5em));
+    height: calc(100% - ( 16px + .5em));
 }
 
 div.leftPane {
-	width: -moz-calc(75% - ( 16px + .5em));
-	width: -webkit-calc(75% - ( 16px + .5em));
-	width: calc(75% - ( 16px + .5em));
-	border-left-style: solid;
+    width: -moz-calc(75% - ( 16px + .5em));
+    width: -webkit-calc(75% - ( 16px + .5em));
+    width: calc(75% - ( 16px + .5em));
+    border-left-style: solid;
 }
 
 div.rightPane {
-	width: -moz-calc(25% - ( 16px + .5em));
-	width: -webkit-calc(25% - ( 16px + .5em));
-	width: calc(25% - ( 16px + .5em));
+    width: -moz-calc(25% - ( 16px + .5em));
+    width: -webkit-calc(25% - ( 16px + .5em));
+    width: calc(25% - ( 16px + .5em));
 }
 
 .me td {
-	background: lightgray;
-	padding: 1px 1px 1px 10px
+    background: lightgray;
+    padding: 1px 1px 1px 10px
 }
 
 .gameLobby {
-	margin: 0 auto;
-	float: left;
-	position: relative;
-	background-color: gray;
-	cursor: default;
+    margin: 0 auto;
+    float: left;
+    position: relative;
+    background-color: gray;
+    cursor: default;
 }
 
 #gameAndChatBlock {
-	background-color: #D50000;
-	width: 100%;
+    background-color: #D50000;
+    width: 100%;
 }
 
 #gameBlock {
-	width: 100%;
-	background-color: #00D500;
+    width: 100%;
+    background-color: #00D500;
 }
 
 #gameList, #gameView, #gameBlock, #userBlock {
-	max-height: 350px;
-	height: 350px;
+    max-height: 350px;
+    height: 350px;
 }
 
 #gameList {
-	width: -moz-calc(100% - 500px);
-	width: -webkit-calc(100% - 500px);
-	width: calc(100% - 500px);
-	text-align: center;
+    width: -moz-calc(100% - 500px);
+    width: -webkit-calc(100% - 500px);
+    width: calc(100% - 500px);
+    text-align: center;
 }
 
 #gameList, #userBlock, #gameView {
-	overflow-y: auto;
+    overflow-y: auto;
 }
 
 #gameView {
-	background-color: lightgray;
+    background-color: lightgray;
 }
 
 #gameView, #userBlock {
-	max-width: 250px;
-	width: 250px;
+    max-width: 250px;
+    width: 250px;
 }
 
 #chatView {
-	width: 100%;
-	height: -moz-calc(100% - 300px);
-	height: -webkit-calc(100% - 300px);
-	height: calc(100% - 300px);
-	background-color: #004;
-	text-align: center;
+    width: 100%;
+    height: -moz-calc(100% - 300px);
+    height: -webkit-calc(100% - 300px);
+    height: calc(100% - 300px);
+    background-color: #004;
+    text-align: center;
 }
 
 #userList {
-	width: 100%;
-	font-size: medium;
+    width: 100%;
+    font-size: medium;
 }
 
 #userList tbody {
-	text-align: left;
+    text-align: left;
 }
 
 #newGameButton {
-	position: absolute;
-	left: -moz-calc(40% - 15px);
-	left: -webkit-calc(40% - 15px);
-	left: calc(40% - 15px);
-	top: -moz-calc(87%);
-	top: -webkit-calc(87%);
-	top: calc(87%);
+    position: absolute;
+    left: -moz-calc(40% - 15px);
+    left: -webkit-calc(40% - 15px);
+    left: calc(40% - 15px);
+    top: -moz-calc(87%);
+    top: -webkit-calc(87%);
+    top: calc(87%);
 }

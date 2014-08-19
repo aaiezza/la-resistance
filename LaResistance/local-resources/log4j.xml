@@ -10,15 +10,15 @@
             <param name="ConversionPattern" value="%-5p %d{HH:mm:ss,SSS} %c{3}: %m%n" />
         </layout>
     </appender>
-    
+
     <logger name="org.springframework.beans.TypeConverterDelegate">
         <level value="OFF" />
     </logger>
-    
+
     <logger name="com.mysql.jdbc">
         <level value="INFO" />
     </logger>
-    
+
     <logger name="org.springframework.beans">
         <level value="INFO" />
     </logger>
@@ -26,17 +26,21 @@
     <logger name="org.resistance.site">
         <level value="INFO" />
     </logger>
-    
+
     <logger name="com.gargoylesoftware.htmlunit">
         <level value="FATAL" />
     </logger>
-  
+
     <logger name="org.springframework.web.servlet.DispatcherServlet">
         <level value="INFO" />
     </logger>
-    
+
     <logger name="org.springframework.web.socket">
         <level value="OFF" />
+    </logger>
+
+    <logger name="org.springframework.messaging.simp">
+        <level value="TRACE" />
     </logger>
 
     <root>

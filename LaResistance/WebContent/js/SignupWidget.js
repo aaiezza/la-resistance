@@ -1,23 +1,22 @@
 // Wrap code with module pattern
 var SignupWidget = function()
 {
-	var global = this;
+    var global = this;
 
     /////////////////////////////////
     // Widget Constructor Function //
     /////////////////////////////////
-	global.makeSignupWidget = function( parentElement )
-	{
+    global.makeSignupWidget = function(parentElement)
+    {
         ////////////////////////
         /////    Fields    /////
         ////////////////////////
 
-		var container = parentElement;
+        var container = parentElement;
 
         //////////////////////////////
         // Private Instance Methods //
         //////////////////////////////
-
 
         //////////////////////////////////////////
         // Find Pieces and Enliven DOM Fragment //
@@ -30,24 +29,24 @@ var SignupWidget = function()
         /////////////////////////////
         // Public Instance Methods //
         /////////////////////////////
-		return {
+        return {
             getRootEl : function()
             {
                 return container;
             },
             update : function()
             {
-                
+
             },
-            log : function( message )
+            log : function(message)
             {
-                
+
             }
         };
-	};
+    };
 }();
 
 $(document).ready(function()
 {
-    signupWidget = makeSignupWidget( $("#core") )
+    signupWidget = makeSignupWidget($("#core"))
 });

@@ -82,7 +82,7 @@ public class Board
 
     /**
      * Proceed to the next mission
-     * 
+     *
      * @return <code>true</code> if there is another mission to go on.
      */
     boolean nextMission()

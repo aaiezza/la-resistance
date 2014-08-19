@@ -13,5 +13,5 @@
 		</websocket:stomp-endpoint>
 		<websocket:simple-broker prefix="/queue/"/>
     </websocket:message-broker>
-    
+
 </beans>

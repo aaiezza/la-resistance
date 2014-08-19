@@ -506,7 +506,7 @@ public class Game extends MessageRelayer<Game>
 
     /**
      * Called every time the number of players changes
-     * 
+     *
      * @param numberOfPlayers
      */
     public synchronized boolean makeBoard( int numberOfPlayers )
@@ -562,7 +562,7 @@ public class Game extends MessageRelayer<Game>
 
     /**
      * Called every time the number of bots changes
-     * 
+     *
      * @param numberOfBots
      */
     public synchronized boolean updateBotPlayers( int numberOfBots )
