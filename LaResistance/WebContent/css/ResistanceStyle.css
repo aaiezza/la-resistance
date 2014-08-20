@@ -14,7 +14,7 @@ html, body {
     height: calc(100% - ( 16px + .5em));
 }
 
-td {
+table {
 	font-size: initial;
 }
 

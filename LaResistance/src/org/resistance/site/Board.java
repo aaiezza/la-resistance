@@ -9,7 +9,6 @@ import org.resistance.site.mech.Mission;
 import org.resistance.site.mech.Missions;
 import org.resistance.site.mech.Role;
 import org.resistance.site.utils.VoteCounter;
-import org.resistance.site.utils.VoteCounter.VoteResults;
 
 /**
  * @author Alex Aiezza
@@ -113,11 +112,6 @@ public class Board
     VoteCounter getTeamVoter()
     {
         return currentMission.getTeamVotes();
-    }
-
-    VoteResults getLastTeamVoteResults()
-    {
-        return currentMission.getLastTeamVotes().getResults();
     }
 
     public Player getCurrentLeader()

@@ -78,6 +78,10 @@ table tr td {
     background: #AFA;
 }
 
+.messageUpdates {
+	background: goldenrod;
+}
+
 /*
  USED BY THE GAME MONITOR
 */

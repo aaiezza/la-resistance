@@ -55,13 +55,13 @@ public class Game extends MessageRelayer<Game>
 
     private static final String MES_WINNER               = "<span id='winner' class='%1$s'>The %1$sS are Victorious!</span>";
 
-    private static final String MES_MISSION_SUCCESS      = "<span id='successful'>Mission #%d was a Success! (%d : %d)<table class='teamFull'>%s</table></span>";
+    private static final String MES_MISSION_SUCCESS      = "<span id='successful'>Mission #%d was a Success! (%d : %d)</span>";
 
-    private static final String MES_MISSION_FAILURE      = "<span id='failure'>Mission #%d was a Failure! (%d : %d)<table class='teamFull'>%s</table></span>";
+    private static final String MES_MISSION_FAILURE      = "<span id='failure'>Mission #%d was a Failure! (%d : %d)</span>";
 
-    private static final String MES_TEAM_APPROVE         = "<span>%s's team is out on their Mission! (%d : %d)</span>";
+    private static final String MES_TEAM_APPROVE         = "<table class='teamFull'>%s</table><span>%s's team is out on their Mission! (%d : %d)</span>";
 
-    private static final String MES_TEAM_DENY            = "<span id='failure'>The Resistance did NOT agree with that Team! (%d : %d)</span>";
+    private static final String MES_TEAM_DENY            = "<table class='teamFull'>%s</table><span id='failure'>The Resistance did NOT agree with %s's Team! (%d : %d)</span>";
 
     private Board               board;
 
@@ -142,11 +142,14 @@ public class Game extends MessageRelayer<Game>
             if ( board.getTeamVoter().getResults().isPasses() )
             {
                 state = TEAM_VOTES_ON_MISSION;
-                message.add( String.format( MES_TEAM_APPROVE, getCurrentLeader(), board
-                        .getTeamVoter().getResults().approves(), board.getTeamVoter().getResults()
-                        .denies() ) );
+                message.add( String.format( MES_TEAM_APPROVE, board.getCurrentMission()
+                        .getHTMLTeam(), getCurrentLeader(), board.getTeamVoter().getResults()
+                        .approves(), board.getTeamVoter().getResults().denies() ) );
             } else
             {
+                String denyMessage = String.format( MES_TEAM_DENY, board.getCurrentMission()
+                        .getHTMLTeam(), getCurrentLeader(), board.getTeamVoter().getResults()
+                        .approves(), board.getTeamVoter().getResults().denies() );
                 if ( !board.prepareForTeamVote() )
                 {
                     // SPIES WIN
@@ -155,8 +158,7 @@ public class Game extends MessageRelayer<Game>
                     state = GAME_OVER;
                     break;
                 }
-                message.add( String.format( MES_TEAM_DENY, board.getLastTeamVoteResults()
-                        .approves(), board.getLastTeamVoteResults().denies() ) );
+                message.add( denyMessage );
                 appointLeader( false );
                 state = LEADER_CHOOSING_TEAM;
             }
@@ -167,16 +169,14 @@ public class Game extends MessageRelayer<Game>
                 message.add( String.format( MES_MISSION_SUCCESS,
                     board.getCurrentMission().MissionNumber, board.getCurrentMission()
                             .getMissionVotes().getResults().approves(), board.getCurrentMission()
-                            .getMissionVotes().getResults().denies(), board.getCurrentMission()
-                            .getHTMLTeam() ) );
+                            .getMissionVotes().getResults().denies() ) );
                 successfulMissions++;
             } else
             {
                 message.add( String.format( MES_MISSION_FAILURE,
                     board.getCurrentMission().MissionNumber, board.getCurrentMission()
                             .getMissionVotes().getResults().approves(), board.getCurrentMission()
-                            .getMissionVotes().getResults().denies(), board.getCurrentMission()
-                            .getHTMLTeam() ) );
+                            .getMissionVotes().getResults().denies() ) );
                 failedMissions++;
             }
 

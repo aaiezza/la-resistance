@@ -265,7 +265,7 @@ var GameWidget = function()
                 }
 
                 var m = 0;
-                var message = $("<tr><td colspan='2'></td></tr>");
+                var message = $("<tr><td colspan='2' class='messageUpdates'></td></tr>");
 
                 if (prepend)
                     infoTable.prepend(message);
@@ -277,7 +277,8 @@ var GameWidget = function()
                 {
                     m++;
 
-                    message.children("td").prepend("<p>" + this + "</p>");
+                    if (!_.isEmpty(this))
+                        message.children("td").prepend("<p>" + this + "</p>");
 
                     if (m == activeGame.updateMessage.length)
                     {
