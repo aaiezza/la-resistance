@@ -49,7 +49,7 @@
                 </tr>
                 <tr>
                     <td><form:label path="username">Username:</form:label></td>
-                    <td><form:input class="userForm" type="text" path="username"
+                    <td><form:input class="userForm" type="text" maxlength="16" path="username"
                             placeholder="username" /></td>
                 </tr>
                 <tr>

@@ -196,7 +196,7 @@ var GameLobbyWidget = function()
                 .toggleClass("me", this.username == me.username));
             });
 
-            $("#userList").trigger("update")//.trigger("sorton",[[[0,0]]]);
+            $("#userList").trigger("update");//.trigger("sorton",[[[0,0]]]);
         }
 
         function setGameIDtoFocusOn(gameID)
