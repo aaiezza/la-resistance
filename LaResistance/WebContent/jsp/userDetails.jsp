@@ -65,6 +65,14 @@
                         <td><form:label for="enabled" path="enabled">Enabled</form:label></td>
                         <td><form:checkbox id="enabled" path="enabled"/></td>
                     </tr>
+                    <tr id="dateJoinedRow" class="permanent">
+                        <td><form:label for="date_joined" path="date_joined">Date Joined</form:label></td>
+                        <td><form:input type="datetime" id="date_joined" path="date_joined"/></td>
+                    </tr>
+                    <tr id="lastOnlineRow" class="permanent">
+                        <td><form:label for="last_online" path="last_online">Last Online</form:label></td>
+                        <td><form:input type="datetime" id="last_online" path="last_online"/></td>
+                    </tr>
                     <tr id="passwordRow">
                         <td><form:label for="password" path="password">Password</form:label></td>
                         <td><form:input type="password" id="password" path="password"/></td>

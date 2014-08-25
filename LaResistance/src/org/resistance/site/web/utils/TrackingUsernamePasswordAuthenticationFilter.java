@@ -41,7 +41,9 @@ public class TrackingUsernamePasswordAuthenticationFilter extends
             Authentication authResult ) throws IOException, ServletException
     {
         super.successfulAuthentication( request, response, chain, authResult );
-        USER_TRACKER.addUser( USER_MAN.loadShabaUserByUsername( ( (UserDetails) authResult
-                .getPrincipal() ).getUsername() ) );
+        ShabaUser user = USER_MAN.loadShabaUserByUsername( ( (UserDetails) authResult
+                .getPrincipal() ).getUsername() );
+        USER_TRACKER.addUser( user );
+        USER_MAN.loggedIn( user );
     }
 }

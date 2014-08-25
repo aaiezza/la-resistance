@@ -1,6 +1,5 @@
 package org.resistance.site.web.utils;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,7 +12,6 @@ import java.util.Set;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.security.access.AccessDeniedException;
@@ -44,7 +42,7 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
     /**
      *
      */
-    public final static String           QUERY_USER_BY_USERNAME      = "SELECT users.username, password, enabled, first_name, last_name, email, role FROM users LEFT JOIN user_role ON users.username=user_role.username WHERE users.username = ?";
+    public final static String           QUERY_USER_BY_USERNAME      = "SELECT users.username, password, enabled, first_name, last_name, email, date_joined, last_online, role FROM users LEFT JOIN user_role ON users.username=user_role.username WHERE users.username = ?";
 
     /**
      *
@@ -69,7 +67,7 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
     /**
      *
      */
-    public final static String           SELECT_ALL_USERS_SQL        = "SELECT users.username, password, enabled, first_name, last_name, email, role FROM users LEFT JOIN user_role ON users.username=user_role.username";
+    public final static String           SELECT_ALL_USERS_SQL        = "SELECT users.username, password, enabled, first_name, last_name, email, date_joined, last_online, role FROM users LEFT JOIN user_role ON users.username=user_role.username";
 
     /**
      *
@@ -85,6 +83,11 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
      *
      */
     public final static String           UPDATE_USER_SQL             = "UPDATE users SET enabled = ?, first_name = ?, last_name = ?, email = ? WHERE username = ?";
+
+    /**
+     * 
+     */
+    public final static String           UPDATE_USER_LAST_ONLINE_SQL = "UPDATE users SET last_online = DATETIME('NOW', 'LOCALTIME') WHERE username = ?";
 
     private AuthenticationManager        authenticationManager;
 
@@ -109,19 +112,15 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
      */
     public void createUser( final UserForm user )
     {
-        getJdbcTemplate().update( NEW_USER_SQL, new PreparedStatementSetter()
-        {
-            public void setValues( PreparedStatement ps ) throws SQLException
-            {
-                ps.setString( 1, user.getUsername() );
-                ps.setString( 2, DigestUtils.sha1Hex( user.getPassword() ) );
-                ps.setBoolean( 3, NEW_USER_ENABLED ); // Changing this so admin
-                                                      // has to enable
-                // people first!
-                ps.setString( 4, user.getFirst_name() );
-                ps.setString( 5, user.getLast_name() );
-                ps.setString( 6, user.getEmail() );
-            }
+        getJdbcTemplate().update( NEW_USER_SQL, ps -> {
+            ps.setString( 1, user.getUsername() );
+            ps.setString( 2, DigestUtils.sha1Hex( user.getPassword() ) );
+            ps.setBoolean( 3, NEW_USER_ENABLED ); // Changing this so admin
+                                                  // has to enable
+            // people first!
+            ps.setString( 4, user.getFirst_name() );
+            ps.setString( 5, user.getLast_name() );
+            ps.setString( 6, user.getEmail() );
         } );
 
         if ( getEnableAuthorities() )
@@ -129,6 +128,13 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
             getJdbcTemplate().update( NEW_USER_ROLE_SQL, user.getUsername(), USER.getAuthority() );
         }
 
+    }
+
+    public void loggedIn( final ShabaUser user )
+    {
+        getJdbcTemplate().update( UPDATE_USER_LAST_ONLINE_SQL, ps -> {
+            ps.setString( 1, user.getUsername() );
+        } );
     }
 
     /**
@@ -143,16 +149,12 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
                 checkForAdminRights();
             }
 
-            getJdbcTemplate().update( UPDATE_USER_SQL, new PreparedStatementSetter()
-            {
-                public void setValues( PreparedStatement ps ) throws SQLException
-                {
-                    ps.setBoolean( 1, user.isEnabled() );
-                    ps.setString( 2, user.getFirst_name() );
-                    ps.setString( 3, user.getLast_name() );
-                    ps.setString( 4, user.getEmail() );
-                    ps.setString( 5, user.getUsername() );
-                }
+            getJdbcTemplate().update( UPDATE_USER_SQL, ps -> {
+                ps.setBoolean( 1, user.isEnabled() );
+                ps.setString( 2, user.getFirst_name() );
+                ps.setString( 3, user.getLast_name() );
+                ps.setString( 4, user.getEmail() );
+                ps.setString( 5, user.getUsername() );
             } );
 
             if ( getEnableAuthorities() )
@@ -358,8 +360,9 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
 
         return new ShabaUser( returnUsername, userFromUserQuery.getPassword(),
                 userFromUserQuery.isEnabled(), userFromUserQuery.getFirst_name(),
-                userFromUserQuery.getLast_name(), userFromUserQuery.getEmail(), true, true, true,
-                combinedAuthorities );
+                userFromUserQuery.getLast_name(), userFromUserQuery.getEmail(),
+                userFromUserQuery.getDate_joined(), userFromUserQuery.getLast_online(), true, true,
+                true, combinedAuthorities );
     }
 
     public ShabaUser loadShabaUserByUsername( String username ) throws UsernameNotFoundException
@@ -428,7 +431,9 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
 
             ShabaUser user = new ShabaUser( rs.getString( "username" ), rs.getString( "password" ),
                     rs.getBoolean( "enabled" ), rs.getString( "first_name" ),
-                    rs.getString( "last_name" ), rs.getString( "email" ), true, true, true, roles );
+                    rs.getString( "last_name" ), rs.getString( "email" ),
+                    rs.getString( "date_joined" ), rs.getString( "last_online" ), true, true, true,
+                    roles );
 
             return user;
         }

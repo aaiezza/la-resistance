@@ -59,20 +59,20 @@
 	<http auto-config="true" security="none" pattern="/js/**" />
 	<http auto-config="true" security="none" pattern="/images/**" />
 
-	<http auto-config="true" security="none" pattern="/login*" />
+	<http auto-config="true" security="none" disable-url-rewriting="true" pattern="/login*" />
 	<http auto-config="true" security="none" pattern="/signup*" />
-	<http auto-config="true" security="none" pattern="/vote*" />
 
-	<!-- Paths that need securing -->
-	<http auto-config="false" entry-point-ref="loginUrlAuthenticationEntryPoint">
-		<intercept-url pattern="/userManagement*" access="ROLE_ADMIN" />
-		<intercept-url pattern="/updateUser*" access="ROLE_USER" />
-		<intercept-url pattern="/userDetails*" access="ROLE_USER" />
-		<intercept-url pattern="/gameLobby*" access="ROLE_USER" />
-		<intercept-url pattern="/profile*" access="ROLE_USER" />
-		<intercept-url pattern="/game*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<intercept-url pattern="/lobbyUpdate/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<intercept-url pattern="/**" access="ROLE_USER" />
+    <!-- Paths that need securing -->
+    <http auto-config="false" entry-point-ref="loginUrlAuthenticationEntryPoint" use-expressions="true">
+    	<intercept-url pattern="/resources/*" access="denyAll" />
+        <intercept-url pattern="/userManagement*" access="hasRole('ROLE_ADMIN')" />
+        <intercept-url pattern="/updateUser*" access="hasRole('ROLE_USER')" />
+        <intercept-url pattern="/userDetails*" access="hasRole('ROLE_USER')" />
+        <intercept-url pattern="/gameLobby*" access="hasRole('ROLE_USER')" />
+        <intercept-url pattern="/profile*" access="hasRole('ROLE_USER')" />
+        <intercept-url pattern="/game*" access="permitAll" />
+        <intercept-url pattern="/lobbyUpdate/**" access="permitAll" />
+        <intercept-url pattern="/**" access="hasRole('ROLE_USER')" />
 
 		<!-- form-login login-page="/login" username-parameter="username" password-parameter="password"
 			always-use-default-target="true" default-target-url="/profile" authentication-failure-url="/login?authfailed"

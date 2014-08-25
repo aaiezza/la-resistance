@@ -57,6 +57,8 @@ var UserManagementWidget = function()
                     $("<td><span>" + user.first_name + "</span></td>")).append(
                     $("<td><span>" + user.last_name + "</span></td>")).append(
                     $("<td><span>" + user.email + "</span></td>")).append(
+                    $("<td><span>" + user.date_joined + "</span></td>")).append(
+                    $("<td><span>" + user.last_online + "</span></td>")).append(
                     authorities));
                 });
 
@@ -155,6 +157,8 @@ var UserManagementWidget = function()
         $("<th class='header'>First Name</th>")).append(
         $("<th class='header'>Last Name</th>")).append(
         $("<th class='header'>Email</th>")).append(
+        $("<th class='header'>Date Joined</th>")).append(
+        $("<th class='header'>Last Online</th>")).append(
         $("<th class='header'>Roles</th>"));
 
         $("#userTable").append($("<tbody>"));

@@ -18,15 +18,22 @@ public class ShabaUser extends User
 
     private final String      email;
 
+    private final String      date_joined;
+
+    private final String      last_online;
+
     public ShabaUser(
         String username,
         String password,
         String first_name,
         String last_name,
         String email,
+        String date_joined,
+        String last_online,
         Collection<? extends GrantedAuthority> authorities )
     {
-        this( username, password, true, first_name, last_name, email, true, true, true, authorities );
+        this( username, password, true, first_name, last_name, email, date_joined, last_online,
+                true, true, true, authorities );
     }
 
     public ShabaUser(
@@ -36,6 +43,8 @@ public class ShabaUser extends User
         String first_name,
         String last_name,
         String email,
+        String date_joined,
+        String last_online,
         boolean accountNonExpired,
         boolean credentialsNonExpired,
         boolean accountNonLocked,
@@ -47,6 +56,8 @@ public class ShabaUser extends User
         this.first_name = first_name;
         this.last_name = last_name;
         this.email = email;
+        this.date_joined = date_joined;
+        this.last_online = last_online;
     }
 
     /**
@@ -73,6 +84,22 @@ public class ShabaUser extends User
         return email;
     }
 
+    /**
+     * @return the date_joined
+     */
+    public String getDate_joined()
+    {
+        return date_joined;
+    }
+
+    /**
+     * @return the last_online
+     */
+    public String getLast_online()
+    {
+        return last_online;
+    }
+
     @Override
     public String toString()
     {
@@ -97,8 +124,8 @@ public class ShabaUser extends User
     public static final ShabaUser ShabaUserFromForm( UserForm user )
     {
         return new ShabaUser( user.getUsername(), user.getPassword(), user.isEnabled(),
-                user.getFirst_name(), user.getLast_name(), user.getEmail(),
-                user.isAccountNonExpired(), user.isCredentialsNonExpired(),
+                user.getFirst_name(), user.getLast_name(), user.getEmail(), user.getDate_joined(),
+                user.getLast_online(), user.isAccountNonExpired(), user.isCredentialsNonExpired(),
                 user.isAccountNonLocked(), user.getAuthorities() );
 
 

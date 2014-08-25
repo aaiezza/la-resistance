@@ -24,6 +24,10 @@ public class UserForm implements UserDetails
 
     private String                            email;
 
+    private String                            date_joined;
+
+    private String                            last_online;
+
     private transient String                  confirmPassword;
 
     private String                            username;
@@ -98,6 +102,38 @@ public class UserForm implements UserDetails
     public void setEmail( String email )
     {
         this.email = email;
+    }
+
+    /**
+     * @return the date_joined
+     */
+    public String getDate_joined()
+    {
+        return date_joined;
+    }
+
+    /**
+     * @param date_joined the date_joined to set
+     */
+    public void setDate_joined( String date_joined )
+    {
+        this.date_joined = date_joined;
+    }
+
+    /**
+     * @return the last_online
+     */
+    public String getLast_online()
+    {
+        return last_online;
+    }
+
+    /**
+     * @param last_online the last_online to set
+     */
+    public void setLast_online( String last_online )
+    {
+        this.last_online = last_online;
     }
 
     /**
