@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
@@ -94,6 +96,14 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
     public final static GrantedAuthority USER                        = new SimpleGrantedAuthority(
                                                                              "ROLE_USER" );
 
+    private final boolean                NEW_USER_ENABLED;
+
+    @Autowired
+    private ShabaJdbcUserDetailsManager( @Value ( "${newUserEnabled}" ) boolean newUserEnabled )
+    {
+        NEW_USER_ENABLED = newUserEnabled;
+    }
+
     /**
      * @param user
      */
@@ -105,8 +115,9 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
             {
                 ps.setString( 1, user.getUsername() );
                 ps.setString( 2, DigestUtils.sha1Hex( user.getPassword() ) );
-                ps.setBoolean( 3, false ); // Changing this so I have to enable
-                                           // people first!
+                ps.setBoolean( 3, NEW_USER_ENABLED ); // Changing this so admin
+                                                      // has to enable
+                // people first!
                 ps.setString( 4, user.getFirst_name() );
                 ps.setString( 5, user.getLast_name() );
                 ps.setString( 6, user.getEmail() );
