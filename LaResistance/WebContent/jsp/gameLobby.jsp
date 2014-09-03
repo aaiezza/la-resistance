@@ -17,6 +17,7 @@
 <link type="text/css" href="${imagePath}css/lib/emoji.css" rel="stylesheet"/>
 
 <script type="text/javascript" src="${imagePath}js/lib/jquery-latest.min.js"></script>
+<script type="text/javascript" src="${imagePath}js/lib/jquery-ui.js"></script>
 <script type="text/javascript" src="${imagePath}js/lib/underscore-min.js"></script>
 <script type="text/javascript" src="${imagePath}js/lib/sockjs-0.3.js"></script>
 <script type="text/javascript" src="${imagePath}js/lib/stomp.js"></script>

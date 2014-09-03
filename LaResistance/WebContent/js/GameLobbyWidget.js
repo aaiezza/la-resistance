@@ -3,10 +3,10 @@ var GameLobbyWidget = function()
 {
     var global = this;
 
-    if (window.orientation == 0)
-    {
-        alert("For best results in the lobby, rotate device");
-    }
+//    if (window.orientation == 0)
+//    {
+//        alert("For best results in the lobby, rotate device");
+//    }
 
     /////////////////////////////////
     // Widget Constructor Function //
@@ -26,14 +26,18 @@ var GameLobbyWidget = function()
 
         var gameBlock = $("<div id='gameBlock'>");
 
+        var gameListBlock = $("<div id='gameListBlock'>").addClass("gameLobby");
+
         var gameList = $("<div id='gameList'>").addClass("gameLobby");
 
         var gameView = $("<div id='gameView'>").addClass("gameLobby");
 
         var chatView = $("<div id='chatView'>").addClass("gameLobby");
 
-        var userList = $("<div id='userBlock'>").append(
+        var userBlock = $("<div id='userBlock'>").append(
         $("<table id='userList'>").addClass("gameLobby")).addClass("gameLobby");
+
+        var createGameBlock = $("<div id='createGameBlock'>");
 
         var createGameButton = $("<input id='newGameButton' type='button' value='Start a Resistance'>");
 
@@ -55,11 +59,6 @@ var GameLobbyWidget = function()
             debug : true
         });
         var stompClient = Stomp.over(lobbySock);
-
-        stompClient.ws.onclose = function()
-        {
-            alert("Poopsicles");
-        };
 
         stompClient.connect({}, function(frame)
         {
@@ -208,6 +207,8 @@ var GameLobbyWidget = function()
         {
             var id = gameIDtoFocusOn;
             gameIDtoFocusOn = null;
+            if (id)
+                $("h2:contains('" + id + "')")[0].scrollIntoView(false);
             return id;
         }
 
@@ -221,11 +222,47 @@ var GameLobbyWidget = function()
         //////////////////////////////////////////
         headerWidget.addOption(logoutOption);
 
-        gameList.append(createGameButton);
+        createGameBlock.append(createGameButton);
 
-        gameBlock.append(gameList).append(gameView);
+        gameListBlock.append(gameList).append(createGameBlock);
 
-        gameAndChatBlock.append(gameBlock.append(userList)).append(chatView);
+        gameBlock.append(gameListBlock).append(gameView);
+
+        // Create ability to hide userList
+        var hideUsersDiv = $("<div id='hideUsers'>").prependTo(userBlock)
+        .append("<h1 id='hideUsersIcon' class='hideIcon'>></h1>");
+
+        hideUsersDiv.click(function(e)
+        {
+            e.stopPropagation();
+
+            var showing = !$("#userList").is(":hidden");
+
+            $("#userList").toggle("slide", {
+                direction : 'right'
+            });
+
+            userBlock.animate({
+                width : (showing ? '17px' : '17.5%'),
+                'min-width' : (showing ? '17px' : '200px')
+            });
+
+            gameView.animate({
+                width : (showing ? '100%' : '65%')
+            });
+
+            gameView.css('max-width',
+            ($(window).width() - (showing ? 217 : 400)) + "px");
+
+           gameListBlock.animate({
+                width : (showing ? '30%' : '17.5%')
+            });
+
+            $("#hideUsersIcon").html(showing ? '<' : '>');
+
+        });
+
+        gameAndChatBlock.append(gameBlock.append(userBlock)).append(chatView);
 
         container.append(gameAndChatBlock);
 
@@ -234,6 +271,15 @@ var GameLobbyWidget = function()
         $("<tbody>"));
 
         createGameButton.click(createGame);
+
+        // FIX WINDOW RESIZING BUG
+        $(window).resize(
+        function()
+        {
+            gameView.css('max-width', ($(window).width() - ($("#userList").is(
+            ":hidden") ? 217 : 400))
+            + "px");
+        });
 
         /////////////////////////////
         // Public Instance Methods //

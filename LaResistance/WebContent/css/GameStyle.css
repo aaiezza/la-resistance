@@ -2,7 +2,6 @@ h3, td {
     margin: 0 auto;
 }
 
-
 .teamFull {
     background: #F58080;
 }
@@ -33,6 +32,8 @@ table {
 	text-align: center;
     margin: inherit;
     font-size: x-large;
+    
+    cursor: default;
 }
 
 table tr td {
