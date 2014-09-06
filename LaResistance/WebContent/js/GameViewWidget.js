@@ -140,6 +140,24 @@ var GameViewWidget = function()
                 + ((activeGame.botCount == 1) ? "!" : "s!")));
             }
 
+            // Display current players
+            container.append($("<p id='currentPlayers'>").append(
+            "Current Members: "));
+
+            var length = activeGame.players.length - 1;
+            $(activeGame.players).each(
+            function(i)
+            {
+                var player = $("<span>" + this.name + "</span>").addClass(
+                "player")
+                .toggleClass("host", this.name == activeGame.host.name);
+                $("#currentPlayers").append(player);
+                if (i < length)
+                {
+                    $("#currentPlayers").append(", ");
+                }
+            });
+
             // If Hosting the game, you can adjust number of players
             if (hosting && activeGame.state == "AWAITING_PLAYERS")
             {
@@ -184,24 +202,6 @@ var GameViewWidget = function()
                 });
             }
 
-            // Display current players
-            container.append($("<p id='currentPlayers'>").append(
-            "Current Members: "));
-
-            var length = activeGame.players.length - 1;
-            $(activeGame.players).each(
-            function(i)
-            {
-                var player = $("<span>" + this.name + "</span>").addClass(
-                "player")
-                .toggleClass("host", this.name == activeGame.host.name);
-                $("#currentPlayers").append(player);
-                if (i < length)
-                {
-                    $("#currentPlayers").append(", ");
-                }
-            });
-
             //If the game is over, you only want to cancel it
             if (activeGame.state == "GAME_OVER")
             {
@@ -221,7 +221,7 @@ var GameViewWidget = function()
                 {
                     container
                     .append($(
-                    "<input id='start' type='button' value='Start Resistance'>")
+                    "<br><input id='start' type='button' value='Start Resistance'>")
                     .click(startGame));
                 } else
                 {
