@@ -209,8 +209,8 @@ var GameViewWidget = function()
                 + activeGame.updateMessage[activeGame.updateMessage.length - 1]
                 + "</h1>");
                 appendGamePortal();
-                container.append($(
-                "<input id='cancel' type='button' value='Retire Resistance'>")
+                container.append("<br/><br/>").append($(
+                "<input id='cancel' type='button' value='Retire Resistance'/>")
                 .click(cancelGame));
             } else if (activeGame.state == "AWAITING_PLAYERS")
             {
