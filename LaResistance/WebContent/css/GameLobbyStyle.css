@@ -31,10 +31,14 @@ body {
     position: relative;
     margin: 0 auto;
     display: flex;
-    
+
     /* Push 'down' on chat */
     max-height: 75%;
     height: 75%;
+}
+
+#userBlock {
+	overflow-x: hidden;
 }
 
 #gameListBlock, #userBlock {
