@@ -6,6 +6,9 @@ html, body, div, span, p, a {
     border: 0.0;
     outline: 0.0;
     background: transparent;
+    
+    -moz-user-select: none; /* mozilla browsers */
+    -webkit-user-select: none; /* webkit browsers */
 }
 
 html, body {
