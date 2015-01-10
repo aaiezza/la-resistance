@@ -375,14 +375,13 @@ var GameWidget = function()
                                     if (dismissingTeammate)
                                     {
                                         stompClient.send(
-                                        "/app/dismissTeammate", {}, JSON
-                                        .stringify($(this).children(
-                                        ":first-child").html()));
+                                        "/app/dismissTeammate", {}, $(this)
+                                        .children(":first-child").html());
                                     } else
                                     {
                                         stompClient.send("/app/addTeammate",
-                                        {}, JSON.stringify($(this).children(
-                                        ":first-child").html()));
+                                        {}, $(this).children(":first-child")
+                                        .html());
                                     }
                                 }
                             }));
