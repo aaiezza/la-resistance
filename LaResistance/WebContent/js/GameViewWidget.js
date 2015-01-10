@@ -287,10 +287,10 @@ var GameViewWidget = function()
         // Find Pieces and Enliven DOM Fragment //
         //////////////////////////////////////////
         subscriptions = [
-            stompClient.subscribe("/queue/game/" + activeGame.gameID,
+            stompClient.subscribe("/topic/game/" + activeGame.gameID,
             updateGame),
 
-            stompClient.subscribe("/user/queue/game/" + activeGame.gameID,
+            stompClient.subscribe("/user/topic/game/" + activeGame.gameID,
             updateGame),
 
             stompClient.subscribe("/app/game/" + activeGame.gameID) ];

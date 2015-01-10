@@ -26,7 +26,7 @@ import com.google.common.collect.Collections2;
 @ManagedResource
 public class UserTracker extends MessageRelayer<List<ShabaUser>>
 {
-    public static final String    RELAY_DESTINATION   = "/queue/activeUsers";
+    public static final String    RELAY_DESTINATION   = "/topic/activeUsers";
 
     public static final String    SUBSCRIPTION_URL    = "/activeUsers";
 

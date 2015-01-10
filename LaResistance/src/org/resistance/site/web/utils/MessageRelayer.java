@@ -2,7 +2,6 @@ package org.resistance.site.web.utils;
 
 import org.apache.commons.logging.Log;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler;
 
 /**
  * @author Alex Aiezza
@@ -61,7 +60,7 @@ public abstract class MessageRelayer <T>
      * {@link #setTemplate(SimpMessagingTemplate)} method provides a way of
      * setting the {@link SimpMessagingTemplate} for the MessageRelayer subtype. <br/>
      * <br/>
-     * The {@link SimpleBrokerMessageHandler Simple Message Broker} spring
+     * The {@link StompBrokerMessageHandler Stomp Message Broker} spring
      * provides needs to be declared in the Resistance Dispatcher servlet and
      * not at root context. That means the SimpMessagingTemplate for that
      * broker's message relayer is not a created bean until this context is
@@ -118,9 +117,7 @@ public abstract class MessageRelayer <T>
      */
     protected final void broadcastPayload( String user )
     {
-        doBeforeBroadcastingPayload();
-        LOGGER.debug( String.format( USER_BROADCAST_LOG, getRelayDestination(), user ) );
-        TEMPLATE.convertAndSendToUser( user, getRelayDestination(), getPayload() );
+        broadcastPayload( user, getPayload() );
     }
 
     /**
@@ -134,6 +131,8 @@ public abstract class MessageRelayer <T>
         doBeforeBroadcastingPayload();
         LOGGER.debug( String.format( USER_BROADCAST_LOG, getRelayDestination(), user ) );
         TEMPLATE.convertAndSendToUser( user, getRelayDestination(), customPayload );
+        // TEMPLATE.convertAndSend( "/user/" + user + "/" +
+        // getRelayDestination(), customPayload );
     }
 
     /**

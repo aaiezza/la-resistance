@@ -61,11 +61,11 @@ public class ChatController
         {
         case "/clear":
             map.put( "messages", new String [0] );
-            TEMPLATE.convertAndSendToUser( user.getUsername(), "/queue/chatSpecial", map );
+            TEMPLATE.convertAndSendToUser( user.getUsername(), "/topic/chatSpecial", map );
             break;
         case "/all":
             map.put( "messages", CHAT_LOG.getAllMessages() );
-            TEMPLATE.convertAndSendToUser( user.getUsername(), "/queue/chatSpecial", map );
+            TEMPLATE.convertAndSendToUser( user.getUsername(), "/topic/chatSpecial", map );
             break;
         default:
             CHAT_LOG.say( user.getUsername(), NAUGHTY_CONTROL.makeNice( sayIt, true ) );

@@ -287,7 +287,7 @@ var GameMonitorWidget = function()
             console.log('Connected: ' + frame);
 
             subscriptions = [
-                stompClient.subscribe("/queue/game/" + QueryString.gameID,
+                stompClient.subscribe("/topic/game/" + QueryString.gameID,
                 updateGame),
 
                 stompClient.subscribe("/app/gameMonitor/" + QueryString.gameID,

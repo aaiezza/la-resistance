@@ -66,13 +66,13 @@ var GameLobbyWidget = function()
             chatWidget = makeChatWidget(chatView, stompClient);
 
             subscriptions = [
-                stompClient.subscribe('/queue/activeUsers', updateActiveUsers),
+                stompClient.subscribe('/topic/activeUsers', updateActiveUsers),
 
                 stompClient.subscribe('/app/activeUsers'),
 
-                stompClient.subscribe('/queue/activeGames', updateActiveGames),
+                stompClient.subscribe('/topic/activeGames', updateActiveGames),
 
-                stompClient.subscribe('/user/queue/activeGames',
+                stompClient.subscribe('/user/topic/activeGames',
                 updateActiveGames),
 
                 stompClient.subscribe('/app/activeGames') ];

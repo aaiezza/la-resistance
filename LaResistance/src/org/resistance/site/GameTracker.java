@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class GameTracker extends MessageRelayer<List<Game>>
 {
-    public static final String      RELAY_DESTINATION = "/queue/activeGames";
+    public static final String      RELAY_DESTINATION = "/topic/activeGames";
 
     public static final String      SUBSCRIPTION_URL  = "/activeGames";
 

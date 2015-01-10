@@ -507,10 +507,10 @@ var GameWidget = function()
             console.log('Connected: ' + frame);
 
             subscriptions = [
-                stompClient.subscribe("/queue/game/" + QueryString.gameID,
+                stompClient.subscribe("/topic/game/" + QueryString.gameID,
                 updateGame),
 
-                stompClient.subscribe("/user/queue/game/" + QueryString.gameID,
+                stompClient.subscribe("/user/topic/game/" + QueryString.gameID,
                 updateGame),
 
                 stompClient.subscribe("/app/game/" + QueryString.gameID) ];

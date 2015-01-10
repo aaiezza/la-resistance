@@ -41,9 +41,9 @@ public class Game extends MessageRelayer<Game>
 
     private static final String MONITOR_URL_FORMAT       = "game?gameID=%s";
 
-    private static final String RELAY_DESTINATION_FORMAT = "/queue/game/%s";
+    private static final String RELAY_DESTINATION_FORMAT = "/topic/game/%s";
 
-    public static final String  RELAY_DESTINATION        = "/queue/game/{gameID}";
+    public static final String  RELAY_DESTINATION        = "/topic/game/{gameID}";
 
     public static final String  SUBSCRIPTION_URL         = "/game/{gameID}";
 

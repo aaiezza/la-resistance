@@ -27,7 +27,7 @@ public class ChatLogger extends MessageRelayer<List<String>>
 {
     private static final String           USER_ENTERED_CHAT = "[%s] has entered Resistance Lobby";
 
-    public static final String            RELAY_DESTINATION = "/queue/chat";
+    public static final String            RELAY_DESTINATION = "/topic/chat";
 
     public static final String            SUBSCRIPTION_URL  = "/chat";
 

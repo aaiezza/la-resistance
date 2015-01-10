@@ -30,11 +30,11 @@ var ChatWidget = function()
 
         var stickyScroll = 0;
 
-        stompClient.subscribe('/queue/chat', updateChat);
+        stompClient.subscribe('/topic/chat', updateChat);
 
         stompClient.subscribe('/app/chat');
 
-        stompClient.subscribe('/user/queue/chatSpecial', updateSpecialChat);
+        stompClient.subscribe('/user/topic/chatSpecial', updateSpecialChat);
 
         //////////////////////////////
         // Private Instance Methods //
