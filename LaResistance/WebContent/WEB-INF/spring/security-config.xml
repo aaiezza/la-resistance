@@ -71,7 +71,7 @@
         <intercept-url pattern="/gameLobby*" access="hasRole('ROLE_USER')" />
         <intercept-url pattern="/profile*" access="hasRole('ROLE_USER')" />
         <intercept-url pattern="/game*" access="permitAll" />
-        <intercept-url pattern="/lobbyUpdate/**" access="permitAll" />
+        <intercept-url pattern="/stompshake/**" access="permitAll" />
         <intercept-url pattern="/**" access="hasRole('ROLE_USER')" />
 
 		<!-- form-login login-page="/login" username-parameter="username" password-parameter="password"
