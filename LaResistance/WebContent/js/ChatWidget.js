@@ -83,7 +83,7 @@ var ChatWidget = function()
             {
                 return;
             }
-            stompClient.send("/app/say", {}, JSON.stringify(sayIt))
+            stompClient.send("/app/say", {}, sayIt)
         }
 
         function scrollDown()
