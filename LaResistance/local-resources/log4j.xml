@@ -40,7 +40,7 @@
     </logger>
 
     <logger name="org.springframework.messaging.simp">
-        <level value="TRACE" />
+        <level value="OFF" />
     </logger>
 
     <root>

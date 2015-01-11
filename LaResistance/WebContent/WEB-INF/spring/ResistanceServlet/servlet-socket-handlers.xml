@@ -11,22 +11,15 @@
     <websocket:stomp-endpoint path="/stompshake">
       <websocket:sockjs websocket-enabled="true" session-cookie-needed="true"  client-library-url="http://cdn.sockjs.org/sockjs-0.3.js"/>
     </websocket:stomp-endpoint>
-    <websocket:simple-broker prefix="/topic/,/queue/"/>
-    <!-- websocket:stomp-broker-relay prefix="/topic/"
+    <!-- websocket:simple-broker prefix="/topic/,/queue/"/ -->
+    <websocket:stomp-broker-relay prefix="/topic/,/queue/"
            relay-host="localhost" relay-port="61613"
-           heartbeat-send-interval="15000" heartbeat-receive-interval="15000"/ -->
+           heartbeat-send-interval="15000" heartbeat-receive-interval="15000"/>
   </websocket:message-broker>
   
   <amq:broker useJmx="true" persistent="false" schedulePeriodForDestinationPurge="10000">
-    <amq:destinationPolicy>
-      <amq:policyMap>
-        <amq:policyEntries>
-          <amq:policyEntry queue=">" gcInactiveDestinations="true" inactiveTimoutBeforeGC="30000"></amq:policyEntry>
-        </amq:policyEntries>
-      </amq:policyMap>
-    </amq:destinationPolicy>
     <amq:transportConnectors>
-      <amq:transportConnector name="openwire" uri="tcp://0.0.0.0:61616" allowLinkStealing="true"/> 
+      <amq:transportConnector name="openwire" uri="tcp://0.0.0.0:61616"/> 
       <amq:transportConnector uri="stomp://localhost:61613"/>
     </amq:transportConnectors>
   </amq:broker>
