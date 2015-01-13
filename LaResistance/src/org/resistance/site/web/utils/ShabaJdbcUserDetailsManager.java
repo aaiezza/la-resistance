@@ -13,7 +13,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -177,6 +177,7 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
     /**
      * @see org.springframework.security.provisioning.JdbcUserDetailsManager#deleteUser(java.lang.String)
      */
+    @Override
     public void deleteUser( String username )
     {
         try
@@ -216,6 +217,7 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
         getJdbcTemplate().update( DELETE_USER_AUTHORITIES_SQL, username );
     }
 
+    @Override
     public void changePassword( String oldPassword, String newPassword )
             throws AuthenticationException
     {
@@ -418,7 +420,7 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager
             new ShabaUserMapper() );
     }
 
-    private class ShabaUserMapper implements ParameterizedRowMapper<ShabaUser>
+    private class ShabaUserMapper implements RowMapper<ShabaUser>
     {
         @Override
         public ShabaUser mapRow( ResultSet rs, int rowNum ) throws SQLException
