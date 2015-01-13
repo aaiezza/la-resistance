@@ -3,10 +3,10 @@ var GameLobbyWidget = function()
 {
     var global = this;
 
-//    if (window.orientation == 0)
-//    {
-//        alert("For best results in the lobby, rotate device");
-//    }
+    //    if (window.orientation == 0)
+    //    {
+    //        alert("For best results in the lobby, rotate device");
+    //    }
 
     /////////////////////////////////
     // Widget Constructor Function //
@@ -45,6 +45,20 @@ var GameLobbyWidget = function()
 
         var gameViewWidget;
 
+        /*
+         * Used to see if this is the firstLoad of the page. If it is, of the
+         * active games, if any, the one where the current user is the host will
+         * be selected.
+         */
+        var firstLoad = true;
+
+        /*
+         * Tracks which game the user has selected of all the active games in
+         * the list. Then, if there is a change to the list it will not affect
+         * which game the user has selected.
+         */
+        var selectedGame;
+
         var chatWidget;
 
         var me = $.parseJSON($("#p_user").html());
@@ -53,30 +67,43 @@ var GameLobbyWidget = function()
 
         var subscriptions = [];
 
-        var lobbySock = new SockJS("http://" + location.host
-        + ":8081/resist/stompshake", null, {
-            /* protocols_whitelist : [ "websocket" ], */
-            debug : true
-        });
-        var stompClient = Stomp.over(lobbySock);
+        var lobbySock;
 
-        stompClient.connect({}, function(frame)
+        var stompClient;
+
+        function makeConnection()
         {
-            console.log('Connected: ' + frame);
-            chatWidget = makeChatWidget(chatView, stompClient);
+            lobbySock = new SockJS("http://" + location.host
+            + ":8081/resist/stompshake", null, {
+                /* protocols_whitelist : [ "websocket" ], */
+                debug : true
+            });
+            stompClient = Stomp.over(lobbySock);
 
-            subscriptions = [
-                stompClient.subscribe('/topic/activeUsers', updateActiveUsers),
+            stompClient.connect({}, function(frame)
+            {
+                console.log('Connected: ' + frame);
+                chatWidget = makeChatWidget(chatView, stompClient);
 
-                stompClient.subscribe('/app/activeUsers'),
+                subscriptions = [
+                    stompClient.subscribe('/topic/activeUsers',
+                    updateActiveUsers),
 
-                stompClient.subscribe('/topic/activeGames', updateActiveGames),
+                    stompClient
+                    .subscribe('/app/activeUsers', updateActiveUsers),
 
-                stompClient.subscribe('/user/topic/activeGames',
-                updateActiveGames),
+                    stompClient.subscribe('/topic/activeGames',
+                    updateActiveGames),
 
-                stompClient.subscribe('/app/activeGames') ];
-        });
+                    stompClient.subscribe('/user/topic/activeGames',
+                    updateActiveGames),
+
+                    stompClient
+                    .subscribe('/app/activeGames', updateActiveGames) ];
+            });
+        }
+
+        makeConnection();
 
         window.onbeforeunload = function()
         {
@@ -127,11 +154,14 @@ var GameLobbyWidget = function()
                     if (!$(this).hasClass("selected"))
                     {
                         if (gameViewWidget)
-                            gameViewWidget.unsubscribe();
+                        {
+                            gameViewWidget.clear();
+                        }
                         gameViewWidget = makeGameViewWidget(gameView, game,
                         setGameIDtoFocusOn, stompClient);
                         $(".game").removeClass("selected");
                         $(this).addClass("selected");
+                        selectedGame = game;
                     } else
                     {
                         $(".game").removeClass("selected");
@@ -152,7 +182,11 @@ var GameLobbyWidget = function()
                     }
                 });
 
-                if (imInGame)
+                if (imInGame && firstLoad)
+                {
+                    setGameIDtoFocusOn(game.gameID);
+                    firstLoad = false;
+                } else if (selectedGame && game.gameID == selectedGame.gameID)
                 {
                     setGameIDtoFocusOn(game.gameID);
                 }
@@ -254,7 +288,7 @@ var GameLobbyWidget = function()
             gameView.css('max-width',
             ($(window).width() - (showing ? 217 : 400)) + "px");
 
-           gameListBlock.animate({
+            gameListBlock.animate({
                 width : (showing ? '30%' : '17.5%')
             });
 

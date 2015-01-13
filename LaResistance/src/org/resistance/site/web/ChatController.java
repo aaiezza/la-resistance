@@ -3,6 +3,7 @@ package org.resistance.site.web;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.resistance.site.web.chat.ChatLogger;
@@ -74,8 +75,8 @@ public class ChatController
     }
 
     @SubscribeMapping ( ChatLogger.SUBSCRIPTION_URL )
-    public void subscribeToChat( Principal principal )
+    public List<String> subscribeToChat( Principal principal )
     {
-        CHAT_LOG.onSubscription( USER_MAN.loadShabaUserByUsername( principal.getName() ) );
+        return CHAT_LOG.onSubscription( USER_MAN.loadShabaUserByUsername( principal.getName() ) );
     }
 }

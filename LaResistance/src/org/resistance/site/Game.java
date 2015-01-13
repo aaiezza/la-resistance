@@ -13,6 +13,7 @@ import static org.resistance.site.mech.Role.SPY;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
@@ -21,7 +22,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.logging.LogFactory;
 import org.resistance.site.mech.AINamer;
 import org.resistance.site.mech.GameState;
-import org.resistance.site.mech.Mission;
 import org.resistance.site.mech.Role;
 import org.resistance.site.utils.RandomPicker;
 import org.resistance.site.web.utils.MessageRelayer;
@@ -239,14 +239,14 @@ public class Game extends MessageRelayer<Game>
      * that contains only that user's role so as to not reveal it to any other
      * client or listener
      */
-    private void broadcastGame()
+    private synchronized void broadcastGame()
     {
         broadcastPayload();
         broadcastGameToEachPlayer();
     }
 
     @Override
-    protected Game getPayload()
+    protected synchronized Game getPayload()
     {
         return this;
     }
@@ -258,14 +258,15 @@ public class Game extends MessageRelayer<Game>
     }
 
     @Override
-    public void onSubscription( ShabaUser user )
+    public synchronized Game onSubscription( ShabaUser user )
     {
         if ( !state.equals( AWAITING_PLAYERS ) )
         {
             broadcastingRoles = user.getUsername();
         }
-        onSubscription( user, UPDATE_USER );
-        broadcastingRoles = "";
+        Game g = onSubscription( user, UPDATE_USER );
+        //broadcastingRoles = "";
+        return g;
     }
 
     public List<String> getUpdateMessage()
@@ -287,6 +288,13 @@ public class Game extends MessageRelayer<Game>
 
     public Player getHost()
     {
+        if ( !broadcastingRoles.isEmpty() )
+        {
+            Player p;
+            p = host.clone();
+            p.setRole( null );
+            return p;
+        }
         return host;
     }
 
@@ -328,6 +336,21 @@ public class Game extends MessageRelayer<Game>
 
     public Set<Mission> getMissions()
     {
+        if ( !broadcastingRoles.isEmpty() )
+        {
+            Set<Mission> missions = new HashSet<Mission>();
+
+            board.getMissions().forEach( ( m ) -> {
+                Mission mission = m.clone();
+
+                mission.getTeam().forEach( ( player ) -> player.setRole( null ) );
+
+                missions.add( mission );
+            } );
+
+            return missions;
+        }
+
         return board.getMissions();
     }
 

@@ -52,7 +52,7 @@ public class Player implements Cloneable
     }
 
     @Override
-    protected Player clone() throws CloneNotSupportedException
+    protected Player clone()
     {
         Player p = new Player( name, GAME_ID );
 

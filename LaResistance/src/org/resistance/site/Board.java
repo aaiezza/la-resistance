@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.resistance.site.mech.Mission;
 import org.resistance.site.mech.Missions;
 import org.resistance.site.mech.Role;
 import org.resistance.site.utils.VoteCounter;

@@ -77,10 +77,10 @@ public class ChatLogger extends MessageRelayer<List<String>>
     }
 
     @Override
-    public void onSubscription( ShabaUser user )
+    public synchronized List<String> onSubscription( ShabaUser user )
     {
-        onSubscription( user, NO_UPDATE );
         systemUpdate( USER_ENTERED_CHAT, user );
+        return onSubscription( user, NO_UPDATE );
     }
 
     public synchronized String lastMessage()

@@ -10,11 +10,12 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
  */
 public abstract class MessageRelayer <T>
 {
-    private static final String     SUBSCRIBE_LOG          = "\n\t\t%s has subscribed to [%s]";
+    private static final String              SUBSCRIBE_LOG          = "\n\t\t%s has subscribed to [%s]";
 
-    private static final String     BROADCAST_LOG          = "Broadcasting Payload to Relay @:[%s]";
+    private static final String              BROADCAST_LOG          = "Broadcasting Payload to Relay @:[%s]";
 
-    private static final String     USER_BROADCAST_LOG     = BROADCAST_LOG + " for user %s";
+    private static final String              USER_BROADCAST_LOG     = BROADCAST_LOG +
+                                                                            " for user %s";
 
     /**
      * This value can be used in the initalAction parameter for the
@@ -22,7 +23,7 @@ public abstract class MessageRelayer <T>
      * On initial subscription to a {@link MessageRelayer} instance, using this
      * value in that subclass will result in there being no updates broadcast.
      */
-    public static final int         NO_UPDATE              = 0;
+    public static final int                  NO_UPDATE              = 0;
 
     /**
      * This value can be used in the initalAction parameter for the
@@ -31,7 +32,7 @@ public abstract class MessageRelayer <T>
      * value in that subclass will result in the user who subscribed to be
      * updated of the object's {@link #getPayload payload}.
      */
-    public static final int         UPDATE_USER            = 1;
+    public static final int                  UPDATE_USER            = 1;
 
     /**
      * This value can be used in the initalAction parameter for the
@@ -40,13 +41,13 @@ public abstract class MessageRelayer <T>
      * value in that subclass will result in everyone who is subscribed to be
      * updated of the object's {@link #getPayload payload}.
      */
-    public static final int         UPDATE_ALL_SUBSCRIBERS = 2;
+    public static final int                  UPDATE_ALL_SUBSCRIBERS = 2;
 
-    protected SimpMessagingTemplate TEMPLATE;
+    protected volatile SimpMessagingTemplate TEMPLATE;
 
-    protected final Log             LOGGER;
+    protected final Log                      LOGGER;
 
-    private final String            relayDestination;
+    private final String                     relayDestination;
 
     /**
      * The reason this method exists and is called in all of the subclasses
@@ -104,7 +105,7 @@ public abstract class MessageRelayer <T>
     /**
      * Broadcast payload to all subscribers
      */
-    protected final void broadcastPayload()
+    protected synchronized final void broadcastPayload()
     {
         doBeforeBroadcastingPayload();
         LOGGER.debug( String.format( BROADCAST_LOG, getRelayDestination() ) );
@@ -115,7 +116,7 @@ public abstract class MessageRelayer <T>
      * @param user
      *            The user to broadcast payload to
      */
-    protected final void broadcastPayload( String user )
+    protected synchronized final void broadcastPayload( String user )
     {
         broadcastPayload( user, getPayload() );
     }
@@ -126,19 +127,17 @@ public abstract class MessageRelayer <T>
      * @param customPayload
      *            A custom payload for this specific time and user
      */
-    protected final void broadcastPayload( String user, T customPayload )
+    protected synchronized final void broadcastPayload( String user, T customPayload )
     {
         doBeforeBroadcastingPayload();
         LOGGER.debug( String.format( USER_BROADCAST_LOG, getRelayDestination(), user ) );
         TEMPLATE.convertAndSendToUser( user, getRelayDestination(), customPayload );
-        // TEMPLATE.convertAndSend( "/user/" + user + "/" +
-        // getRelayDestination(), customPayload );
     }
 
     /**
      * Optional overriding to perform task before broadcasting payload
      */
-    protected void doBeforeBroadcastingPayload()
+    protected synchronized void doBeforeBroadcastingPayload()
     {}
 
     /**
@@ -164,21 +163,23 @@ public abstract class MessageRelayer <T>
      *
      * @param user
      */
-    protected final void onSubscription( ShabaUser user, int initialAction )
+    protected synchronized final T onSubscription( ShabaUser user, int initialAction )
     {
-        LOGGER.debug( String.format( SUBSCRIBE_LOG, user.getUsername(), getRelayDestination() ) );
-
         switch ( initialAction )
         {
         case UPDATE_ALL_SUBSCRIBERS:
+            LOGGER.debug( String.format( SUBSCRIBE_LOG, user.getUsername(), getRelayDestination() ) );
             broadcastPayload();
             break;
         case UPDATE_USER:
+            LOGGER.debug( String.format( SUBSCRIBE_LOG, user.getUsername(), getRelayDestination() ) );
             broadcastPayload( user.getUsername() );
             break;
         case NO_UPDATE:
         default:
         }
+
+        return getPayload();
     }
 
     /**
@@ -186,7 +187,7 @@ public abstract class MessageRelayer <T>
      * @param user
      *            The user subscribing to this
      */
-    public abstract void onSubscription( ShabaUser user );
+    public abstract T onSubscription( ShabaUser user );
 
     /**
      * @param template

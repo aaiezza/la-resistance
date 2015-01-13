@@ -123,21 +123,21 @@ public class GameTracker extends MessageRelayer<List<Game>>
         return game.addPlayer( player );
     }
 
-    public List<Game> getActiveGames()
+    public synchronized List<Game> getActiveGames()
     {
         return new ArrayList<Game>( games.values() );
     }
 
     @Override
-    protected List<Game> getPayload()
+    protected synchronized List<Game> getPayload()
     {
         return getActiveGames();
     }
 
     @Override
-    public void onSubscription( ShabaUser user )
+    public synchronized List<Game> onSubscription( ShabaUser user )
     {
-        onSubscription( user, UPDATE_USER );
+        return onSubscription( user, NO_UPDATE );
     }
 
     @Override

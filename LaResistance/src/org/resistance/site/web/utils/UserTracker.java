@@ -89,19 +89,19 @@ public class UserTracker extends MessageRelayer<List<ShabaUser>>
     }
 
     @Override
-    protected List<ShabaUser> getPayload()
+    protected synchronized List<ShabaUser> getPayload()
     {
         return getLoggedInUsers();
     }
 
     @Override
-    public void onSubscription( ShabaUser user )
+    public synchronized List<ShabaUser> onSubscription( ShabaUser user )
     {
-        onSubscription( user, UPDATE_ALL_SUBSCRIBERS );
+        return onSubscription( user, UPDATE_ALL_SUBSCRIBERS );
     }
 
     @ManagedOperation ( description = "View Active Users" )
-    public List<String> getStringgLoggedInUsers()
+    public List<String> getStringLoggedInUsers()
     {
         return new ArrayList<String>( Collections2.transform( getLoggedInUsers(),
             ( user ) -> user.getUsername() ) );

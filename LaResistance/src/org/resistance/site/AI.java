@@ -9,7 +9,6 @@ import java.util.Stack;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.resistance.site.mech.GameState;
-import org.resistance.site.mech.Mission;
 
 public class AI extends Player
 {

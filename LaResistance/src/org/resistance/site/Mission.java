@@ -1,16 +1,15 @@
-package org.resistance.site.mech;
+package org.resistance.site;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.resistance.site.Player;
 import org.resistance.site.utils.VoteCounter;
 
 /**
  * @author Alex Aiezza
  */
-public final class Mission implements Comparable<Mission>
+public final class Mission implements Comparable<Mission>, Cloneable
 {
     public final int                MissionNumber;
 
@@ -116,7 +115,6 @@ public final class Mission implements Comparable<Mission>
         return teamVotes.get( teamVotes.size() - 2 );
     }
 
-
     public void emptyTeam()
     {
         teamIsFinal = false;
@@ -158,6 +156,16 @@ public final class Mission implements Comparable<Mission>
         }
 
         return out.toString();
+    }
+
+    @Override
+    public Mission clone()
+    {
+        Mission m = new Mission( MissionNumber, TeamSize, MinimumFails );
+
+        team.forEach( ( player ) -> m.team.add( player.clone() ) );
+
+        return m;
     }
 
     @Override

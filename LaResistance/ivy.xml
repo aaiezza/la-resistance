@@ -47,6 +47,7 @@
         <dependency org="org.apache.activemq" name="activemq-client" rev="5.10.0"/>
         <dependency org="org.apache.activemq" name="activemq-broker" rev="5.10.0"/>
         <dependency org="org.apache.activemq" name="activemq-stomp" rev="5.10.0"/>
+        <dependency org="org.apache.activemq" name="activemq-pool" rev="5.10.0"/>
         <dependency org="org.apache.qpid" name="proton-jms" rev="0.8" conf="compile->runtime"/>
 
         <dependency org="mysql" name="mysql-connector-java" rev="5.1.34" conf="build"/>

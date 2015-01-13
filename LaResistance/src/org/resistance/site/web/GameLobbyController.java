@@ -91,7 +91,7 @@ public class GameLobbyController
     }
 
     @SubscribeMapping ( Game.SUBSCRIPTION_URL )
-    public void subscribeToActiveGameUpdates(
+    public synchronized Game subscribeToActiveGameUpdates(
             @DestinationVariable String gameID,
             Principal principal )
     {
@@ -99,20 +99,21 @@ public class GameLobbyController
 
         if ( g != null )
         {
-            g.onSubscription( USER_MAN.loadShabaUserByUsername( principal.getName() ) );
+            return g.onSubscription( USER_MAN.loadShabaUserByUsername( principal.getName() ) );
         }
+        return g;
     }
 
     @SubscribeMapping ( GameTracker.SUBSCRIPTION_URL )
-    public void subscribeToActiveGamesUpdates( Principal principal )
+    public List<Game> subscribeToActiveGamesUpdates( Principal principal )
     {
-        GAME_TRACKER.onSubscription( USER_MAN.loadShabaUserByUsername( principal.getName() ) );
+        return GAME_TRACKER.onSubscription( USER_MAN.loadShabaUserByUsername( principal.getName() ) );
     }
 
     @SubscribeMapping ( UserTracker.SUBSCRIPTION_URL )
-    public void subscribeToActiveUserUpdates( Principal principal )
+    public List<ShabaUser> subscribeToActiveUserUpdates( Principal principal )
     {
-        USER_TRACKER.onSubscription( USER_MAN.loadShabaUserByUsername( principal.getName() ) );
+        return USER_TRACKER.onSubscription( USER_MAN.loadShabaUserByUsername( principal.getName() ) );
     }
 
     // TODO BETTER ERROR HANDLING!!!

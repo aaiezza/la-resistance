@@ -30,9 +30,7 @@ var ChatWidget = function()
 
         var stickyScroll = 0;
 
-        stompClient.subscribe('/topic/chat', updateChat);
-
-        stompClient.subscribe('/app/chat');
+        stompClient.subscribe('/app/chat', updateChat);
 
         stompClient.subscribe('/user/topic/chatSpecial', updateSpecialChat);
 
@@ -100,6 +98,13 @@ var ChatWidget = function()
         //////////////////////////////////////////
         container.append(chatLogBlock.append(chatLog)).append(chatInput)
         .append(chatButton);
+
+        /*
+         * This is down here because we don't want to subscribe to this channel
+         * until after the system chat message is sent saying this user has
+         * entered the lobby
+         */
+        stompClient.subscribe('/topic/chat', updateChat);
 
         chatButton.click(function()
         {

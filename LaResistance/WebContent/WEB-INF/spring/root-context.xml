@@ -26,7 +26,5 @@
 	<context:mbean-server />
 
 	<context:mbean-export />
-
-	<!-- bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource" p:basename="classpath:resources/laResistance" / -->
 	
 </beans>

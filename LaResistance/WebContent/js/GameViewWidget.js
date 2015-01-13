@@ -32,7 +32,16 @@ var GameViewWidget = function()
             }
         });
 
-        var subscriptions = [];
+        var sub3 = stompClient.subscribe("/app/game/" + activeGame.gameID,
+        updateGame);
+
+        var sub1 = stompClient.subscribe("/topic/game/" + activeGame.gameID,
+        updateGame);
+
+        var sub2 = stompClient.subscribe("/user/topic/game/"
+        + activeGame.gameID, updateGame);
+
+        var subscriptions = [ sub1, sub2, sub3 ];
 
         var playerMenu = [ {
             name : 'Remove From Game',
@@ -209,7 +218,8 @@ var GameViewWidget = function()
                 + activeGame.updateMessage[activeGame.updateMessage.length - 1]
                 + "</h1>");
                 appendGamePortal();
-                container.append("<br/><br/>").append($(
+                container.append("<br/><br/>").append(
+                $(
                 "<input id='cancel' type='button' value='Retire Resistance'/>")
                 .click(cancelGame));
             } else if (activeGame.state == "AWAITING_PLAYERS")
@@ -286,14 +296,6 @@ var GameViewWidget = function()
         //////////////////////////////////////////
         // Find Pieces and Enliven DOM Fragment //
         //////////////////////////////////////////
-        subscriptions = [
-            stompClient.subscribe("/topic/game/" + activeGame.gameID,
-            updateGame),
-
-            stompClient.subscribe("/user/topic/game/" + activeGame.gameID,
-            updateGame),
-
-            stompClient.subscribe("/app/game/" + activeGame.gameID) ];
 
         /////////////////////////////
         // Public Instance Methods //
@@ -305,7 +307,8 @@ var GameViewWidget = function()
             },
             clear : function()
             {
-                this.unsubscribe();
+                if (this.hasSubscriptions())
+                    this.unsubscribe();
                 container.empty();
             },
             clearIfGameCanceled : function()
@@ -315,8 +318,17 @@ var GameViewWidget = function()
 
                 this.clear();
             },
+            hasSubscriptions : function()
+            {
+                return subscriptions;
+            },
             unsubscribe : function()
             {
+                sub1.unsubscribe();
+                sub2.unsubscribe();
+                subscriptions = null;
+                return;
+
                 $(subscriptions).each(function()
                 {
                     this.unsubscribe();

@@ -71,10 +71,20 @@ var GameWidget = function()
         });
         var stompClient = Stomp.over(lobbySock);
 
-        stompClient.ws.onclose = function()
+        stompClient.connect({}, function(frame)
         {
-            alert("Poopsicles");
-        };
+            console.log('Connected: ' + frame);
+
+            subscriptions = [
+                stompClient.subscribe("/app/game/" + QueryString.gameID,
+                updateGame),
+
+                stompClient.subscribe("/topic/game/" + QueryString.gameID,
+                updateGame),
+
+                stompClient.subscribe("/user/topic/game/" + QueryString.gameID,
+                updateGame) ];
+        });
 
         window.onbeforeunload = function()
         {
@@ -104,7 +114,7 @@ var GameWidget = function()
         function updateGame(response)
         {
             activeGame = $.parseJSON(response.body);
-
+            
             var playerPanel = "";
 
             var p = 0;
@@ -502,19 +512,6 @@ var GameWidget = function()
         //////////////////////////////////////////
         // Find Pieces and Enliven DOM Fragment //
         //////////////////////////////////////////
-        stompClient.connect({}, function(frame)
-        {
-            console.log('Connected: ' + frame);
-
-            subscriptions = [
-                stompClient.subscribe("/topic/game/" + QueryString.gameID,
-                updateGame),
-
-                stompClient.subscribe("/user/topic/game/" + QueryString.gameID,
-                updateGame),
-
-                stompClient.subscribe("/app/game/" + QueryString.gameID) ];
-        });
 
         /////////////////////////////
         // Public Instance Methods //
