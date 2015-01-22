@@ -12,7 +12,7 @@ public class MultiPropertyLoader
 {
 
     protected static final String PROPERTY_FILE_SYSTEM_PROPERTY = "applicationProperties";
-    protected static final String RESISTANCE_PROPERTY_FILE      = "local-resources/laResistance.properties";
+    protected static final String RESISTANCE_PROPERTY_FILE      = "resources/laResistance.properties";
 
     private static final String   PROPERTY_NOT_DEFINED_ERROR    = "No properties defined.  Properties are critical for the application to function.";
     private static final String   PROPERTY_NOT_LOADED_ERROR     = "The properties were not loaded. Properties are critical for the application to function.";
