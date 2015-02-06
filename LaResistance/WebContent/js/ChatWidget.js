@@ -34,6 +34,8 @@ var ChatWidget = function()
 
         stompClient.subscribe('/user/topic/chatSpecial', updateSpecialChat);
 
+        var subscriptionToChat;
+
         //////////////////////////////
         // Private Instance Methods //
         //////////////////////////////
@@ -47,6 +49,15 @@ var ChatWidget = function()
                 chatLog.append(saidLine);
             });
             scrollDown();
+
+            /*
+             * This is down here because we don't want to subscribe to this
+             * channel until after the system chat message is sent saying this
+             * user has entered the lobby
+             */
+            if (!subscriptionToChat)
+                subscriptionToChat = stompClient.subscribe('/topic/chat',
+                updateChat);
         }
 
         function updateSpecialChat(response)
@@ -98,13 +109,6 @@ var ChatWidget = function()
         //////////////////////////////////////////
         container.append(chatLogBlock.append(chatLog)).append(chatInput)
         .append(chatButton);
-
-        /*
-         * This is down here because we don't want to subscribe to this channel
-         * until after the system chat message is sent saying this user has
-         * entered the lobby
-         */
-        stompClient.subscribe('/topic/chat', updateChat);
 
         chatButton.click(function()
         {
