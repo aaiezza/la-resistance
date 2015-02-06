@@ -1,117 +1,124 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-	id="WebApp_ID" version="3.0">
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
+  xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+  id="WebApp_ID" version="3.0">
 
-	<display-name>LaResistance</display-name>
+  <display-name>LaResistance</display-name>
 
 	<!-- The definition of the Root Spring Container shared by all Servlets
 		and Filters -->
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>
             /WEB-INF/spring/root-context.xml
         </param-value>
-	</context-param>
+  </context-param>
 
 	<!-- These filters tell the container that all upcoming requests will be
 		handled by Spring Security -->
-	<filter>
-		<filter-name>springSecurityFilterChain</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  <filter>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 		<!-- This allows you to return a DeferredResult object from any Controller -->
-		<async-supported>true</async-supported>
-		<init-param>
-			<param-name>targetBeanName</param-name>
-			<param-value>springSecurityFilterChain</param-value>
-		</init-param>
-	</filter>
+    <async-supported>true</async-supported>
+    <init-param>
+      <param-name>targetBeanName</param-name>
+      <param-value>springSecurityFilterChain</param-value>
+    </init-param>
+  </filter>
 
-	<filter-mapping>
-		<filter-name>springSecurityFilterChain</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+  <filter-mapping>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
 
 	<!-- The definition of the Logger Container shared by all Servlets and Filters -->
-	<context-param>
-		<param-name>log4jConfigLocation</param-name>
-		<param-value>/resources/log4j.xml</param-value>
-	</context-param>
+  <context-param>
+    <param-name>log4jConfigLocation</param-name>
+    <param-value>/resources/log4j.xml</param-value>
+  </context-param>
 
 	<!-- Loads the Properties Files -->
-	<listener>
-		<listener-class>org.resistance.site.property.MultiPropertyLoaderListener</listener-class>
-	</listener>
+  <listener>
+    <listener-class>org.resistance.site.property.MultiPropertyLoaderListener</listener-class>
+  </listener>
 
 	<!-- Initializes the Logger with Appenders -->
-	<listener>
-		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
-	</listener>
+  <listener>
+    <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+  </listener>
 
 	<!-- Creates the Spring Container shared by all Servlets and Filters -->
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
 
-	<listener>
-		<listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
-	</listener>
+    <!-- This is essential to make sure that the
+            Spring Security session registry is notified when the session is destroyed. -->
+  <listener>
+    <listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
+  </listener>
+
+    <!-- This chooses where to store the JSESSIONID – in the cookie or in a URL parameter. -->
+  <session-config>
+    <tracking-mode>COOKIE</tracking-mode>
+  </session-config>
 
 	<!-- Declares the Servlet -->
-	<servlet>
-		<servlet-name>Resistance-dispatcher</servlet-name>
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-		<init-param>
-			<param-name>contextConfigLocation</param-name>
-			<param-value>
+  <servlet>
+    <servlet-name>Resistance-dispatcher</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>
 				/WEB-INF/spring/ResistanceServlet/servlet-socket-handlers.xml
 				/WEB-INF/spring/ResistanceServlet/servlet-context.xml
 			</param-value>
-		</init-param>
-		<init-param>
-			<param-name>listings</param-name>
-			<param-value>true</param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
+    </init-param>
+    <init-param>
+      <param-name>listings</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
 		<!-- This allows you to return a DeferredResult object from any Controller -->
-		<async-supported>true</async-supported>
-	</servlet>
+    <async-supported>true</async-supported>
+  </servlet>
 
 	<!-- Defines the Servlet Mapping -->
-	<servlet-mapping>
-		<servlet-name>default</servlet-name>
-		<url-pattern>/js/*</url-pattern>
-	</servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>/js/*</url-pattern>
+  </servlet-mapping>
 
-	<servlet-mapping>
-		<servlet-name>default</servlet-name>
-		<url-pattern>/images/*</url-pattern>
-	</servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>/images/*</url-pattern>
+  </servlet-mapping>
 
-	<servlet-mapping>
-		<servlet-name>default</servlet-name>
-		<url-pattern>/css/*</url-pattern>
-	</servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>/css/*</url-pattern>
+  </servlet-mapping>
 
-	<servlet-mapping>
-		<servlet-name>default</servlet-name>
-		<url-pattern>*.pdf</url-pattern>
-	</servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.pdf</url-pattern>
+  </servlet-mapping>
 
-	<servlet-mapping>
-		<servlet-name>default</servlet-name>
-		<url-pattern>/resources/*</url-pattern>
-	</servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>/resources/*</url-pattern>
+  </servlet-mapping>
 
-	<servlet-mapping>
-		<servlet-name>default</servlet-name>
-		<url-pattern>*.txt</url-pattern>
-	</servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.txt</url-pattern>
+  </servlet-mapping>
 
-	<servlet-mapping>
-		<servlet-name>Resistance-dispatcher</servlet-name>
-		<url-pattern>/</url-pattern>
-	</servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Resistance-dispatcher</servlet-name>
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
 
 </web-app>
