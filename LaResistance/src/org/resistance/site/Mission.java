@@ -39,9 +39,7 @@ public final class Mission implements Comparable<Mission>, Cloneable
     public void addPlayerToTeam( Player player ) throws UnsupportedOperationException
     {
         if ( teamIsFull() || teamIsFinal || team.contains( player ) )
-        {
             throw new UnsupportedOperationException( "Cannot add this player to the Team!" );
-        }
 
         team.add( player );
     }
@@ -49,9 +47,7 @@ public final class Mission implements Comparable<Mission>, Cloneable
     public void dismissPlayerFromTeam( Player player ) throws UnsupportedOperationException
     {
         if ( !team.contains( player ) || teamIsFinal )
-        {
             throw new UnsupportedOperationException( "Cannot remove this player from the Team!" );
-        }
 
         team.remove( player );
     }
@@ -59,9 +55,7 @@ public final class Mission implements Comparable<Mission>, Cloneable
     public boolean submitMissionVote( Player player, boolean _vote )
     {
         if ( !team.contains( player ) || !teamIsFull() )
-        {
             return false;
-        }
 
         // If player already voted, this will not work
         return missionVotes.vote( player, _vote );
@@ -75,21 +69,18 @@ public final class Mission implements Comparable<Mission>, Cloneable
     public Boolean isSuccessful()
     {
         if ( missionVotes.acceptingVotes() )
-        {
             return null;
-        }
+
         return missionVotes.getResults().isFailed( MinimumFails );
     }
 
-    public void submitTeamVote( Player player, boolean _vote )
+    public void submitTeamVote( Player player, boolean vote )
     {
         if ( !teamIsFull() )
-        {
             return;
-        }
 
         // If player already voted, this will not work
-        getTeamVotes().vote( player, _vote );
+        getTeamVotes().vote( player, vote );
     }
 
     public List<VoteCounter> getAllTeamVotes()
@@ -100,18 +91,16 @@ public final class Mission implements Comparable<Mission>, Cloneable
     public VoteCounter getTeamVotes()
     {
         if ( teamVotes.size() <= 0 )
-        {
             return null;
-        }
+
         return teamVotes.get( teamVotes.size() - 1 );
     }
 
     public VoteCounter getLastTeamVotes()
     {
         if ( teamVotes.size() <= 1 )
-        {
             return null;
-        }
+
         return teamVotes.get( teamVotes.size() - 2 );
     }
 
@@ -125,9 +114,8 @@ public final class Mission implements Comparable<Mission>, Cloneable
     {
         VoteCounter teamVotes = getTeamVotes();
         if ( teamVotes == null )
-        {
             return null;
-        }
+
         return teamVotes.getResults().denies() < MinimumFails;
     }
 
@@ -148,12 +136,9 @@ public final class Mission implements Comparable<Mission>, Cloneable
 
     public String getHTMLTeam()
     {
-        StringBuilder out = new StringBuilder();
+        final StringBuilder out = new StringBuilder();
 
-        for ( Player p : team )
-        {
-            out.append( "<tr><td>" ).append( p.getName() ).append( "</td></tr>" );
-        }
+        team.forEach( p -> out.append( "<tr><td>" ).append( p.getName() ).append( "</td></tr>" ) );
 
         return out.toString();
     }
@@ -161,7 +146,7 @@ public final class Mission implements Comparable<Mission>, Cloneable
     @Override
     public Mission clone()
     {
-        Mission m = new Mission( MissionNumber, TeamSize, MinimumFails );
+        final Mission m = new Mission( MissionNumber, TeamSize, MinimumFails );
 
         team.forEach( ( player ) -> m.team.add( player.clone() ) );
 

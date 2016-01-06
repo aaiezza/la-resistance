@@ -210,24 +210,16 @@ public class Game extends MessageRelayer<Game>
             if ( player instanceof AI )
             {
                 final Game game = this;
-                new Thread( new Runnable()
-                {
-                    @Override
-                    public void run()
+                new Thread( ( ) -> {
+                    try
                     {
-                        try
-                        {
-                            ( (AI) player ).updateGame( game );
-                        } catch ( InterruptedException e )
-                        {
-                            e.printStackTrace();
-                        }
+                        ( (AI) player ).updateGame( game );
+                    } catch ( InterruptedException e )
+                    {
+                        e.printStackTrace();
                     }
                 } ).start();
-            } else
-            {
-                broadcastPayload( player.getName() );
-            }
+            } else broadcastPayload( player.getName() );
         } );
         broadcastingRoles = "";
     }
@@ -265,7 +257,7 @@ public class Game extends MessageRelayer<Game>
             broadcastingRoles = user.getUsername();
         }
         Game g = onSubscription( user, UPDATE_USER );
-        //broadcastingRoles = "";
+        // broadcastingRoles = "";
         return g;
     }
 

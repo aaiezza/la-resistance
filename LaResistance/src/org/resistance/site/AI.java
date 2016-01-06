@@ -1,6 +1,7 @@
 package org.resistance.site;
 
 import static org.resistance.site.mech.Role.SPY;
+import static org.resistance.site.mech.Role.LOYAL;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,8 +14,6 @@ import org.resistance.site.mech.GameState;
 public class AI extends Player
 {
     private Game      activeGame;
-
-    private boolean   choseTeam;
 
     private GameState lastGameState = GameState.AWAITING_PLAYERS;
 
@@ -56,29 +55,24 @@ public class AI extends Player
             activeGame.setPlayerRoleLearned( getName() );
             break;
         case LEADER_CHOOSING_TEAM:
-            if ( activeGame.getCurrentLeader().equals( getName() ) && !choseTeam )
+            if ( activeGame.getDefaultScopeBoard().getCurrentLeader() == this )
             {
                 decideOnATeam();
+                // final ThreadLocal<Player> proofOfLeadership = new
+                // ThreadLocal<Player>();
+                // proofOfLeadership.set( this );
                 if ( !activeGame.submitTeam( getName() ) )
-                {
-                    LOGGER.info( "Trouble SUBMITTING TEAM: " + getName() );
-                }
+                    LOGGER.error( "Trouble SUBMITTING TEAM: " + getName() );
             }
             break;
         case RESISTANCE_VOTES_ON_TEAM:
             if ( !activeGame.submitTeamVote( getName(), decideToLikeTeam() ) )
-            {
-                LOGGER.info( "Trouble SUBMITTING TEAM VOTE: " + getName() );
-            }
+                LOGGER.error( "Trouble SUBMITTING TEAM VOTE: " + getName() );
             break;
         case TEAM_VOTES_ON_MISSION:
             if ( activeGame.getTeam().contains( getName() ) )
-            {
                 if ( !activeGame.submitMissionVote( getName(), decideToDoDuty() ) )
-                {
-                    LOGGER.info( "Trouble SUBMITTING MISSION VOTE: " + getName() );
-                }
-            }
+                    LOGGER.error( "Trouble SUBMITTING MISSION VOTE: " + getName() );
             break;
         case GAME_OVER:
             break;
@@ -89,8 +83,6 @@ public class AI extends Player
 
     private void decideOnATeam()
     {
-        choseTeam = true;
-
         final List<Player> myTeam = activeGame.getDefaultScopeBoard().getCurrentMission().getTeam();
 
         int requirement = activeGame.getDefaultScopeBoard().getCurrentMission().TeamSize;
@@ -113,11 +105,11 @@ public class AI extends Player
 
     private boolean decideToLikeTeam()
     {
-        if ( choseTeam )
-        {
-            choseTeam = false;
+        if ( activeGame.getDefaultScopeBoard().getCurrentLeader() == this )
             return true;
-        }
+
+        if ( activeGame.getTeamVoteTracker() == 4 )
+            return getRole() == LOYAL;
 
         List<Player> team = activeGame.getDefaultScopeBoard().getCurrentMission().getTeam();
 
@@ -128,15 +120,11 @@ public class AI extends Player
         for ( Player p : team )
         {
             if ( !likePlayer( p, null ) )
-            {
                 dislikes--;
-            }
 
 
             if ( dislikes == 0 )
-            {
                 return false;
-            }
         }
 
         return true;
@@ -180,10 +168,9 @@ public class AI extends Player
 
     private boolean likePlayer( Player pick, final Stack<Player> picks )
     {
+        // Arrogance Standard
         if ( pick.equals( this ) )
-        {
             return true;
-        }
 
         int minFails = activeGame.getDefaultScopeBoard().getCurrentMission().MinimumFails;
         int requirement = activeGame.getDefaultScopeBoard().getCurrentMission().TeamSize;
@@ -193,10 +180,6 @@ public class AI extends Player
 
         if ( getRole() == SPY )
         {
-            if ( activeGame.getTeamVoteTracker() == 4 )
-            {
-                return false;
-            }
             if ( getSpyCount( team ) < minFails )
             {
                 return pick.getRole() == SPY ||
