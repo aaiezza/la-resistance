@@ -37,5 +37,10 @@
 	<context:component-scan base-package="org.resistance.site.web">
 	    <context:exclude-filter expression="org.springframework.stereotype.Service" type="annotation"/>
 	</context:component-scan>
+  
+    <bean id="manualNativeLoader" class="org.springframework.beans.factory.config.MethodInvokingBean">
+        <property name="staticMethod" value="java.lang.System.loadLibrary" />
+        <property name="arguments" value="sqlitejdbc" />
+    </bean>
 	
 </beans>
