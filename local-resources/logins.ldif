@@ -1,0 +1,54 @@
+version: 1
+
+dn: ou=users,o=mojo
+objectClass: organizationalUnit
+objectClass: top
+ou: users
+
+dn: cn=User,ou=groups,o=mojo
+objectClass: groupOfUniqueNames
+objectClass: top
+cn: User
+uniqueMember: cn=Alex Aiezza,ou=users,o=mojo
+uniqueMember: cn=Kristina Aiezza,ou=users,o=mojo
+
+dn: o=mojo
+objectclass: extensibleObject
+objectclass: top
+objectclass: domain
+dc: mojo
+o: mojo
+
+dn: cn=Kristina Aiezza,ou=users,o=mojo
+objectClass: organizationalPerson
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: top
+cn: Kristina Aiezza
+sn: Aiezza
+uid: kaiezza
+userPassword:: e1NTSEF9T2k5ZFFkV0duRVF4YXFUYUdoWno4Y0dMU1pybzdRTmRBakxVQnc9P
+ Q==
+
+dn: ou=groups,o=mojo
+objectClass: organizationalUnit
+objectClass: top
+ou: groups
+
+dn: cn=Admin,ou=groups,o=mojo
+objectClass: groupOfUniqueNames
+objectClass: top
+cn: Admin
+uniqueMember: cn=Alex Aiezza,ou=users,o=mojo
+
+dn: cn=Alex Aiezza,ou=users,o=mojo
+objectClass: organizationalPerson
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: top
+cn: Alex Aiezza
+sn: Aiezza
+uid: aaiezza
+userPassword:: e1NTSEF9TEI2ZmNVYjhnZzdDUFpzamtzMGdLQkpLTUp2TWFvUk8yd0IwVHc9P
+ Q==
+

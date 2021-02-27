@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <PatternLayout pattern="%-5p %d{HH:mm:ss,SSS} %c{3}: %m%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Logger name="edu.rit.go" level="INFO"/>
+        <Logger name="com.gargoylesoftware.htmlunit" level="FATAL"/>
+        <Logger name="org.springframework.web.servlet.DispatcherServlet" level="INFO"/>
+        <Root level="INFO">
+            <AppenderRef ref="STDOUT"/>
+        </Root>
+    </Loggers>
+</Configuration>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+  <bean id="propertyConfiguer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="locations" value="/resources/laResistance.properties" />
+  </bean>
+  
+  <!-- Loggers -->
+  
+  <bean id="Login_Logger" class="org.apache.commons.logging.LogFactory" factory-method="getLog">
+    <constructor-arg value="org.resist.ance.web.LoginController" />
+  </bean>
+  
+  <bean id="GameLobby_Logger" class="org.apache.commons.logging.LogFactory" factory-method="getLog">
+    <constructor-arg value="org.resist.ance.web.GameLobbyController" />
+  </bean>
+  
+  <bean id="Resistance_Logger" class="org.apache.commons.logging.LogFactory" factory-method="getLog">
+    <constructor-arg value="org.resist.ance.web.ResistanceController" />
+  </bean>
+  
+  <bean id="Signup_Logger" class="org.apache.commons.logging.LogFactory" factory-method="getLog">
+    <constructor-arg value="org.resist.ance.web.SignUpController" />
+  </bean>
+  
+  <!-- Import the La Resistance database files -->
+  <import resource="resistance-context.xml"/>
+      <!-- import resource="${GO_Database-context}" /-->
+      
+      <!-- Let's try out the java file WebSecurityConfig -->
+  <import resource="../security-config.xml"/>
+  
+  <context:annotation-config />
+  
+</beans>
