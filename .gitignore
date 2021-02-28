@@ -1,1 +1,38 @@
-/build/
+# Generated files
+*.class
+*.war
+*.jar
+build/
+target/
+out/
+logs/
+*.versionsBackup
+*.orig
+*.bak
+
+# System files
+.DS_Store
+
+# Eclipse files
+.project
+.settings/
+.classpath
+.externalToolBuilders
+## Eclipse/Spring plugin files
+.springBeans
+.factorypath
+.dbeaver
+
+# Files containing sensitive data
+.env*
+admin/.env*
+
+# IntelliJ IDEA Files
+dataSources.local.xml
+*.iml
+.idea
+!.idea/runConfigurations
+
+*.crt
+*.key
+*.pkcs12
