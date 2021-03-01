@@ -1,38 +1,33 @@
-# Generated files
-*.class
-*.war
-*.jar
-build/
+HELP.md
 target/
-out/
-logs/
-*.versionsBackup
-*.orig
-*.bak
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
-# System files
-.DS_Store
-
-# Eclipse files
-.project
-.settings/
+### STS ###
+.apt_generated
 .classpath
-.externalToolBuilders
-## Eclipse/Spring plugin files
-.springBeans
 .factorypath
-.dbeaver
+.project
+.settings
+.springBeans
+.sts4-cache
 
-# Files containing sensitive data
-.env*
-admin/.env*
-
-# IntelliJ IDEA Files
-dataSources.local.xml
-*.iml
+### IntelliJ IDEA ###
 .idea
-!.idea/runConfigurations
+*.iws
+*.iml
+*.ipr
 
-*.crt
-*.key
-*.pkcs12
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/

@@ -8,11 +8,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configurers.provisioning.JdbcUserDetailsManagerConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
 
 @Configuration
 @EnableWebSecurity
@@ -21,12 +23,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   @Autowired private DataSource dataSource;
 
   @Override
+  public void configure(final WebSecurity web) throws Exception {
+    web.ignoring().antMatchers("/resources/**");
+  }
+
+  @Override
   protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
     final JdbcUserDetailsManager userDetailsManager = new JdbcUserDetailsManager(dataSource);
     userDetailsManager.setAuthoritiesByUsernameQuery(
-        "SELECT username, role FROM user_role WHERE username =?  ");
+        "SELECT username, role FROM user_role WHERE username = ?  ");
     userDetailsManager.setUsersByUsernameQuery(
-        "SELECT username,password, enabled FROM users WHERE username=?");
+        "SELECT username, password, enabled FROM users WHERE username = ?");
 
     auth.apply(
         new JdbcUserDetailsManagerConfigurer<AuthenticationManagerBuilder>(userDetailsManager));
@@ -35,8 +42,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(final HttpSecurity http) throws Exception {
     http.csrf()
-        .disable()
-        .cors()
         .disable()
         .authorizeRequests()
         .antMatchers("/css/**", "/js/**", "/images/**", "/login*", "/signup*", "/vote*")
@@ -50,14 +55,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         .and()
         .formLogin()
         .loginPage("/login")
-        // .loginProcessingUrl("/login ? ?")
+        .loginProcessingUrl("/login")
         .usernameParameter("username")
         .passwordParameter("password")
         .defaultSuccessUrl("/profile", true)
         .failureUrl("/login?authfailed")
+        .permitAll()
         .and()
         .logout()
         .logoutUrl("/login?logout")
+        .permitAll()
         .deleteCookies("JSESSIONID");
   }
 
@@ -70,4 +77,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
+
+  @Configuration
+  public static class WC extends AbstractSecurityWebApplicationInitializer {}
 }
