@@ -1,0 +1,62 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:amq="http://activemq.apache.org/schema/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:websocket="http://www.springframework.org/schema/websocket"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd
+  http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket.xsd">
+
+	<websocket:message-broker
+		application-destination-prefix="/app">
+		<websocket:stomp-endpoint path="/stompshake">
+			<websocket:sockjs websocket-enabled="true"
+				session-cookie-needed="true" client-library-url="http://cdn.sockjs.org/sockjs-0.3.js" />
+		</websocket:stomp-endpoint>
+		<!-- websocket:simple-broker prefix="/topic/"/ -->
+		<websocket:stomp-broker-relay prefix="/queue/,/topic/"
+			relay-host="127.0.0.1" relay-port="61613" heartbeat-send-interval="15000"
+			heartbeat-receive-interval="15000" />
+	</websocket:message-broker>
+
+	<amq:broker useJmx="true" persistent="false" schedulePeriodForDestinationPurge="10000">
+	  <amq:destinationPolicy>
+        <amq:policyMap>
+          <amq:policyEntries>
+            <amq:policyEntry topic=">" gcInactiveDestinations="true" inactiveTimoutBeforeGC="30000"/>
+          </amq:policyEntries>
+        </amq:policyMap>
+      </amq:destinationPolicy>
+      <amq:transportConnectors>
+		<amq:transportConnector name="openwire" uri="tcp://0.0.0.0:61616" />
+		<amq:transportConnector uri="stomp://127.0.0.1:61613" />
+      </amq:transportConnectors>
+	</amq:broker>
+
+	<!-- A connection to ActiveMQ ->
+	<bean id="amqConnectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="tcp://localhost:61616" />
+	</bean>
+
+	<- A cached connection to wrap the ActiveMQ connection ->
+	<bean id="cachedConnectionFactory"
+		class="org.springframework.jms.connection.CachingConnectionFactory">
+		<constructor-arg ref="amqConnectionFactory" />
+		<property name="sessionCacheSize" value="10" />
+	</bean>
+
+	<- A destination in ActiveMQ ->
+	<bean id="destination" class="org.apache.activemq.command.ActiveMQTopic">
+		<constructor-arg value="/topic/" />
+	</bean>
+
+	<- A JmsTemplate instance that uses the cached connection and destination ->
+	<bean id="producerTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<constructor-arg ref="cachedConnectionFactory" />
+		<property name="defaultDestination" ref="destination" />
+	</bean>
+
+	<- A JmsTemplate instance that uses the cached connection and destination ->
+	<bean id="messagingTemplate" class="org.springframework.jms.core.JmsMessagingTemplate">
+		<constructor-arg ref="producerTemplate" />
+	</bean -->
+
+</beans>

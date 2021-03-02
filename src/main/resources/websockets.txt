@@ -1,0 +1,5 @@
+Help with websockets
+
+~ Sending to /user/ channel:
+https://stackoverflow.com/questions/25681520/spring-as-broker-relay-by-using-an-external-message-broker
+http://docs.spring.io/spring/docs/current/spring-framework-reference/html/websocket.html#websocket-stomp-user-destination

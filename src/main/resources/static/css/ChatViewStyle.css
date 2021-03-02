@@ -1,0 +1,49 @@
+#chatLogBlock {
+    overflow-y: auto;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 100%;
+    height: -moz-calc(100% - 28px);
+    height: -webkit-calc(100% - 28px);
+    height: calc(100% - 28px);
+    background-color: transparent;
+    color: white;
+    border: 0;
+    padding: 0;
+    text-rendering: optimizeLegibility;
+    text-align: left;
+    position: relative;
+    
+    -moz-user-select: initial; /* mozilla browsers */
+    -webkit-user-select: initial; /* webkit browsers */
+}
+
+#chat {
+    position: relative;
+    float: left;
+    padding-left: 2px;
+    border: 0;
+    margin: 0 1px;
+    width: -moz-calc(100% - 70px);
+    width: -webkit-calc(100% - 70px);
+    width: calc(100% - 70px);
+    font-family: "Helvetica Neue", Verdana, Arial, sans-serif;
+    color: #444;
+    font-size: 180%;
+    text-rendering: optimizeLegibility;
+    background-color: #ddd;
+}
+
+#chatLog {
+    width: 100%;
+    font-size: medium;
+}
+
+#chatSubmit {
+    margin: 0 auto;
+    padding: 1px 3px;
+}
+
+.said {
+    float: left;
+}

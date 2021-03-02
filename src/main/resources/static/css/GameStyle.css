@@ -1,0 +1,96 @@
+h3, td {
+    margin: 0 auto;
+}
+
+.teamFull {
+    background: #F58080;
+}
+
+#role {
+    text-align: center;
+    padding: 10px;
+    background: #D50000;
+    font-size: medium;
+    margin: 5px auto;
+    display: inline-block;
+}
+
+#role.revealed {
+    font-size: xx-large;
+    font-weight: bolder;
+}
+
+#gameInfoBlock {
+    background: whitesmoke;
+    border: 5px solid black;
+    text-align: center;
+    margin: 0 auto;
+    display: inline-block;
+}
+
+table {
+	text-align: center;
+    margin: inherit;
+    font-size: x-large;
+    
+    cursor: default;
+}
+
+table tr td {
+    border: 1px solid black;
+}
+
+.leader {
+    background: #F50000;
+}
+
+.member.teammate td {
+    background: #F58080;
+}
+
+.member.disabled td {
+    background: gray;
+}
+
+#successfulMissions {
+    background: #D0D0F5;
+}
+
+#failedMissions {
+    background: #F5D0D0;
+}
+
+#approve, #successful {
+    background: #AFA;
+}
+
+#reject, #failure {
+    background: #FAA;
+}
+
+.SPY {
+    background: #F5D0D0;
+}
+
+.LOYAL {
+    background: #D0D0F5;
+}
+
+#winner {
+    background: #AFA;
+}
+
+.messageUpdates {
+	background: wheat;
+}
+
+/*
+ USED BY THE GAME MONITOR
+*/
+
+#board {
+    width: 100%;
+    height: -moz-calc(100% - 50px);
+    height: -webkit-calc(100% - 50px);
+    height: calc(100% - 50px);
+}

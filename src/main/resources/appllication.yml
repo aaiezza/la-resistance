@@ -1,0 +1,16 @@
+---
+
+Board_DB: resources/ResistanceBoard.db
+
+# USER Database properties
+spring.datasource:
+  driver-class-name: org.sqlite.JDBC
+  url: jdbc:sqlite:resources/sqlite_resist/resist_members.db
+  username: root
+  password: ''
+
+# Bot names
+AI.names: 'Lester Bester:Sir Freud:Madam Jewswelle:Jimmy the Hammer:Barry Cade:Bill Board:Jo King:Polly Ester:Phil Graves:May Flower:Lou Zar'
+
+# New Users that signup initially enabled
+newUserEnabled: true
