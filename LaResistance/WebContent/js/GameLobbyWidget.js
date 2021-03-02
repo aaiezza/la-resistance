@@ -73,8 +73,7 @@ var GameLobbyWidget = function()
 
         function makeConnection()
         {
-            lobbySock = new SockJS("http://" + location.host
-            + ":8081/resist/stompshake", null, {
+            lobbySock = new SockJS('/resist/stompshake', null, {
                 /* protocols_whitelist : [ "websocket" ], */
                 debug : true
             });

@@ -64,8 +64,7 @@ var GameWidget = function()
 
         var playerMenu = [];
 
-        var lobbySock = new SockJS("http://" + location.host
-        + ":8081/resist/stompshake", null, {
+        var lobbySock = new SockJS('/resist/stompshake', null, {
             /* protocols_whitelist : [ "websocket" ], */
             debug : true
         });

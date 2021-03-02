@@ -38,9 +38,9 @@
 	    <context:exclude-filter expression="org.springframework.stereotype.Service" type="annotation"/>
 	</context:component-scan>
   
-    <bean id="manualNativeLoader" class="org.springframework.beans.factory.config.MethodInvokingBean">
+    <!-- <bean id="manualNativeLoader" class="org.springframework.beans.factory.config.MethodInvokingBean">
         <property name="staticMethod" value="java.lang.System.loadLibrary" />
         <property name="arguments" value="sqlitejdbc" />
-    </bean>
+    </bean> -->
 	
 </beans>
