@@ -14,9 +14,11 @@ import org.springframework.stereotype.Service;
 public class BoardFactory {
   private final File BoardDB;
 
-  @Autowired
-  private BoardFactory(@Value("${Board_DB}") String boardDB) {
-    BoardDB = new File(boardDB);
+//  @Autowired
+//  private BoardFactory(@Value("${Board_DB}") String boardDB) {
+  private BoardFactory() {
+//    BoardDB = new File(boardDB);
+    BoardDB = new File("resources/ResistanceBoard.db");
   }
 
   public final synchronized Board MakeBoard(int numberOfPlayers) throws FileNotFoundException {

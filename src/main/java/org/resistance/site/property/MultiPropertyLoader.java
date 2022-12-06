@@ -7,7 +7,7 @@ import org.springframework.core.io.Resource;
 /** @author Alex Aiezza */
 public class MultiPropertyLoader {
 
-  protected static final String PROPERTY_FILE_SYSTEM_PROPERTY = "applicationProperties";
+  protected static final String PROPERTY_FILE_SYSTEM_PROPERTY = "application.yml";//"applicationProperties";
   protected static final String RESISTANCE_PROPERTY_FILE = "resources/laResistance.properties";
 
   private static final String PROPERTY_NOT_DEFINED_ERROR =

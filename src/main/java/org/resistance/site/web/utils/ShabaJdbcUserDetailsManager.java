@@ -8,9 +8,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.sql.DataSource;
+
 import org.apache.commons.codec.digest.DigestUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.security.access.AccessDeniedException;
@@ -26,9 +27,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.userdetails.cache.NullUserCache;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 /** @author Alex Aiezza */
+@Component
 public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager {
   /** */
   public static final String QUERY_NUMBER_OF_USERS_SQL =
@@ -81,9 +84,11 @@ public class ShabaJdbcUserDetailsManager extends JdbcUserDetailsManager {
 
   private final boolean NEW_USER_ENABLED;
 
-  @Autowired
-  private ShabaJdbcUserDetailsManager(@Value("${newUserEnabled}") boolean newUserEnabled) {
-    NEW_USER_ENABLED = newUserEnabled;
+//  @Autowired
+//  private ShabaJdbcUserDetailsManager(@Value("${newUserEnabled}") boolean newUserEnabled) {
+  private ShabaJdbcUserDetailsManager(DataSource dataSource) {
+    NEW_USER_ENABLED = true;
+    setDataSource(dataSource);
   }
 
   /** @param user */
