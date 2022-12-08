@@ -44,33 +44,4 @@ public class LogConfiguration {
   public Log chatLogger() {
     return LogFactory.getLog(ChatController.class);
   }
-  
-//  @Bean
-//  public SimpMessagingTemplate simplMessagingTemplate() {
-//    return null;
-//  }
-
-  @Bean
-  public DataSource dataSource()
-  {
-      DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
-      dataSourceBuilder.driverClassName("org.sqlite.JDBC");
-      dataSourceBuilder.url("jdbc:sqlite:src/main/resources/sqlite_resist/resist_members.db");
-      dataSourceBuilder.username("root");
-      dataSourceBuilder.password("");
-      return dataSourceBuilder.build();
-  }
-
-//  @Bean
-//  public JdbcTemplate jdbcTemplate() throws IllegalAccessException, InvocationTargetException, InstantiationException {
-//    // extract this 4 parameters using your own logic
-//    final String driverClassName = "org.sqlite.JDBC";
-//    final String jdbcUrl = "jdbc:sqlite:resources/sqlite_resist/resist_members.db";
-//    final String username = "root";
-//    final String password = "";
-//    final DataSource dataSource = DataSourceBuilder.create().driverClassName(driverClassName).url(jdbcUrl)
-//        .username(username).password(password).build();
-//    // and make the jdbcTemplate
-//    return new JdbcTemplate(dataSource);
-//  }
 }
