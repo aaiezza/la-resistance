@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 public class TrackingUsernamePasswordAuthenticationFilter
@@ -18,9 +20,14 @@ public class TrackingUsernamePasswordAuthenticationFilter
 
   @Autowired
   private TrackingUsernamePasswordAuthenticationFilter(
-      UserTracker userTracker, ShabaJdbcUserDetailsManager userManager) {
+      UserTracker userTracker, ShabaJdbcUserDetailsManager userManager,
+      SimpleUrlAuthenticationFailureHandler failureHandler,
+      SavedRequestAwareAuthenticationSuccessHandler successHandler
+      ) {
     USER_TRACKER = userTracker;
     USER_MAN = userManager;
+    this.setAuthenticationFailureHandler(failureHandler);
+    this.setAuthenticationSuccessHandler(successHandler);
   }
 
   /**

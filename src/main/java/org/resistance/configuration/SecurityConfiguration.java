@@ -1,6 +1,8 @@
 package org.resistance.configuration;
 
 import javax.sql.DataSource;
+
+import org.resistance.site.web.utils.TrackingUsernamePasswordAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +16,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
 
 @Configuration
@@ -66,6 +71,25 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         .logoutUrl("/login?logout")
         .permitAll()
         .deleteCookies("JSESSIONID");
+  }
+
+  @Bean
+  public SimpleUrlAuthenticationFailureHandler failureHandler() {
+    return new SimpleUrlAuthenticationFailureHandler("/login?authfailed");
+  }
+
+  @Bean
+  public SavedRequestAwareAuthenticationSuccessHandler successHandler() {
+    final SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
+    successHandler.setDefaultTargetUrl("/profile");
+    successHandler.setAlwaysUseDefaultTargetUrl(true);
+
+    return successHandler;
+  }
+
+  @Bean
+  public LoginUrlAuthenticationEntryPoint loginUrlAuthenticationEntryPoint() {
+    return new LoginUrlAuthenticationEntryPoint("/login");
   }
 
   @Bean
