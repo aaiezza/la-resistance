@@ -74,7 +74,7 @@ var GameLobbyWidget = function()
         function makeConnection()
         {
             lobbySock = new SockJS("http://" + location.host
-            + ":8081/resist/stompshake", null, {
+            + "/resist/stompshake", null, {
                 /* protocols_whitelist : [ "websocket" ], */
                 debug : true
             });
@@ -306,7 +306,7 @@ var GameLobbyWidget = function()
 
         createGameButton.click(createGame);
 
-        // FIX WINDOW RESIZING BUG
+        // FIX WINDOW RESIZING
         $(window).resize(
         function()
         {

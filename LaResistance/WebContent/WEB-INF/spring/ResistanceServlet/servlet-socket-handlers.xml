@@ -13,7 +13,7 @@
 		</websocket:stomp-endpoint>
 		<!-- websocket:simple-broker prefix="/topic/"/ -->
 		<websocket:stomp-broker-relay prefix="/queue/,/topic/"
-			relay-host="localhost" relay-port="61613" heartbeat-send-interval="15000"
+			relay-host="127.0.0.1" relay-port="61613" heartbeat-send-interval="15000"
 			heartbeat-receive-interval="15000" />
 	</websocket:message-broker>
 
@@ -27,7 +27,7 @@
       </amq:destinationPolicy>
       <amq:transportConnectors>
 		<amq:transportConnector name="openwire" uri="tcp://0.0.0.0:61616" />
-		<amq:transportConnector uri="stomp://localhost:61613" />
+		<amq:transportConnector uri="stomp://127.0.0.1:61613" />
       </amq:transportConnectors>
 	</amq:broker>
 

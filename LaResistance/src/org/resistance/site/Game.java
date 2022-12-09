@@ -28,7 +28,6 @@ import org.resistance.site.web.utils.MessageRelayer;
 import org.resistance.site.web.utils.ShabaUser;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-import com.sun.istack.internal.NotNull;
 
 /**
  * @author Alex Aiezza
@@ -83,7 +82,6 @@ public class Game extends MessageRelayer<Game>
 
     private final AINamer       aiNamer;
 
-    @NotNull
     private String              broadcastingRoles        = new String();
 
     public Game(
